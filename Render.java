@@ -39,6 +39,10 @@ public class Render extends Application{
         //gc.setFill(Color.BLACK);
         gc.fillRect(10,10,10,10);
 
+        gameLoop<Render, Render> gl = new gameLoop();
+        gl.setGraphicsContext(gc);
+        gl.start();
+
 
 
         stage.show();
