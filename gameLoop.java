@@ -14,6 +14,14 @@ public class gameLoop<UpdaterType, RenderType> extends AnimationTimer{
     private RenderType renderer;
 
 
+    public gameLoop(){
+
+    }
+
+    public gameLoop(UpdaterType updater, RenderType renderer){
+        this.updater = updater;
+        this.renderer = renderer;
+    }
 
     @Override
     public void handle(long currentTime){
@@ -22,17 +30,23 @@ public class gameLoop<UpdaterType, RenderType> extends AnimationTimer{
         lastTime = now;
         fractionOfSecondPassed = (double)timeSinceLastLoop/1000000000;
 
-        //updater.update(fractionOfSecondPassed);
-        //renderer.render();
 
-        System.out.println(fractionOfSecondPassed);
+        updater.update(fractionOfSecondPassed);
+        renderer.render();
 
 
-        System.out.println("hello");
+
     }
 
 
     public void setGraphicsContext(GraphicsContext graphicsContext) {
-        graphicsContext = graphicsContext;
+    }
+
+    public void setUpdater(UpdaterType updater) {
+        this.updater = updater;
+    }
+
+    public void setRenderer(RenderType renderer) {
+        this.renderer = renderer;
     }
 }

@@ -5,5 +5,14 @@ public class Update {
     //contains model of game world
     //all logic is updated using update function
 
-    public
+    public void update(double fractionOfSecondPassed){
+        double foc = fractionOfSecondPassed;
+
+        System.out.println("yo");
+
+
+
+    }
+
+
 }

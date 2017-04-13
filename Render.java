@@ -14,6 +14,10 @@ import javafx.stage.Stage;
  */
 public class Render extends Application{
     private Stage stage;
+    private GraphicsContext gc;
+    private int width = 400;
+    private int height = 400;
+    private int i = 0;
 
     public static void main(String args){
         launch(args);
@@ -30,21 +34,34 @@ public class Render extends Application{
         Scene gameScene = new Scene(root);
         stage.setScene(gameScene);
 
-        Canvas gameCanvas = new Canvas(400,400);
+        Canvas gameCanvas = new Canvas(width, height);
 
         ObservableList<Node> rootChildren = root.getChildren();
         rootChildren.add(gameCanvas);
 
-        GraphicsContext gc = gameCanvas.getGraphicsContext2D();
+        gc = gameCanvas.getGraphicsContext2D();
         //gc.setFill(Color.BLACK);
-        gc.fillRect(10,10,10,10);
 
-        gameLoop<Render, Render> gl = new gameLoop();
-        gl.setGraphicsContext(gc);
+
+        Update updater = new Update();
+        Render renderer = new Render();
+        gameLoop<Update, Render> gl;
+        gl = new gameLoop(updater, renderer);
+
+        gl.updater.update(1);
+
+        gl.setUpdater(updater);
+        gl.setRenderer(renderer);
+
         gl.start();
 
-
-
         stage.show();
+    }
+
+     public void render(){
+        gc.setFill(Color.WHITE);
+        gc.fillRect(0,0, width, height);
+        gc.setFill(Color.BLACK);
+        gc.fillRect(i,10, 10,10);
     }
 }
