@@ -1,5 +1,6 @@
-import { Component, AnimationComponent } from "component";
-import { PositionComponent } from './component';
+import { Component } from "component";
+import { PositionComponent } from './position-component';
+import { AnimationComponent } from './animation-component';
 
 export class ComponentFactory {
     constructor(){

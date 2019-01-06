@@ -114,7 +114,9 @@ function createSpriteManager():HtmlSpriteManager{
     
     sm.loadSprite("blond", "blondWalk.png", 4, 2);
     sm.addAnimation("blond", "blondWalk", [4,5,6,7], 5);
+    sm.addAnimation("blond", "blond", [4], 5);
    
     sm.loadSprite("fantasySprites", "fantasysprites.png", 12,8);
+    sm.addAnimation("fantasySprites", "redHair", [24,25,26,25], 6);
     return sm;
 }

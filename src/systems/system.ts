@@ -1,6 +1,8 @@
-import { Component, AnimationComponent, PositionComponent } from '../components/component';
+import { Component } from '../components/component';
 import { Entity } from '../entities/entity';
 import { HtmlRenderer } from '../render';
+import { AnimationComponent } from '../components/animation-component';
+import { PositionComponent } from '../components/position-component';
 
 export class EntitySystem {
     /**
@@ -39,8 +41,8 @@ export class RenderSystem extends EntitySystem{
     apply(entity:Entity){
         var a:AnimationComponent = <AnimationComponent>entity.getComponent("animation", true);
         var p:PositionComponent = <PositionComponent>entity.getComponent("position", true);
-        if (a == null)return;
+        if (a == null || p == null)return;
         var r:HtmlRenderer = this.renderer;
-        r.sprite(a.spriteName, p.x, p.y, p.width, p.height, a.getSpriteNumber());
+        r.sprite(a.spriteName, p.x, p.y, p.width, p.height, a.getSpriteNumber(), p.faceRight);
     }
 }

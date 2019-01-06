@@ -1,6 +1,8 @@
 import { HtmlSpriteManager } from './sprite-manager';
 
-interface Renderer {
+export interface Renderer {
+    cbox():void;
+    sprite(spriteName:string, x:number, y:number, width:number, height:number, spriteNumber:number):void;
 }
 
 export class HtmlRenderer implements Renderer {
@@ -17,11 +19,23 @@ export class HtmlRenderer implements Renderer {
         this.ctx.clearRect(0,0,this.canvas.width,this.canvas.height);
     }
 
-    sprite(spriteName:string, x:number, y:number, width:number, height:number, spriteNumber:number){
+    sprite(spriteName:string, x:number, y:number, width:number, height:number, spriteNumber:number, flip:boolean=false){
         var sprite = this.spriteManager.getSprite(spriteName);
         var spriteImg = sprite.sprite;
         var fc = sprite.frameCoords(spriteNumber);
-        this.ctx.drawImage(spriteImg, fc[0], fc[1], sprite.frameWidth, sprite.frameHeight, x, y, width, height);
+
+        if(flip){
+            this.ctx.translate(2*x, 0);
+            this.ctx.scale(-1,1);
+        }
+        
+        this.ctx.drawImage(spriteImg, fc[0], fc[1], sprite.frameWidth,
+                           sprite.frameHeight, x-width/2, y-height/2, width, height);
+
+        if (flip){
+            this.ctx.scale(-1,1);
+            this.ctx.translate(-2*x,0);
+        }
     }
 
     static create():HtmlRenderer{
