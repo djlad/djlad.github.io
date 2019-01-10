@@ -4,11 +4,11 @@ import { HtmlSpriteManager, SpriteAnimation } from '../sprite-manager';
 export class AnimationComponent extends Component {
     constructor(animationName:string, delay:number, spriteManager:HtmlSpriteManager){
         super("animation");
-        this.animationName = animationName;
         this.delay = delay;
         this.currentDelay = delay;
         this.spriteManager = spriteManager;
         this.setSprite(animationName);
+        this.animationName = animationName;
     }
     spriteNumbers:number[];
     animationName:string;
@@ -22,16 +22,20 @@ export class AnimationComponent extends Component {
     getSpriteNumber(){
         var frameNum = this.frameNum;
         var spriteNum = this.spriteNumbers[frameNum];
-        //console.log(spriteNum)
         return spriteNum;
     }
 
     setSprite(animationName:string){
+        if(animationName == this.animationName){
+            return;
+        }
+
         this.animationName = animationName;
         var animation:SpriteAnimation = this.spriteManager.getAnimation(animationName);
         this.spriteNumbers = animation.spriteNumbers;
         this.spriteName = animation.spriteName;
         this.delay = animation.delay;
+        this.frameNum = 0;
     }
 
     update():void{

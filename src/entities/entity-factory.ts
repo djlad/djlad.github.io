@@ -1,5 +1,6 @@
 import { PlayerEntity } from './player-entity';
 import { Entity } from './entity';
+import { VillagerEntity } from './villager-entity';
 
 export class EntityFactory {
     constructor(){}
@@ -24,5 +25,6 @@ export class EntityFactory {
 function createEntityFactory():EntityFactory{
     var ef = new EntityFactory();
     ef.registerComponent("player", PlayerEntity);
+    ef.registerComponent("villager", VillagerEntity);
     return ef;
 }

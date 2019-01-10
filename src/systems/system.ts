@@ -3,6 +3,8 @@ import { Entity } from '../entities/entity';
 import { HtmlRenderer } from '../render';
 import { AnimationComponent } from '../components/animation-component';
 import { PositionComponent } from '../components/position-component';
+import { GameEvent } from '../events/event-manager';
+import { WasdComponent } from '../components/wasd-component';
 
 export class EntitySystem {
     /**
@@ -18,6 +20,9 @@ export class EntitySystem {
     apply(entity:Entity):void{
         throw "an entity system did not implement apply method.";
     };
+    applyEvents(entity:Entity, events:{[key:string]:GameEvent}):void{
+        throw "an did not implement apply Events";
+    }
     static create():EntitySystem{
         throw "an entity system has no create method."
     };
@@ -43,6 +48,62 @@ export class RenderSystem extends EntitySystem{
         var p:PositionComponent = <PositionComponent>entity.getComponent("position", true);
         if (a == null || p == null)return;
         var r:HtmlRenderer = this.renderer;
-        r.sprite(a.spriteName, p.x, p.y, p.width, p.height, a.getSpriteNumber(), p.faceRight);
+        r.sprite(a.spriteName, p.x, p.y, p.width, p.height, a.getSpriteNumber(), !p.faceRight);
+    }
+    applyEvents(){}
+}
+
+export class WasdSystem extends EntitySystem {
+    constructor(){
+        super();
+    }
+    static create(){
+        return new WasdSystem();
+    }
+
+    apply(){}
+
+    applyEvents(entity:Entity, events:{[key:string]:GameEvent}){
+        //console.log(events)
+        var WasdComponent:WasdComponent = <WasdComponent>entity.getComponent("wasd", true);
+        if (WasdComponent == null)return;
+        
+        var position:PositionComponent = <PositionComponent>entity.getComponent("position");
+        var animation:AnimationComponent = <AnimationComponent>entity.getComponent("animation");
+        var speed:number = 5;
+
+        if("w down" in events){
+            animation.setSprite("blondWalk");
+            position.vy = -speed;
+        } else if(position.vy == -speed){
+            animation.setSprite("blond");
+            position.vy = 0;
+        }
+        
+        if("a down" in events){
+            position.faceRight = false;
+            animation.setSprite("blondWalk");
+            position.vx = -speed;
+        } else if(position.vx == -speed){
+            animation.setSprite("blond");
+            position.vx = 0;
+        }
+        
+        if("s down" in events){
+            animation.setSprite("blondWalk");
+            position.vy = speed;
+        } else if(position.vy == speed){
+            animation.setSprite("blond");
+            position.vy = 0;
+        }
+
+        if("d down" in events){
+            position.faceRight = true;
+            animation.setSprite("blondWalk");
+            position.vx = speed;
+        } else if(position.vx == speed){
+            animation.setSprite("blond");
+            position.vx = 0;
+        }
     }
 }

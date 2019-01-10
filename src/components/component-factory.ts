@@ -1,6 +1,7 @@
 import { Component } from "component";
 import { PositionComponent } from './position-component';
 import { AnimationComponent } from './animation-component';
+import { WasdComponent } from './wasd-component';
 
 export class ComponentFactory {
     constructor(){
@@ -26,6 +27,7 @@ export class ComponentFactory {
         var cf:ComponentFactory = new ComponentFactory();
         cf.registerComponent(AnimationComponent);
         cf.registerComponent(PositionComponent);
+        cf.registerComponent(WasdComponent);
         return cf;
     }
 }

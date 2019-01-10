@@ -1,5 +1,6 @@
 import { ComponentFactory } from '../components/component-factory';
 import { Component } from '../components/component';
+import { GameEvent } from '../events/event-manager';
 
 export class Entity {
     constructor(componentFactory:ComponentFactory){
@@ -8,9 +9,10 @@ export class Entity {
     components:Component[] = [];
     componentFactory:ComponentFactory;
 
-    addComponent(componentName:string){
+    addComponent(componentName:string):Component{
         var component:Component = this.componentFactory.createComponent(componentName);
         this.components.push(component);
+        return component;
     }
 
     getComponent(componentName:string, allowUndefined:boolean=false):Component{
@@ -28,6 +30,10 @@ export class Entity {
         for(var i:number=0;i<this.components.length;i++){
             this.components[i].update();
         }
+    }
+
+    handleEvents(events:{[key:string]:GameEvent}){
+
     }
 
     static create():Entity{

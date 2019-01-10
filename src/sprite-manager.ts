@@ -118,5 +118,10 @@ function createSpriteManager():HtmlSpriteManager{
    
     sm.loadSprite("fantasySprites", "fantasysprites.png", 12,8);
     sm.addAnimation("fantasySprites", "redHair", [24,25,26,25], 6);
+
+    sm.loadSprite("crops", "crops.png", 12, 8);
+    sm.addAnimation("crops", "turnip0", [0]);
+    sm.addAnimation("crops", "turnip1", [1]);
+    sm.addAnimation("crops", "turnip2", [2]);
     return sm;
 }
