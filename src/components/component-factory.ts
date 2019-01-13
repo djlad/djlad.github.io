@@ -2,6 +2,7 @@ import { Component } from "component";
 import { PositionComponent } from './position-component';
 import { AnimationComponent } from './animation-component';
 import { WasdComponent } from './wasd-component';
+import { CropComponent } from './crop-component';
 
 export class ComponentFactory {
     constructor(){
@@ -28,6 +29,7 @@ export class ComponentFactory {
         cf.registerComponent(AnimationComponent);
         cf.registerComponent(PositionComponent);
         cf.registerComponent(WasdComponent);
+        cf.registerComponent(CropComponent);
         return cf;
     }
 }

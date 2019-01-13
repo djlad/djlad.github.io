@@ -2,7 +2,7 @@ import { ComponentFactory } from '../components/component-factory';
 import { Component } from '../components/component';
 import { GameEvent } from '../events/event-manager';
 
-export class Entity {
+export abstract class Entity {
     constructor(componentFactory:ComponentFactory){
         this.componentFactory = componentFactory;
     }
@@ -32,14 +32,14 @@ export class Entity {
         }
     }
 
-    handleEvents(events:{[key:string]:GameEvent}){
-
-    }
+    abstract handleEvents(events:{[key:string]:GameEvent}):void;
+    
 
     static create():Entity{
-        var cf:ComponentFactory = ComponentFactory.create();
-        var entity:Entity = new Entity(cf);
-        return entity;
+        //var cf:ComponentFactory = ComponentFactory.create();
+        //var entity:Entity = new this(cf);
+        //return entity;
+        return null;
     }
 }
 

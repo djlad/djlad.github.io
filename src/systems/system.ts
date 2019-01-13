@@ -5,6 +5,7 @@ import { AnimationComponent } from '../components/animation-component';
 import { PositionComponent } from '../components/position-component';
 import { GameEvent } from '../events/event-manager';
 import { WasdComponent } from '../components/wasd-component';
+import { CropComponent } from '../components/crop-component';
 
 export class EntitySystem {
     /**
@@ -106,4 +107,25 @@ export class WasdSystem extends EntitySystem {
             position.vx = 0;
         }
     }
+}
+
+export class CropSystem extends EntitySystem {
+    constructor(){
+        super();
+    }
+    apply(entity:Entity):void{
+        var a:AnimationComponent = <AnimationComponent>entity.getComponent("animation", true);
+        var c:CropComponent = <CropComponent>entity.getComponent("crop", true);
+        if(a==null||c==null){
+            return;
+        }
+        if (c.timeSinceGrowth == 0 || c.timeSinceGrowth==1){
+            a.setSprite(c.growthSprites[c.growthStage]);
+        }
+    };
+    applyEvents(entity:Entity, events:{[key:string]:GameEvent}):void{
+    };
+    static create():EntitySystem{
+        return new CropSystem();
+    };
 }

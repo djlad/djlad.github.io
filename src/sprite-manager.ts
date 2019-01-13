@@ -123,5 +123,13 @@ function createSpriteManager():HtmlSpriteManager{
     sm.addAnimation("crops", "turnip0", [0]);
     sm.addAnimation("crops", "turnip1", [1]);
     sm.addAnimation("crops", "turnip2", [2]);
+
+    sm.addAnimation("crops", "corn0", [30]);
+    sm.addAnimation("crops", "corn1", [31]);
+    sm.addAnimation("crops", "corn2", [32]);
+
+    sm.addAnimation("crops", "wheat0", [33]);
+    sm.addAnimation("crops", "wheat1", [34]);
+    sm.addAnimation("crops", "wheat2", [35]);
     return sm;
 }
