@@ -30,7 +30,7 @@ export class HtmlRenderer implements Renderer {
         }
         
         this.ctx.drawImage(spriteImg, fc[0], fc[1], sprite.frameWidth,
-                           sprite.frameHeight, x-width/2, y-height/2, width, height);
+                           sprite.frameHeight, x-width/2, y-height, width, height);
 
         if (flip){
             this.ctx.scale(-1,1);
