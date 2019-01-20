@@ -12,10 +12,12 @@ export class PositionComponent extends Component{
     width:number=100;
     height:number=100;
     faceRight:boolean=true;
+    moved:boolean=false;
 
     update():void{
         this.x += this.vx;
         this.y += this.vy;
+        this.moved = !(this.vx === 0 && this.vy === 0);
     }
 
     static create():PositionComponent{

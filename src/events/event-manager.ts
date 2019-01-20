@@ -1,7 +1,16 @@
 export class GameEvent {
-    constructor(eventName:string, eventData:{}){}
+    constructor(eventName:string, eventData:{}, componentTarget:string=null){
+        this.eventName = eventName;
+        this.eventData = eventData;
+    }
     eventName:string;
     eventData:any;
+    componentTarget:string;
+
+    static create(eventName:string, eventData:{}):GameEvent{
+        var ge:GameEvent = new GameEvent(eventName, eventData);
+        return ge;
+    }
 }
 
 export class EventManager {

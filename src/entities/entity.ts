@@ -5,9 +5,14 @@ import { GameEvent } from '../events/event-manager';
 export abstract class Entity {
     constructor(componentFactory:ComponentFactory){
         this.componentFactory = componentFactory;
+        Entity.id++
+        this.id = Entity.id;
     }
+    static id:number=-1;
+    id:number=-1;
     components:Component[] = [];
     componentFactory:ComponentFactory;
+    targetedEvents:GameEvent[] = [];
 
     addComponent(componentName:string):Component{
         var component:Component = this.componentFactory.createComponent(componentName);
@@ -26,6 +31,10 @@ export abstract class Entity {
         return component;
     }
 
+    emit(event:GameEvent){
+        this.targetedEvents.push(event);
+    }
+
     update(){
         for(var i:number=0;i<this.components.length;i++){
             this.components[i].update();
@@ -34,7 +43,6 @@ export abstract class Entity {
 
     abstract handleEvents(events:{[key:string]:GameEvent}):void;
     
-
     static create():Entity{
         //var cf:ComponentFactory = ComponentFactory.create();
         //var entity:Entity = new this(cf);

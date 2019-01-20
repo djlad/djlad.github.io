@@ -127,9 +127,25 @@ function createSpriteManager():HtmlSpriteManager{
     sm.addAnimation("crops", "corn0", [30]);
     sm.addAnimation("crops", "corn1", [31]);
     sm.addAnimation("crops", "corn2", [32]);
-
+    
     sm.addAnimation("crops", "wheat0", [33]);
     sm.addAnimation("crops", "wheat1", [34]);
     sm.addAnimation("crops", "wheat2", [35]);
+    
+    sm.addAnimation("crops", "pumpkin0", [54]);
+    sm.addAnimation("crops", "pumpkin1", [55]);
+    sm.addAnimation("crops", "pumpkin2", [56]);
+
+    sm.loadSprite("scrops", "scrops.png", 24, 23);
+    sm.addAnimation("scrops", "onion0", [0]);
+    sm.addAnimation("scrops", "onion1", [1]);
+    sm.addAnimation("scrops", "onion2", [2]);
+    sm.addAnimation("scrops", "onion3", [3]);
+    sm.addAnimation("scrops", "onion4", [4]);
+    sm.addAnimation("scrops", "onion5", [5]);
+    sm.addAnimation("scrops", "onion", [6]);
+
+    var cn = 24 * 8 + 18;
+    sm.addAnimation("scrops", "corn", [cn]);
     return sm;
 }

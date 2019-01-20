@@ -27,21 +27,31 @@ export class CropComponent extends Component {
     }
 
     setCrop(cropName:string){
+        var cropLength:number = 30;
+        this.growthLengths = [cropLength, cropLength, cropLength];
         switch(cropName){
             case "turnip":
                 this.growthSprites = ["turnip0", "turnip1", "turnip2"];
-                this.growthLengths = [30, 30, 30];
+                this.growthLengths = [cropLength, cropLength, cropLength];
                 break;
             case "corn":
                 this.growthSprites = ["corn0", "corn1", "corn2"];
-                this.growthLengths = [30, 30, 30];
+                this.growthLengths = [cropLength, cropLength, cropLength];
                 break;
             case "wheat":
                 this.growthSprites = ["wheat0", "wheat1", "wheat2"];
-                this.growthLengths = [30, 30, 30];
+                this.growthLengths = [cropLength, cropLength, cropLength];
+                break;
+            case "pumpkin":
+                this.growthSprites = ["pumpkin0", "pumpkin1", "pumpkin2"];
+                break;
+            case "onion":
+                this.growthSprites = ["onion0", "onion1", "onion2", "onion3", "onion4", "onion5"];
+                this.growthLengths = [cropLength, cropLength, cropLength, cropLength, cropLength, cropLength];
                 break;
         }
         this.growthStage = 0;
+        this.cropName = cropName;
     }
 
     update(){

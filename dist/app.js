@@ -54,11 +54,13 @@ System.register("components/position-component", ["components/component"], funct
                     _this.width = 100;
                     _this.height = 100;
                     _this.faceRight = true;
+                    _this.moved = false;
                     return _this;
                 }
                 PositionComponent.prototype.update = function () {
                     this.x += this.vx;
                     this.y += this.vy;
+                    this.moved = !(this.vx === 0 && this.vy === 0);
                 };
                 PositionComponent.create = function () {
                     return new PositionComponent();
@@ -91,6 +93,19 @@ System.register("sprite-manager", [], function (exports_3, context_3) {
         sm.addAnimation("crops", "wheat0", [33]);
         sm.addAnimation("crops", "wheat1", [34]);
         sm.addAnimation("crops", "wheat2", [35]);
+        sm.addAnimation("crops", "pumpkin0", [54]);
+        sm.addAnimation("crops", "pumpkin1", [55]);
+        sm.addAnimation("crops", "pumpkin2", [56]);
+        sm.loadSprite("scrops", "scrops.png", 24, 23);
+        sm.addAnimation("scrops", "onion0", [0]);
+        sm.addAnimation("scrops", "onion1", [1]);
+        sm.addAnimation("scrops", "onion2", [2]);
+        sm.addAnimation("scrops", "onion3", [3]);
+        sm.addAnimation("scrops", "onion4", [4]);
+        sm.addAnimation("scrops", "onion5", [5]);
+        sm.addAnimation("scrops", "onion", [6]);
+        var cn = 24 * 8 + 18;
+        sm.addAnimation("scrops", "corn", [cn]);
         return sm;
     }
     return {
@@ -304,21 +319,31 @@ System.register("components/crop-component", ["components/component"], function 
                     return this.growthStage == this.growthSprites.length - 1;
                 };
                 CropComponent.prototype.setCrop = function (cropName) {
+                    var cropLength = 30;
+                    this.growthLengths = [cropLength, cropLength, cropLength];
                     switch (cropName) {
                         case "turnip":
                             this.growthSprites = ["turnip0", "turnip1", "turnip2"];
-                            this.growthLengths = [30, 30, 30];
+                            this.growthLengths = [cropLength, cropLength, cropLength];
                             break;
                         case "corn":
                             this.growthSprites = ["corn0", "corn1", "corn2"];
-                            this.growthLengths = [30, 30, 30];
+                            this.growthLengths = [cropLength, cropLength, cropLength];
                             break;
                         case "wheat":
                             this.growthSprites = ["wheat0", "wheat1", "wheat2"];
-                            this.growthLengths = [30, 30, 30];
+                            this.growthLengths = [cropLength, cropLength, cropLength];
+                            break;
+                        case "pumpkin":
+                            this.growthSprites = ["pumpkin0", "pumpkin1", "pumpkin2"];
+                            break;
+                        case "onion":
+                            this.growthSprites = ["onion0", "onion1", "onion2", "onion3", "onion4", "onion5"];
+                            this.growthLengths = [cropLength, cropLength, cropLength, cropLength, cropLength, cropLength];
                             break;
                     }
                     this.growthStage = 0;
+                    this.cropName = cropName;
                 };
                 CropComponent.prototype.update = function () {
                     if (this.isGrown()) {
@@ -407,8 +432,15 @@ System.register("events/event-manager", [], function (exports_8, context_8) {
         setters: [],
         execute: function () {
             GameEvent = (function () {
-                function GameEvent(eventName, eventData) {
+                function GameEvent(eventName, eventData, componentTarget) {
+                    if (componentTarget === void 0) { componentTarget = null; }
+                    this.eventName = eventName;
+                    this.eventData = eventData;
                 }
+                GameEvent.create = function (eventName, eventData) {
+                    var ge = new GameEvent(eventName, eventData);
+                    return ge;
+                };
                 return GameEvent;
             }());
             exports_8("GameEvent", GameEvent);
@@ -467,8 +499,12 @@ System.register("entities/entity", [], function (exports_9, context_9) {
         execute: function () {
             Entity = (function () {
                 function Entity(componentFactory) {
+                    this.id = -1;
                     this.components = [];
+                    this.targetedEvents = [];
                     this.componentFactory = componentFactory;
+                    Entity.id++;
+                    this.id = Entity.id;
                 }
                 Entity.prototype.addComponent = function (componentName) {
                     var component = this.componentFactory.createComponent(componentName);
@@ -487,6 +523,9 @@ System.register("entities/entity", [], function (exports_9, context_9) {
                         throw "entity has no component " + componentName;
                     return component;
                 };
+                Entity.prototype.emit = function (event) {
+                    this.targetedEvents.push(event);
+                };
                 Entity.prototype.update = function () {
                     for (var i = 0; i < this.components.length; i++) {
                         this.components[i].update();
@@ -495,6 +534,7 @@ System.register("entities/entity", [], function (exports_9, context_9) {
                 Entity.create = function () {
                     return null;
                 };
+                Entity.id = -1;
                 return Entity;
             }());
             exports_9("Entity", Entity);
@@ -608,15 +648,50 @@ System.register("entities/crop-entity", ["entities/entity", "components/componen
         }
     };
 });
-System.register("entities/entity-factory", ["entities/player-entity", "entities/entity", "entities/villager-entity", "entities/crop-entity"], function (exports_13, context_13) {
+System.register("entities/first-entity", ["entities/entity", "components/component-factory"], function (exports_13, context_13) {
     "use strict";
-    var player_entity_1, entity_4, villager_entity_1, crop_entity_1, EntityFactory;
+    var entity_4, component_factory_4, FirstEntity;
     var __moduleName = context_13 && context_13.id;
+    return {
+        setters: [
+            function (entity_4_1) {
+                entity_4 = entity_4_1;
+            },
+            function (component_factory_4_1) {
+                component_factory_4 = component_factory_4_1;
+            }
+        ],
+        execute: function () {
+            FirstEntity = (function (_super) {
+                __extends(FirstEntity, _super);
+                function FirstEntity(cf) {
+                    var _this = _super.call(this, cf) || this;
+                    var position = _this.addComponent("position");
+                    position.y = 9999999;
+                    return _this;
+                }
+                FirstEntity.prototype.handleEvents = function (events) {
+                };
+                FirstEntity.create = function () {
+                    var entity = new FirstEntity(component_factory_4.ComponentFactory.create());
+                    return entity;
+                };
+                return FirstEntity;
+            }(entity_4.Entity));
+            exports_13("FirstEntity", FirstEntity);
+        }
+    };
+});
+System.register("entities/entity-factory", ["entities/player-entity", "entities/entity", "entities/villager-entity", "entities/crop-entity", "entities/first-entity"], function (exports_14, context_14) {
+    "use strict";
+    var player_entity_1, entity_5, villager_entity_1, crop_entity_1, first_entity_1, EntityFactory;
+    var __moduleName = context_14 && context_14.id;
     function createEntityFactory() {
         var ef = new EntityFactory();
         ef.registerComponent("player", player_entity_1.PlayerEntity);
         ef.registerComponent("villager", villager_entity_1.VillagerEntity);
         ef.registerComponent("crop", crop_entity_1.CropEntity);
+        ef.registerComponent("first", first_entity_1.FirstEntity);
         return ef;
     }
     return {
@@ -624,14 +699,17 @@ System.register("entities/entity-factory", ["entities/player-entity", "entities/
             function (player_entity_1_1) {
                 player_entity_1 = player_entity_1_1;
             },
-            function (entity_4_1) {
-                entity_4 = entity_4_1;
+            function (entity_5_1) {
+                entity_5 = entity_5_1;
             },
             function (villager_entity_1_1) {
                 villager_entity_1 = villager_entity_1_1;
             },
             function (crop_entity_1_1) {
                 crop_entity_1 = crop_entity_1_1;
+            },
+            function (first_entity_1_1) {
+                first_entity_1 = first_entity_1_1;
             }
         ],
         execute: function () {
@@ -640,7 +718,7 @@ System.register("entities/entity-factory", ["entities/player-entity", "entities/
                     this.entityTypes = {};
                 }
                 EntityFactory.prototype.registerComponent = function (componentName, EntityClass) {
-                    if (EntityClass.prototype instanceof entity_4.Entity) {
+                    if (EntityClass.prototype instanceof entity_5.Entity) {
                         this.entityTypes[componentName] = EntityClass;
                     }
                     else {
@@ -655,14 +733,14 @@ System.register("entities/entity-factory", ["entities/player-entity", "entities/
                 };
                 return EntityFactory;
             }());
-            exports_13("EntityFactory", EntityFactory);
+            exports_14("EntityFactory", EntityFactory);
         }
     };
 });
-System.register("render", ["sprite-manager"], function (exports_14, context_14) {
+System.register("render", ["sprite-manager"], function (exports_15, context_15) {
     "use strict";
     var sprite_manager_2, HtmlRenderer, hrf;
-    var __moduleName = context_14 && context_14.id;
+    var __moduleName = context_15 && context_15.id;
     function createHtmlRenderer() {
         var canvas = document.getElementById("canvas");
         canvas.width = 1000;
@@ -706,21 +784,17 @@ System.register("render", ["sprite-manager"], function (exports_14, context_14) 
                 };
                 return HtmlRenderer;
             }());
-            exports_14("HtmlRenderer", HtmlRenderer);
+            exports_15("HtmlRenderer", HtmlRenderer);
             hrf = createHtmlRenderer();
         }
     };
 });
-System.register("systems/system", ["render"], function (exports_15, context_15) {
+System.register("systems/system", [], function (exports_16, context_16) {
     "use strict";
-    var render_1, EntitySystem, RenderSystem, WasdSystem, CropSystem;
-    var __moduleName = context_15 && context_15.id;
+    var EntitySystem;
+    var __moduleName = context_16 && context_16.id;
     return {
-        setters: [
-            function (render_1_1) {
-                render_1 = render_1_1;
-            }
-        ],
+        setters: [],
         execute: function () {
             EntitySystem = (function () {
                 function EntitySystem() {
@@ -738,7 +812,24 @@ System.register("systems/system", ["render"], function (exports_15, context_15) 
                 ;
                 return EntitySystem;
             }());
-            exports_15("EntitySystem", EntitySystem);
+            exports_16("EntitySystem", EntitySystem);
+        }
+    };
+});
+System.register("systems/render-system", ["systems/system", "render"], function (exports_17, context_17) {
+    "use strict";
+    var system_1, render_1, RenderSystem;
+    var __moduleName = context_17 && context_17.id;
+    return {
+        setters: [
+            function (system_1_1) {
+                system_1 = system_1_1;
+            },
+            function (render_1_1) {
+                render_1 = render_1_1;
+            }
+        ],
+        execute: function () {
             RenderSystem = (function (_super) {
                 __extends(RenderSystem, _super);
                 function RenderSystem(renderer) {
@@ -760,8 +851,22 @@ System.register("systems/system", ["render"], function (exports_15, context_15) 
                 };
                 RenderSystem.prototype.applyEvents = function () { };
                 return RenderSystem;
-            }(EntitySystem));
-            exports_15("RenderSystem", RenderSystem);
+            }(system_1.EntitySystem));
+            exports_17("RenderSystem", RenderSystem);
+        }
+    };
+});
+System.register("systems/wasd-system", ["systems/system"], function (exports_18, context_18) {
+    "use strict";
+    var system_2, WasdSystem;
+    var __moduleName = context_18 && context_18.id;
+    return {
+        setters: [
+            function (system_2_1) {
+                system_2 = system_2_1;
+            }
+        ],
+        execute: function () {
             WasdSystem = (function (_super) {
                 __extends(WasdSystem, _super);
                 function WasdSystem() {
@@ -814,8 +919,22 @@ System.register("systems/system", ["render"], function (exports_15, context_15) 
                     }
                 };
                 return WasdSystem;
-            }(EntitySystem));
-            exports_15("WasdSystem", WasdSystem);
+            }(system_2.EntitySystem));
+            exports_18("WasdSystem", WasdSystem);
+        }
+    };
+});
+System.register("systems/crop-system", ["systems/system"], function (exports_19, context_19) {
+    "use strict";
+    var system_3, CropSystem;
+    var __moduleName = context_19 && context_19.id;
+    return {
+        setters: [
+            function (system_3_1) {
+                system_3 = system_3_1;
+            }
+        ],
+        execute: function () {
             CropSystem = (function (_super) {
                 __extends(CropSystem, _super);
                 function CropSystem() {
@@ -833,22 +952,151 @@ System.register("systems/system", ["render"], function (exports_15, context_15) 
                 };
                 ;
                 CropSystem.prototype.applyEvents = function (entity, events) {
+                    var c = entity.getComponent("crop", true);
+                    if (c == null)
+                        return;
+                    var event;
+                    for (var i = 0; i < entity.targetedEvents.length; i++) {
+                        event = entity.targetedEvents[i];
+                        this.handleEvent(event, entity);
+                    }
+                    entity.targetedEvents = [];
                 };
                 ;
                 CropSystem.create = function () {
                     return new CropSystem();
                 };
                 ;
+                CropSystem.prototype.handleEvent = function (event, entity) {
+                    var crop = entity.getComponent("crop");
+                    switch (event.eventName) {
+                        case "collision":
+                            crop.setCrop("corn");
+                            break;
+                    }
+                };
                 return CropSystem;
-            }(EntitySystem));
-            exports_15("CropSystem", CropSystem);
+            }(system_3.EntitySystem));
+            exports_19("CropSystem", CropSystem);
         }
     };
 });
-System.register("game", ["entities/entity-factory", "systems/system", "render", "events/event-manager"], function (exports_16, context_16) {
+System.register("systems/collision-system", ["systems/system", "events/event-manager", "entities/first-entity"], function (exports_20, context_20) {
     "use strict";
-    var entity_factory_1, system_1, render_2, event_manager_1, Game, game, player, pc, villager, component;
-    var __moduleName = context_16 && context_16.id;
+    var system_4, event_manager_1, first_entity_2, CollisionSystem;
+    var __moduleName = context_20 && context_20.id;
+    return {
+        setters: [
+            function (system_4_1) {
+                system_4 = system_4_1;
+            },
+            function (event_manager_1_1) {
+                event_manager_1 = event_manager_1_1;
+            },
+            function (first_entity_2_1) {
+                first_entity_2 = first_entity_2_1;
+            }
+        ],
+        execute: function () {
+            CollisionSystem = (function (_super) {
+                __extends(CollisionSystem, _super);
+                function CollisionSystem() {
+                    var _this = _super.call(this) || this;
+                    _this.movingEntities = [];
+                    _this.colliding = {};
+                    _this.numCollisions = 0;
+                    return _this;
+                }
+                CollisionSystem.prototype.distance = function (e1, e2) {
+                    var p1 = e1.getComponent("position");
+                    var p2 = e2.getComponent("position");
+                    var dx = p2.x - p1.x;
+                    var dy = p2.y - p1.y;
+                    return Math.sqrt(dx * dx + dy * dy);
+                };
+                CollisionSystem.prototype.checkCol = function (e1, e2) {
+                    var distance = this.distance(e1, e2);
+                    var p1 = e1.getComponent("position");
+                    var p2 = e2.getComponent("position");
+                    var mask = ((p1.width) + (p1.height)) / 4;
+                    var collision = distance < mask;
+                    return collision;
+                };
+                CollisionSystem.prototype.hashCollision = function (e1, e2) {
+                    var _a;
+                    if (e1.id > e2.id) {
+                        _a = [e2, e1], e1 = _a[0], e2 = _a[1];
+                    }
+                    return e1.id.toString() + ":" + e2.id.toString();
+                };
+                CollisionSystem.prototype.addCollision = function (e1, e2) {
+                    var hash;
+                    hash = this.hashCollision(e1, e2);
+                    if (!(hash in this.colliding)) {
+                        this.colliding[hash] = [e1, e2];
+                        this.numCollisions++;
+                    }
+                };
+                CollisionSystem.prototype.removeCollision = function (e1, e2) {
+                    var hash = this.hashCollision(e1, e2);
+                    if (hash in this.colliding) {
+                        delete this.colliding[hash];
+                        this.numCollisions--;
+                    }
+                };
+                CollisionSystem.prototype.emitCollision = function (e1, e2) {
+                    e1.emit(event_manager_1.GameEvent.create("collision", e2));
+                    e2.emit(event_manager_1.GameEvent.create("collision", e1));
+                };
+                CollisionSystem.prototype.apply = function (entity) {
+                    if (entity instanceof first_entity_2.FirstEntity) {
+                        if (this.numCollisions > 0) {
+                        }
+                        this.movingEntities = [];
+                    }
+                    var position = entity.getComponent("position");
+                    var collision;
+                    var entityTarget;
+                    for (var i = 0; i < this.movingEntities.length; i++) {
+                        entityTarget = this.movingEntities[i];
+                        collision = this.checkCol(entity, entityTarget);
+                        if (collision) {
+                            this.addCollision(entity, entityTarget);
+                        }
+                    }
+                    if (position.moved) {
+                        this.movingEntities.push(entity);
+                    }
+                    if (entity instanceof first_entity_2.FirstEntity) {
+                        var collidingEntities;
+                        for (var key in this.colliding) {
+                            collidingEntities = this.colliding[key];
+                            collision = this.checkCol(collidingEntities[0], collidingEntities[1]);
+                            if (collision) {
+                                this.emitCollision(collidingEntities[0], collidingEntities[1]);
+                            }
+                            else {
+                                this.removeCollision(collidingEntities[0], collidingEntities[1]);
+                            }
+                        }
+                    }
+                };
+                ;
+                CollisionSystem.prototype.applyEvents = function (entity, events) {
+                };
+                CollisionSystem.create = function () {
+                    return new CollisionSystem();
+                };
+                return CollisionSystem;
+            }(system_4.EntitySystem));
+            exports_20("CollisionSystem", CollisionSystem);
+        }
+    };
+});
+System.register("game", ["entities/entity-factory", "render", "events/event-manager", "systems/render-system", "systems/wasd-system", "systems/crop-system", "systems/collision-system"], function (exports_21, context_21) {
+    "use strict";
+    var entity_factory_1, render_2, event_manager_2, render_system_1, wasd_system_1, crop_system_1, collision_system_1, Game, game, player, pc, ac, villager, component;
+    var __moduleName = context_21 && context_21.id;
     function placeField(x, y, cropName, d) {
         if (d === void 0) { d = 50; }
         var crop;
@@ -873,27 +1121,39 @@ System.register("game", ["entities/entity-factory", "systems/system", "render", 
             function (entity_factory_1_1) {
                 entity_factory_1 = entity_factory_1_1;
             },
-            function (system_1_1) {
-                system_1 = system_1_1;
-            },
             function (render_2_1) {
                 render_2 = render_2_1;
             },
-            function (event_manager_1_1) {
-                event_manager_1 = event_manager_1_1;
+            function (event_manager_2_1) {
+                event_manager_2 = event_manager_2_1;
+            },
+            function (render_system_1_1) {
+                render_system_1 = render_system_1_1;
+            },
+            function (wasd_system_1_1) {
+                wasd_system_1 = wasd_system_1_1;
+            },
+            function (crop_system_1_1) {
+                crop_system_1 = crop_system_1_1;
+            },
+            function (collision_system_1_1) {
+                collision_system_1 = collision_system_1_1;
             }
         ],
         execute: function () {
             Game = (function () {
                 function Game(entityFactory, renderer, eventManager) {
                     this.entities = [];
+                    this.entitiesX = [];
                     this.systems = [];
+                    this.i = 0;
                     this.entityFactory = entityFactory;
                     this.renderer = renderer;
                     this.eventManager = eventManager;
                 }
                 Game.create = function () {
-                    var game = new Game(entity_factory_1.EntityFactory.create(), render_2.HtmlRenderer.create(), event_manager_1.EventManager.create());
+                    var game = new Game(entity_factory_1.EntityFactory.create(), render_2.HtmlRenderer.create(), event_manager_2.EventManager.create());
+                    game.addEntity("first");
                     return game;
                 };
                 Game.prototype.update = function () {
@@ -915,6 +1175,11 @@ System.register("game", ["entities/entity-factory", "systems/system", "render", 
                         var pb = b.getComponent("position");
                         return pa.y - pb.y;
                     });
+                    this.entitiesX.sort(function (a, b) {
+                        var pa = a.getComponent("position");
+                        var pb = b.getComponent("position");
+                        return pa.x - pb.x;
+                    });
                 };
                 Game.prototype.render = function () {
                 };
@@ -931,6 +1196,7 @@ System.register("game", ["entities/entity-factory", "systems/system", "render", 
                 Game.prototype.addEntity = function (entityName) {
                     var entity = this.entityFactory.create(entityName);
                     this.entities.push(entity);
+                    this.entitiesX.push(entity);
                     return entity;
                 };
                 Game.prototype.addSystem = function (system) {
@@ -941,16 +1207,21 @@ System.register("game", ["entities/entity-factory", "systems/system", "render", 
             game = Game.create();
             player = game.addEntity("player");
             pc = player.getComponent("position");
+            ac = player.getComponent("animation");
+            pc.x = 600;
+            pc.y = 550;
             villager = game.addEntity("villager");
             component = villager.getComponent("position");
-            component.x = 300;
+            component.x = 150;
             component.y = 300;
             placeField(350, 300, "wheat", 50);
             placeField(650, 300, "corn", 50);
             placeField(350, 600, "turnip", 50);
-            game.addSystem(system_1.RenderSystem.create());
-            game.addSystem(system_1.WasdSystem.create());
-            game.addSystem(system_1.CropSystem.create());
+            placeField(650, 600, "onion", 50);
+            game.addSystem(render_system_1.RenderSystem.create());
+            game.addSystem(wasd_system_1.WasdSystem.create());
+            game.addSystem(crop_system_1.CropSystem.create());
+            game.addSystem(collision_system_1.CollisionSystem.create());
             game.start();
         }
     };

@@ -1,13 +1,17 @@
 import { Entity } from './entities/entity';
 import { EntityFactory } from './entities/entity-factory';
 import { ComponentFactory } from './components/component-factory';
-import { EntitySystem, RenderSystem, WasdSystem, CropSystem } from './systems/system';
+import { EntitySystem } from './systems/system';
 import { PositionComponent } from './components/position-component';
 import { AnimationComponent } from './components/animation-component';
 import { HtmlRenderer, Renderer } from './render';
 import { EventManager } from './events/event-manager';
 import { CropEntity } from './entities/crop-entity';
 import { CropComponent } from './components/crop-component';
+import { RenderSystem } from './systems/render-system';
+import { WasdSystem } from './systems/wasd-system';
+import { CropSystem } from './systems/crop-system';
+import { CollisionSystem } from './systems/collision-system';
 
 class Game {
     constructor(entityFactory:EntityFactory, renderer:Renderer, eventManager:EventManager){
@@ -17,14 +21,17 @@ class Game {
     }
     static create(){
         var game = new Game(EntityFactory.create(), HtmlRenderer.create(), EventManager.create());
+        game.addEntity("first");
         return game;
     }
 
     entities:Entity[] = [];
+    entitiesX:Entity[] = [];
     entityFactory:EntityFactory;
     systems:EntitySystem[] = [];
     renderer:Renderer;
     eventManager:EventManager;
+    i:number=0;
     update(){
         this.renderer.cbox();
         this.eventManager.update();
@@ -46,6 +53,11 @@ class Game {
             var pb:PositionComponent = <PositionComponent>b.getComponent("position");
             return pa.y - pb.y;
         });
+        this.entitiesX.sort(function(a:Entity,b:Entity){
+            var pa:PositionComponent = <PositionComponent>a.getComponent("position");
+            var pb:PositionComponent = <PositionComponent>b.getComponent("position");
+            return pa.x - pb.x;
+        });
     }
     render(){
 
@@ -64,6 +76,7 @@ class Game {
     addEntity(entityName:string){
         var entity:Entity = this.entityFactory.create(entityName);
         this.entities.push(entity);
+        this.entitiesX.push(entity);
         return entity;
     }
 
@@ -74,16 +87,21 @@ class Game {
 var game = Game.create();
 var player = game.addEntity("player");
 var pc= <PositionComponent>player.getComponent("position");
+var ac = <AnimationComponent>player.getComponent("animation");
+pc.x = 600;
+pc.y = 550;
+//ac.setSprite("onion");
 
 var villager = game.addEntity("villager");
 var component = <PositionComponent>villager.getComponent("position");
-component.x = 300;
+component.x = 150;
 component.y = 300;
 
 
 placeField(350,300, "wheat", 50)
 placeField(650,300, "corn", 50)
 placeField(350,600, "turnip", 50)
+placeField(650,600, "onion", 50)
 
 function placeField(x:number,y:number, cropName:string, d:number=50){
     var crop:CropEntity;
@@ -112,4 +130,5 @@ function addCrop(x:number,y:number){
 game.addSystem(RenderSystem.create());
 game.addSystem(WasdSystem.create());
 game.addSystem(CropSystem.create());
+game.addSystem(CollisionSystem.create());
 game.start();
