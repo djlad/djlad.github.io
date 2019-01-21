@@ -1,6 +1,6 @@
 import { EntitySystem } from './system';
 import { Entity } from '../entities/entity';
-import { GameEvent } from '../events/event-manager';
+import { GameEvent, EventManager } from '../events/event-manager';
 import { PositionComponent } from '../components/position-component';
 import { FirstEntity } from '../entities/first-entity';
 import { AnimationComponent } from '../components/animation-component';
@@ -66,7 +66,7 @@ export class CollisionSystem extends EntitySystem{
         ));
     }
 
-    apply(entity:Entity):void{
+    apply(entity:Entity, eventManager:EventManager):void{
         if(entity instanceof FirstEntity){
             if(this.numCollisions > 0){
                 //console.log(this.colliding)
@@ -107,7 +107,7 @@ export class CollisionSystem extends EntitySystem{
         }
     };
 
-    applyEvents(entity:Entity, events:{[key:string]:GameEvent}):void{
+    applyEvents(entity:Entity, eventManager:EventManager):void{
     }
 
     static create():CollisionSystem{

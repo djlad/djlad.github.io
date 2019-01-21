@@ -2,13 +2,13 @@ import { EntitySystem } from './system';
 import { Entity } from '../entities/entity';
 import { AnimationComponent } from '../components/animation-component';
 import { CropComponent } from '../components/crop-component';
-import { GameEvent } from '../events/event-manager';
+import { GameEvent, EventManager } from '../events/event-manager';
 
 export class CropSystem extends EntitySystem {
     constructor(){
         super();
     }
-    apply(entity:Entity):void{
+    apply(entity:Entity, eventManager:EventManager):void{
         var a:AnimationComponent = <AnimationComponent>entity.getComponent("animation", true);
         var c:CropComponent = <CropComponent>entity.getComponent("crop", true);
         if(a==null||c==null){
@@ -19,7 +19,7 @@ export class CropSystem extends EntitySystem {
         }
     };
 
-    applyEvents(entity:Entity, events:{[key:string]:GameEvent}):void{
+    applyEvents(entity:Entity, eventManager:EventManager):void{
         var c:CropComponent = <CropComponent>entity.getComponent("crop", true);
         if(c==null)return;
 

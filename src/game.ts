@@ -35,19 +35,20 @@ class Game {
     update(){
         this.renderer.cbox();
         this.eventManager.update();
-        //console.log("blanked")
         for(var i=0;i<this.entities.length;i++){
-            //this.entities[i].handleEvents(this.eventManager.events);
             for(var systemi=0;systemi<this.systems.length;systemi++){
-                this.systems[systemi].applyEvents(this.entities[i], this.eventManager.events);
+                this.systems[systemi].applyEvents(this.entities[i], this.eventManager);
             }
         }
         for(var i=0;i<this.entities.length;i++){
             this.entities[i].update();
             for(var systemi=0;systemi<this.systems.length;systemi++){
-                this.systems[systemi].apply(this.entities[i]);
+                this.systems[systemi].apply(this.entities[i], this.eventManager);
             }
         }
+
+        this.eventManager.fireCallbacks();
+
         this.entities.sort(function(a:Entity,b:Entity){
             var pa:PositionComponent = <PositionComponent>a.getComponent("position");
             var pb:PositionComponent = <PositionComponent>b.getComponent("position");
@@ -128,7 +129,7 @@ function addCrop(x:number,y:number){
 
 
 game.addSystem(RenderSystem.create());
-game.addSystem(WasdSystem.create());
+game.addSystem(WasdSystem.create(game.eventManager));
 game.addSystem(CropSystem.create());
 game.addSystem(CollisionSystem.create());
 game.start();

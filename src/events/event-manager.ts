@@ -19,7 +19,8 @@ export class EventManager {
     }
 
     keys:boolean[] = Array(1000);
-    events:{[key:string]:GameEvent} = {};
+    events:{[key:string]:GameEvent[]} = {};
+    callbacks:{[key:string]:((event:GameEvent)=>void)[]} = {};
 
 
     createKeyListener(){
@@ -47,18 +48,51 @@ export class EventManager {
         if (this.keys[68]){
             this.emit("d down");
         }
-        //console.log(this.keys)
+        //console.log(this.callbacks)
+        //console.log(this.events)
     }
 
     emit(eventName:string, eventData:{}={}){
-        this.events[eventName] = new GameEvent(eventName, eventData);
+        var ge:GameEvent = new GameEvent(eventName, eventData);
+        if (eventName in this.events){
+            this.events[eventName].push(ge);
+        } else {
+            this.events[eventName] = [ge];
+        }
     }
 
-    register(eventName:string){
-        
+    fireCallbacks(){
+        var events:GameEvent[];
+        var callbacks:((event:GameEvent)=>void)[];
+        for (var eventName in this.events){
+            //get emitted events to eventName
+            events = this.events[eventName];
+            //get listener callbacks listening to this event
+            callbacks = this.callbacks[eventName];
+            events.forEach((event:GameEvent)=>{
+                callbacks.forEach((callback:(event:GameEvent)=>void)=>{
+                    callback(event);
+                })
+            })
+        }
+    }
+
+    addListener(eventName:string, callback:(event:GameEvent)=>void){
+        this.callbacks[eventName].push(callback);
+    }
+    
+    createEvent(eventName:string){
+        if(eventName in this.events)return;
+        this.events[eventName] = [];
+        this.callbacks[eventName] = [];
     }
 
     static create(){
-        return new EventManager();
+        var em:EventManager = new EventManager();
+        em.createEvent("w down");
+        em.createEvent("a down");
+        em.createEvent("s down");
+        em.createEvent("d down");
+        return em;
     }
 }
