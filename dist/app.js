@@ -106,6 +106,12 @@ System.register("sprite-manager", [], function (exports_3, context_3) {
         sm.addAnimation("scrops", "onion", [6]);
         var cn = 24 * 8 + 18;
         sm.addAnimation("scrops", "corn", [cn]);
+        sm.loadSprite("victorian", "victoriansprites.png", 12, 8);
+        sm.addAnimation("victorian", "bluecloak", [24]);
+        sm.addAnimation("victorian", "bluecloakwalk", [24, 25, 26, 25], 5);
+        cn = 12 * 6;
+        sm.addAnimation("victorian", "grey", [cn], 5);
+        sm.addAnimation("victorian", "greyWalk", [cn, cn + 1, cn + 2, cn + 1], 5);
         return sm;
     }
     return {
@@ -276,7 +282,11 @@ System.register("components/wasd-component", ["components/component"], function 
             WasdComponent = (function (_super) {
                 __extends(WasdComponent, _super);
                 function WasdComponent() {
-                    return _super.call(this, "wasd") || this;
+                    var _this = _super.call(this, "wasd") || this;
+                    _this.speed = 5;
+                    _this.sprite = "grey";
+                    _this.walkSprite = "greyWalk";
+                    return _this;
                 }
                 WasdComponent.prototype.update = function () { };
                 WasdComponent.create = function () {
@@ -551,8 +561,10 @@ System.register("entities/entity", [], function (exports_9, context_9) {
                             return this.components[i];
                         }
                     }
-                    if (!allowUndefined)
+                    if (!allowUndefined) {
+                        console.log(this);
                         throw "entity has no component " + componentName;
+                    }
                     return component;
                 };
                 Entity.prototype.emit = function (event) {
@@ -591,10 +603,15 @@ System.register("entities/player-entity", ["entities/entity", "components/compon
                 __extends(PlayerEntity, _super);
                 function PlayerEntity(componentFactory) {
                     var _this = _super.call(this, componentFactory) || this;
-                    _this.addComponent("animation");
+                    var animation = _this.addComponent("animation");
                     var position = _this.addComponent("position");
-                    _this.addComponent("wasd");
-                    position.width = 60;
+                    var wasd = _this.addComponent("wasd");
+                    var sprite = "grey";
+                    var walkSprite = "greyWalk";
+                    animation.setSprite(sprite);
+                    wasd.sprite = sprite;
+                    wasd.walkSprite = walkSprite;
+                    position.width = 70;
                     return _this;
                 }
                 PlayerEntity.prototype.handleEvents = function (events) {
@@ -629,7 +646,7 @@ System.register("entities/villager-entity", ["entities/entity", "components/comp
                     var _this = _super.call(this, cf) || this;
                     _this.addComponent("animation");
                     var position = _this.addComponent("position");
-                    position.width = 60;
+                    position.width = 70;
                     return _this;
                 }
                 VillagerEntity.prototype.handleEvents = function (events) {
@@ -907,51 +924,52 @@ System.register("systems/wasd-system", ["systems/system"], function (exports_18,
                 WasdSystem.create = function (eventManager) {
                     var wasd = new WasdSystem();
                     eventManager.addListener("w down", function () {
-                        console.log("w down");
                     });
                     return wasd;
                 };
                 WasdSystem.prototype.apply = function () { };
                 WasdSystem.prototype.applyEvents = function (entity, eventManager) {
                     var events = eventManager.events;
-                    var WasdComponent = entity.getComponent("wasd", true);
-                    if (WasdComponent == null)
+                    var wasdComponent = entity.getComponent("wasd", true);
+                    if (wasdComponent == null)
                         return;
                     var position = entity.getComponent("position");
                     var animation = entity.getComponent("animation");
-                    var speed = 5;
+                    var speed = wasdComponent.speed;
+                    var sprite = wasdComponent.sprite;
+                    var walkSprite = wasdComponent.walkSprite;
                     if ("w down" in events) {
-                        animation.setSprite("blondWalk");
+                        animation.setSprite(walkSprite);
                         position.vy = -speed;
                     }
                     else if (position.vy == -speed) {
-                        animation.setSprite("blond");
+                        animation.setSprite(sprite);
                         position.vy = 0;
                     }
                     if ("a down" in events) {
                         position.faceRight = false;
-                        animation.setSprite("blondWalk");
+                        animation.setSprite(walkSprite);
                         position.vx = -speed;
                     }
                     else if (position.vx == -speed) {
-                        animation.setSprite("blond");
+                        animation.setSprite(sprite);
                         position.vx = 0;
                     }
                     if ("s down" in events) {
-                        animation.setSprite("blondWalk");
+                        animation.setSprite(walkSprite);
                         position.vy = speed;
                     }
                     else if (position.vy == speed) {
-                        animation.setSprite("blond");
+                        animation.setSprite(sprite);
                         position.vy = 0;
                     }
                     if ("d down" in events) {
                         position.faceRight = true;
-                        animation.setSprite("blondWalk");
+                        animation.setSprite(walkSprite);
                         position.vx = speed;
                     }
                     else if (position.vx == speed) {
-                        animation.setSprite("blond");
+                        animation.setSprite(sprite);
                         position.vx = 0;
                     }
                 };
@@ -1250,8 +1268,10 @@ System.register("game", ["entities/entity-factory", "render", "events/event-mana
             pc.y = 550;
             villager = game.addEntity("villager");
             component = villager.getComponent("position");
+            ac = villager.getComponent("animation");
             component.x = 150;
             component.y = 300;
+            ac.setSprite("bluecloakwalk");
             placeField(350, 300, "wheat", 50);
             placeField(650, 300, "corn", 50);
             placeField(350, 600, "turnip", 50);

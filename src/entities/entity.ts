@@ -27,7 +27,11 @@ export abstract class Entity {
                 return this.components[i];
             }
         }
-        if(!allowUndefined)throw "entity has no component " + componentName;
+        
+        if(!allowUndefined){
+            console.log(this)
+            throw "entity has no component " + componentName;
+        }
         return component;
     }
 

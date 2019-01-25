@@ -95,8 +95,10 @@ pc.y = 550;
 
 var villager = game.addEntity("villager");
 var component = <PositionComponent>villager.getComponent("position");
+ac = <AnimationComponent> villager.getComponent("animation");
 component.x = 150;
 component.y = 300;
+ac.setSprite("bluecloakwalk");
 
 
 placeField(350,300, "wheat", 50)

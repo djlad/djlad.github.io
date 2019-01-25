@@ -8,7 +8,7 @@ export class VillagerEntity extends Entity{
         super(cf);
         this.addComponent("animation");
         var position = <PositionComponent>this.addComponent("position");
-        position.width = 60;
+        position.width = 70;
     }
 
     handleEvents(events:{[key:string]:GameEvent}){
