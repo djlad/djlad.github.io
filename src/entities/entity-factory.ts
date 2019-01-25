@@ -3,6 +3,7 @@ import { Entity } from './entity';
 import { VillagerEntity } from './villager-entity';
 import { CropEntity } from './crop-entity';
 import { FirstEntity } from './first-entity';
+import { ProjectileEntity } from './projectile-entity';
 
 export class EntityFactory {
     constructor(){}
@@ -30,5 +31,6 @@ function createEntityFactory():EntityFactory{
     ef.registerComponent("villager", VillagerEntity);
     ef.registerComponent("crop", CropEntity);
     ef.registerComponent("first", FirstEntity);
+    ef.registerComponent("projectile", ProjectileEntity);
     return ef;
 }

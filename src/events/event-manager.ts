@@ -1,16 +1,24 @@
 export class GameEvent {
-    constructor(eventName:string, eventData:{}, componentTarget:string=null){
+    constructor(eventName:EventType, eventData:{}, componentTarget:string=null){
         this.eventName = eventName;
         this.eventData = eventData;
     }
-    eventName:string;
+    eventName:EventType;
     eventData:any;
     componentTarget:string;
 
-    static create(eventName:string, eventData:{}):GameEvent{
+    static create(eventName:EventType, eventData:{}):GameEvent{
         var ge:GameEvent = new GameEvent(eventName, eventData);
         return ge;
     }
+}
+
+export enum EventType {
+    wDown,
+    aDown,
+    sDown,
+    dDown,
+    collision
 }
 
 export class EventManager {
@@ -37,22 +45,26 @@ export class EventManager {
     update(){
         this.events = {};
         if (this.keys[87]){
-            this.emit("w down");
+            //w
+            this.emit(EventType.wDown);
         }
         if (this.keys[65]){
-            this.emit("a down");
+            //a
+            this.emit(EventType.aDown);
         }
         if (this.keys[83]){
-            this.emit("s down");
+            //s
+            this.emit(EventType.sDown);
         }
         if (this.keys[68]){
-            this.emit("d down");
+            //d
+            this.emit(EventType.dDown);
         }
         //console.log(this.callbacks)
         //console.log(this.events)
     }
 
-    emit(eventName:string, eventData:{}={}){
+    emit(eventName:EventType, eventData:{}={}){
         var ge:GameEvent = new GameEvent(eventName, eventData);
         if (eventName in this.events){
             this.events[eventName].push(ge);
@@ -77,11 +89,11 @@ export class EventManager {
         }
     }
 
-    addListener(eventName:string, callback:(event:GameEvent)=>void){
+    addListener(eventName:EventType, callback:(event:GameEvent)=>void){
         this.callbacks[eventName].push(callback);
     }
     
-    createEvent(eventName:string){
+    createEvent(eventName:EventType){
         if(eventName in this.events)return;
         this.events[eventName] = [];
         this.callbacks[eventName] = [];
@@ -89,10 +101,10 @@ export class EventManager {
 
     static create(){
         var em:EventManager = new EventManager();
-        em.createEvent("w down");
-        em.createEvent("a down");
-        em.createEvent("s down");
-        em.createEvent("d down");
+        em.createEvent(EventType.wDown);
+        em.createEvent(EventType.aDown);
+        em.createEvent(EventType.sDown);
+        em.createEvent(EventType.dDown);
         return em;
     }
 }

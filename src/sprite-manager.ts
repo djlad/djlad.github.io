@@ -155,5 +155,9 @@ function createSpriteManager():HtmlSpriteManager{
     cn = 12 * 6;
     sm.addAnimation("victorian", "grey", [cn], 5);
     sm.addAnimation("victorian", "greyWalk", [cn, cn+1, cn+2, cn+1], 5);
+
+    cn = 8*4;
+    sm.loadSprite("fireball", "fireball.png", 8, 8);
+    sm.addAnimation("fireball", "fireball", [cn, cn+1,cn+2, cn+3, cn+4, cn+5, cn+6,cn+7])
     return sm;
 }

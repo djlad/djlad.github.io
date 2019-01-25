@@ -1,6 +1,6 @@
 import { EntitySystem } from './system';
 import { Entity } from '../entities/entity';
-import { GameEvent, EventManager } from '../events/event-manager';
+import { GameEvent, EventManager, EventType } from '../events/event-manager';
 import { WasdComponent } from '../components/wasd-component';
 import { PositionComponent } from '../components/position-component';
 import { AnimationComponent } from '../components/animation-component';
@@ -11,7 +11,7 @@ export class WasdSystem extends EntitySystem {
     }
     static create(eventManager:EventManager):WasdSystem{
         var wasd:WasdSystem = new WasdSystem();
-        eventManager.addListener("w down", function(){
+        eventManager.addListener(EventType.wDown, function(){
             //console.log("w down")
         });
         return wasd;
@@ -30,7 +30,7 @@ export class WasdSystem extends EntitySystem {
         var sprite:string = wasdComponent.sprite;
         var walkSprite:string = wasdComponent.walkSprite;
 
-        if("w down" in events){
+        if(EventType.wDown in events){
             animation.setSprite(walkSprite);
             position.vy = -speed;
         } else if(position.vy == -speed){
@@ -38,7 +38,7 @@ export class WasdSystem extends EntitySystem {
             position.vy = 0;
         }
         
-        if("a down" in events){
+        if(EventType.aDown in events){
             position.faceRight = false;
             animation.setSprite(walkSprite);
             position.vx = -speed;
@@ -47,7 +47,7 @@ export class WasdSystem extends EntitySystem {
             position.vx = 0;
         }
         
-        if("s down" in events){
+        if(EventType.sDown in events){
             animation.setSprite(walkSprite);
             position.vy = speed;
         } else if(position.vy == speed){
@@ -55,7 +55,7 @@ export class WasdSystem extends EntitySystem {
             position.vy = 0;
         }
 
-        if("d down" in events){
+        if(EventType.dDown in events){
             position.faceRight = true;
             animation.setSprite(walkSprite);
             position.vx = speed;

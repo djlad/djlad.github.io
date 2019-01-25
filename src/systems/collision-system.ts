@@ -1,6 +1,6 @@
 import { EntitySystem } from './system';
 import { Entity } from '../entities/entity';
-import { GameEvent, EventManager } from '../events/event-manager';
+import { GameEvent, EventManager, EventType } from '../events/event-manager';
 import { PositionComponent } from '../components/position-component';
 import { FirstEntity } from '../entities/first-entity';
 import { AnimationComponent } from '../components/animation-component';
@@ -57,20 +57,17 @@ export class CollisionSystem extends EntitySystem{
 
     emitCollision(e1:Entity, e2:Entity){
         e1.emit(GameEvent.create(
-            "collision",
+            EventType.collision,
             e2
         ));
         e2.emit(GameEvent.create(
-            "collision",
+            EventType.collision,
             e1
         ));
     }
 
     apply(entity:Entity, eventManager:EventManager):void{
         if(entity instanceof FirstEntity){
-            if(this.numCollisions > 0){
-                //console.log(this.colliding)
-            }
             this.movingEntities = [];
         }
         var position:PositionComponent = <PositionComponent>entity.getComponent("position");

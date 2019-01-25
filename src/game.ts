@@ -12,6 +12,7 @@ import { RenderSystem } from './systems/render-system';
 import { WasdSystem } from './systems/wasd-system';
 import { CropSystem } from './systems/crop-system';
 import { CollisionSystem } from './systems/collision-system';
+import { ProjectileEntity } from './entities/projectile-entity';
 
 class Game {
     constructor(entityFactory:EntityFactory, renderer:Renderer, eventManager:EventManager){
@@ -98,7 +99,13 @@ var component = <PositionComponent>villager.getComponent("position");
 ac = <AnimationComponent> villager.getComponent("animation");
 component.x = 150;
 component.y = 300;
-ac.setSprite("bluecloakwalk");
+component.vx = 4;
+
+var projectile:ProjectileEntity = <ProjectileEntity> game.addEntity("projectile");
+pc = <PositionComponent>projectile.getComponent("position");
+pc.x = 100;
+pc.y = 500;
+pc.vx = 10
 
 
 placeField(350,300, "wheat", 50)

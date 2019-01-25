@@ -2,7 +2,9 @@ import { EntitySystem } from './system';
 import { Entity } from '../entities/entity';
 import { AnimationComponent } from '../components/animation-component';
 import { CropComponent } from '../components/crop-component';
-import { GameEvent, EventManager } from '../events/event-manager';
+import { GameEvent, EventManager, EventType } from '../events/event-manager';
+import { ProjectileEntity } from '../entities/projectile-entity';
+import { PlayerEntity } from '../entities/player-entity';
 
 export class CropSystem extends EntitySystem {
     constructor(){
@@ -39,9 +41,16 @@ export class CropSystem extends EntitySystem {
         //console.log(event)
         var crop:CropComponent = <CropComponent>entity.getComponent("crop");
         switch (event.eventName){
-            case "collision":
+            case EventType.collision:
                 //console.log(event.eventData);
-                crop.setCrop("corn");
+
+                if (event.eventData instanceof ProjectileEntity){
+                    crop.setCrop("wheat");
+                } else if(event.eventData instanceof PlayerEntity){
+                    crop.setCrop("turnip");
+                } else {
+                    crop.setCrop("corn");
+                }
                 break;
         }
         
