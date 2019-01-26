@@ -5,14 +5,17 @@ import { CropComponent } from '../components/crop-component';
 import { GameEvent, EventManager, EventType } from '../events/event-manager';
 import { ProjectileEntity } from '../entities/projectile-entity';
 import { PlayerEntity } from '../entities/player-entity';
+import { PositionComponent } from '../components/position-component';
+import { Game } from '../game';
 
 export class CropSystem extends EntitySystem {
-    constructor(){
-        super();
+    constructor(game:Game){
+        super(game);
     }
     apply(entity:Entity, eventManager:EventManager):void{
         var a:AnimationComponent = <AnimationComponent>entity.getComponent("animation", true);
         var c:CropComponent = <CropComponent>entity.getComponent("crop", true);
+        var p:PositionComponent = <PositionComponent>entity.getComponent("position", true);
         if(a==null||c==null){
             return;
         }
@@ -33,8 +36,8 @@ export class CropSystem extends EntitySystem {
         }
         entity.targetedEvents = [];
     };
-    static create():EntitySystem{
-        return new CropSystem();
+    static create(game:Game):EntitySystem{
+        return new CropSystem(game);
     };
 
     handleEvent(event:GameEvent, entity:Entity):void{

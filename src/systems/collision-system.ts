@@ -4,11 +4,12 @@ import { GameEvent, EventManager, EventType } from '../events/event-manager';
 import { PositionComponent } from '../components/position-component';
 import { FirstEntity } from '../entities/first-entity';
 import { AnimationComponent } from '../components/animation-component';
+import { Game } from '../game';
 
 
 export class CollisionSystem extends EntitySystem{
-    constructor(){
-        super();
+    constructor(game:Game){
+        super(game);
     }
     movingEntities:Entity[]=[];
     colliding:{[key:string]:Entity[]}={};
@@ -107,7 +108,7 @@ export class CollisionSystem extends EntitySystem{
     applyEvents(entity:Entity, eventManager:EventManager):void{
     }
 
-    static create():CollisionSystem{
-        return new CollisionSystem();
+    static create(game:Game):CollisionSystem{
+        return new CollisionSystem(game);
     }
 }

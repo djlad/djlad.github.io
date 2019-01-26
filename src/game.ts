@@ -14,7 +14,7 @@ import { CropSystem } from './systems/crop-system';
 import { CollisionSystem } from './systems/collision-system';
 import { ProjectileEntity } from './entities/projectile-entity';
 
-class Game {
+export class Game {
     constructor(entityFactory:EntityFactory, renderer:Renderer, eventManager:EventManager){
         this.entityFactory = entityFactory;
         this.renderer = renderer;
@@ -105,7 +105,7 @@ var projectile:ProjectileEntity = <ProjectileEntity> game.addEntity("projectile"
 pc = <PositionComponent>projectile.getComponent("position");
 pc.x = 100;
 pc.y = 500;
-pc.vx = 10
+pc.vx = 0
 
 
 placeField(350,300, "wheat", 50)
@@ -137,8 +137,8 @@ function addCrop(x:number,y:number){
 
 
 
-game.addSystem(RenderSystem.create());
-game.addSystem(WasdSystem.create(game.eventManager));
-game.addSystem(CropSystem.create());
-game.addSystem(CollisionSystem.create());
+game.addSystem(RenderSystem.create(game));
+game.addSystem(WasdSystem.create(game));
+game.addSystem(CropSystem.create(game));
+game.addSystem(CollisionSystem.create(game));
 game.start();

@@ -6,7 +6,6 @@ export class CropComponent extends Component {
         this.growthStage = 0;
         this.cropName = "turnip"
         this.setCrop(this.cropName)
-        this.setCrop("wheat");
     }
     //growth sprites for each stage
     growthSprites:string[];
@@ -44,10 +43,15 @@ export class CropComponent extends Component {
                 break;
             case "pumpkin":
                 this.growthSprites = ["pumpkin0", "pumpkin1", "pumpkin2"];
+                this.growthLengths = [cropLength, cropLength, cropLength];
                 break;
             case "onion":
                 this.growthSprites = ["onion0", "onion1", "onion2", "onion3", "onion4", "onion5"];
                 this.growthLengths = [cropLength, cropLength, cropLength, cropLength, cropLength, cropLength];
+                break;
+            case "tomato":
+                this.growthSprites = ["tomato0", "tomato1", "tomato2", "tomato3"];
+                this.growthLengths = [cropLength, cropLength, cropLength, cropLength];
                 break;
         }
         this.growthStage = 0;

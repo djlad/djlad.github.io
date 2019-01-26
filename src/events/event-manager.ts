@@ -27,7 +27,8 @@ export class EventManager {
     }
 
     keys:boolean[] = Array(1000);
-    events:{[key:string]:GameEvent[]} = {};
+    //events:{[key:string]:GameEvent[]} = {};
+    events:GameEvent[] = [];
     callbacks:{[key:string]:((event:GameEvent)=>void)[]} = {};
 
 
@@ -43,7 +44,7 @@ export class EventManager {
     }
 
     update(){
-        this.events = {};
+        this.events = [];
         if (this.keys[87]){
             //w
             this.emit(EventType.wDown);
@@ -67,18 +68,20 @@ export class EventManager {
     emit(eventName:EventType, eventData:{}={}){
         var ge:GameEvent = new GameEvent(eventName, eventData);
         if (eventName in this.events){
-            this.events[eventName].push(ge);
+            this.events.push(ge);
         } else {
-            this.events[eventName] = [ge];
+            this.events = [ge];
         }
     }
 
     fireCallbacks(){
+        //used with addListener
+        //unused currently
         var events:GameEvent[];
         var callbacks:((event:GameEvent)=>void)[];
         for (var eventName in this.events){
             //get emitted events to eventName
-            events = this.events[eventName];
+            events = this.events;
             //get listener callbacks listening to this event
             callbacks = this.callbacks[eventName];
             events.forEach((event:GameEvent)=>{
@@ -90,12 +93,14 @@ export class EventManager {
     }
 
     addListener(eventName:EventType, callback:(event:GameEvent)=>void){
+        //used with fireCallbacks
+        //unused currently
         this.callbacks[eventName].push(callback);
     }
     
     createEvent(eventName:EventType){
         if(eventName in this.events)return;
-        this.events[eventName] = [];
+        this.events = [];
         this.callbacks[eventName] = [];
     }
 

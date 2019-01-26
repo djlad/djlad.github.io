@@ -159,5 +159,15 @@ function createSpriteManager():HtmlSpriteManager{
     cn = 8*4;
     sm.loadSprite("fireball", "fireball.png", 8, 8);
     sm.addAnimation("fireball", "fireball", [cn, cn+1,cn+2, cn+3, cn+4, cn+5, cn+6,cn+7])
+
+    sm.loadSprite("tilesetcrops", "tilesets/submission_daneeklu/tilesets/plants.png", 9, 6);
+
+    cn = 6;
+    sm.addAnimation("tilesetcrops", "tomato0", [cn + 0]);
+    sm.addAnimation("tilesetcrops", "tomato1", [cn + 9]);
+    sm.addAnimation("tilesetcrops", "tomato2", [cn + 18]);
+    sm.addAnimation("tilesetcrops", "tomato3", [cn + 27]);
+    sm.addAnimation("tilesetcrops", "tomato4", [cn + 36]);
+
     return sm;
 }

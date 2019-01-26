@@ -16,7 +16,9 @@ export class HtmlRenderer implements Renderer {
     }
 
     cbox(){
-        this.ctx.clearRect(0,0,this.canvas.width,this.canvas.height);
+        //this.ctx.clearRect(0,0,this.canvas.width,this.canvas.height);
+        this.ctx.fillStyle = "#00ffff";
+        this.ctx.fillRect(0,0,this.canvas.width,this.canvas.height);
     }
 
     sprite(spriteName:string, x:number, y:number, width:number, height:number, spriteNumber:number, flip:boolean=false){

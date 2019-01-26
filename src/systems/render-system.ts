@@ -3,20 +3,21 @@ import { HtmlRenderer } from '../render';
 import { AnimationComponent } from '../components/animation-component';
 import { Entity } from '../entities/entity';
 import { PositionComponent } from '../components/position-component';
+import { Game } from '../game';
 
 export class RenderSystem extends EntitySystem{
     /**
      * used for drawing animation components
      */
-    constructor(renderer:HtmlRenderer){
-        super();
+    constructor(renderer:HtmlRenderer, game:Game){
+        super(game);
         this.renderer = renderer;
     }
     renderer:HtmlRenderer;
 
-    static create():RenderSystem{
+    static create(game:Game):RenderSystem{
         var hr:HtmlRenderer = HtmlRenderer.create();
-        return new RenderSystem(hr);
+        return new RenderSystem(hr, game);
     }
 
     apply(entity:Entity){
