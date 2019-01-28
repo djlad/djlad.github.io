@@ -9,12 +9,9 @@ export class ProjectileEntity extends Entity {
         super(cf);
         var animation:AnimationComponent = <AnimationComponent>this.addComponent("animation");
         var position:PositionComponent = <PositionComponent>this.addComponent("position");
+        this.addComponent("projectile");
         animation.setSprite("fireball");
-        position.vx = 5;
     }
-    speed:number;
-
-
     handleEvents(events:{[key:string]:GameEvent}):void{
     };
 

@@ -57,6 +57,7 @@ export class CollisionSystem extends EntitySystem{
     }
 
     emitCollision(e1:Entity, e2:Entity){
+        //console.log("collision")
         e1.emit(GameEvent.create(
             EventType.collision,
             e2
@@ -80,6 +81,7 @@ export class CollisionSystem extends EntitySystem{
             entityTarget = this.movingEntities[i];
             collision = this.checkCol(entity, entityTarget);
             if(collision){
+                //console.log(collision)
                 this.addCollision(entity, entityTarget);
             }
         }

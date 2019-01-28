@@ -6,6 +6,7 @@ import { PositionComponent } from '../components/position-component';
 import { AnimationComponent } from '../components/animation-component';
 import { Game } from '../game';
 import { VillagerEntity } from '../entities/villager-entity';
+import { ProjectileEntity } from '../entities/projectile-entity';
 
 export class WasdSystem extends EntitySystem {
     constructor(game:Game){
@@ -21,6 +22,7 @@ export class WasdSystem extends EntitySystem {
 
     applyEvents(entity:Entity, eventManager:EventManager){
         var events:GameEvent[] = eventManager.events;
+        var event:GameEvent;
         var wasdComponent:WasdComponent= <WasdComponent>entity.getComponent("wasd", true);
         if (wasdComponent == null)return;
         var position:PositionComponent = <PositionComponent>entity.getComponent("position");
@@ -29,46 +31,56 @@ export class WasdSystem extends EntitySystem {
         var speed:number = wasdComponent.speed;
         var sprite:string = wasdComponent.sprite;
         var walkSprite:string = wasdComponent.walkSprite;
-
-        if(EventType.wDown in events){
-            animation.setSprite(walkSprite);
-            position.vy = -speed;
-        } else if(position.vy == -speed){
-            animation.setSprite(sprite);
-            position.vy = 0;
+        if (events.length > 0){
+            //console.log(events)
         }
-        
-        if(EventType.aDown in events){
-            position.faceRight = false;
-            animation.setSprite(walkSprite);
-            position.vx = -speed;
-        } else if(position.vx == -speed){
-            animation.setSprite(sprite);
-            position.vx = 0;
+        for (var i=0;i<events.length;i++){
+            event = events[i];
+            //console.log(event)
+            switch(event.eventName){
+                case EventType.wDown:
+                    animation.setSprite(walkSprite);
+                    position.vy = -speed;
+                break;
+                case EventType.wUp:
+                    animation.setSprite(sprite);
+                    position.vy = 0;
+                break;
+                case EventType.aDown:
+                    position.faceRight = false;
+                    animation.setSprite(walkSprite);
+                    position.vx = -speed;
+                break;
+                case EventType.aUp:
+                    animation.setSprite(sprite);
+                    position.vx = 0;
+                break;
+                case EventType.sDown:
+                    animation.setSprite(walkSprite);
+                    position.vy = speed;
+                break;
+                case EventType.sUp:
+                    animation.setSprite(sprite);
+                    position.vy = 0;
+                break;
+                case EventType.dDown:
+                    position.faceRight = true;
+                    animation.setSprite(walkSprite);
+                    position.vx = speed;
+                break;
+                case EventType.dUp:
+                    animation.setSprite(sprite);
+                    position.vx = 0;
+                break;
+                case EventType.spaceUp:
+                    var ge:GameEvent = GameEvent.create(EventType.fireProjectile);
+                    entity.emit(ge);
+                break;
+                case EventType.pUp:
+                    console.log("p up")
+                    console.log(this.game)
+                break;
+            }
         }
-        
-        if(EventType.sDown in events){
-            animation.setSprite(walkSprite);
-            position.vy = speed;
-        } else if(position.vy == speed){
-            animation.setSprite(sprite);
-            position.vy = 0;
-        }
-
-        if(EventType.dDown in events){
-            position.faceRight = true;
-            animation.setSprite(walkSprite);
-            position.vx = speed;
-            
-            var villager:VillagerEntity = <VillagerEntity>this.game.addEntity("villager");
-            var pc:PositionComponent = <PositionComponent>villager.getComponent("position");
-            pc.x = 300;
-            pc.y = 300;
-        } else if(position.vx == speed){
-            animation.setSprite(sprite);
-            position.vx = 0;
-        }
-        
-
     }
 }

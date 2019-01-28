@@ -29,7 +29,6 @@ export class CropSystem extends EntitySystem {
         if(c==null)return;
 
         var event:GameEvent;
-        //if(entity.targetedEvents.length>0)console.log(entity.targetedEvents.length);
         for(var i:number=0;i<entity.targetedEvents.length;i++){
             event = entity.targetedEvents[i];
             this.handleEvent(event, entity);

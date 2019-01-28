@@ -2,12 +2,14 @@ export class GameEvent {
     constructor(eventName:EventType, eventData:{}, componentTarget:string=null){
         this.eventName = eventName;
         this.eventData = eventData;
+        this.eventDescription = EventType[eventName];
     }
     eventName:EventType;
+    eventDescription:string;
     eventData:any;
     componentTarget:string;
 
-    static create(eventName:EventType, eventData:{}):GameEvent{
+    static create(eventName:EventType, eventData:{}=null):GameEvent{
         var ge:GameEvent = new GameEvent(eventName, eventData);
         return ge;
     }
@@ -18,7 +20,20 @@ export enum EventType {
     aDown,
     sDown,
     dDown,
-    collision
+
+    wUp,
+    aUp,
+    sUp,
+    dUp,
+
+    spaceDown,
+    spaceUp,
+
+    pDown,
+    pUp,
+
+    collision,
+    fireProjectile
 }
 
 export class EventManager {
@@ -27,6 +42,7 @@ export class EventManager {
     }
 
     keys:boolean[] = Array(1000);
+    keysReleased:boolean[] = Array(1000);
     //events:{[key:string]:GameEvent[]} = {};
     events:GameEvent[] = [];
     callbacks:{[key:string]:((event:GameEvent)=>void)[]} = {};
@@ -39,39 +55,39 @@ export class EventManager {
         })
         window.addEventListener("keyup", function(e){
             keys[e.keyCode] = false;
+            //console.log(e.keyCode)
         })
         return keys;
     }
 
     update(){
         this.events = [];
-        if (this.keys[87]){
-            //w
-            this.emit(EventType.wDown);
+
+        //wasd controls
+        var controls:EventType[] = [EventType.wDown, EventType.aDown, EventType.sDown,
+            EventType.dDown, EventType.spaceDown];
+        var controlRelease:EventType[] = [EventType.wUp, EventType.aUp, EventType.sUp,
+            EventType.dUp, EventType.spaceUp, EventType.pDown, EventType.pUp]
+        var controlKeys:number[] = [87, 65, 83, 68, 32, 80];
+
+        for(var i:number=0;i<controls.length;i++){
+            if(this.keys[controlKeys[i]]){
+                //emit key down event
+                this.emit(controls[i]);
+                this.keysReleased[controlKeys[i]] = true;
+            } else {
+                if(this.keysReleased[controlKeys[i]]){
+                    //emit key up event
+                    this.emit(controlRelease[i]);
+                    this.keysReleased[controlKeys[i]] = false;
+                }
+            }
         }
-        if (this.keys[65]){
-            //a
-            this.emit(EventType.aDown);
-        }
-        if (this.keys[83]){
-            //s
-            this.emit(EventType.sDown);
-        }
-        if (this.keys[68]){
-            //d
-            this.emit(EventType.dDown);
-        }
-        //console.log(this.callbacks)
-        //console.log(this.events)
     }
 
     emit(eventName:EventType, eventData:{}={}){
         var ge:GameEvent = new GameEvent(eventName, eventData);
-        if (eventName in this.events){
-            this.events.push(ge);
-        } else {
-            this.events = [ge];
-        }
+        this.events.push(ge);
     }
 
     fireCallbacks(){

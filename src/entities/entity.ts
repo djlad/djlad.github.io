@@ -13,6 +13,7 @@ export abstract class Entity {
     components:Component[] = [];
     componentFactory:ComponentFactory;
     targetedEvents:GameEvent[] = [];
+    destroyed:boolean = false;
 
     addComponent(componentName:string):Component{
         var component:Component = this.componentFactory.createComponent(componentName);

@@ -13,6 +13,8 @@ import { WasdSystem } from './systems/wasd-system';
 import { CropSystem } from './systems/crop-system';
 import { CollisionSystem } from './systems/collision-system';
 import { ProjectileEntity } from './entities/projectile-entity';
+import { ProjectileComponent } from './components/projectile-component';
+import { ProjectileSystem } from './systems/projectile-system';
 
 export class Game {
     constructor(entityFactory:EntityFactory, renderer:Renderer, eventManager:EventManager){
@@ -26,8 +28,15 @@ export class Game {
         return game;
     }
 
-    entities:Entity[] = [];
-    entitiesX:Entity[] = [];
+    private _entities:Entity[] = [];
+    get entities():Entity[]{
+        return this._entities;
+    }
+    set entities(entities:Entity[]){
+        //console.log(entities)
+        this._entities = entities;
+    }
+    //entitiesX:Entity[] = [];
     entityFactory:EntityFactory;
     systems:EntitySystem[] = [];
     renderer:Renderer;
@@ -55,11 +64,13 @@ export class Game {
             var pb:PositionComponent = <PositionComponent>b.getComponent("position");
             return pa.y - pb.y;
         });
+        this.cleanDestroyedEntities();
+        /*
         this.entitiesX.sort(function(a:Entity,b:Entity){
             var pa:PositionComponent = <PositionComponent>a.getComponent("position");
             var pb:PositionComponent = <PositionComponent>b.getComponent("position");
             return pa.x - pb.x;
-        });
+        });*/
     }
     render(){
 
@@ -78,8 +89,18 @@ export class Game {
     addEntity(entityName:string){
         var entity:Entity = this.entityFactory.create(entityName);
         this.entities.push(entity);
-        this.entitiesX.push(entity);
+        //this.entitiesX.push(entity);
         return entity;
+    }
+
+    destroy(entity:Entity){
+        entity.destroyed = true;
+    }
+
+    cleanDestroyedEntities(){
+        this.entities = this.entities.filter(function(e){
+            return !e.destroyed;
+        })
     }
 
     addSystem(system:EntitySystem){
@@ -90,8 +111,8 @@ var game = Game.create();
 var player = game.addEntity("player");
 var pc= <PositionComponent>player.getComponent("position");
 var ac = <AnimationComponent>player.getComponent("animation");
-pc.x = 600;
-pc.y = 550;
+pc.x = 300;
+pc.y = 380;
 //ac.setSprite("onion");
 
 var villager = game.addEntity("villager");
@@ -99,7 +120,7 @@ var component = <PositionComponent>villager.getComponent("position");
 ac = <AnimationComponent> villager.getComponent("animation");
 component.x = 150;
 component.y = 300;
-component.vx = 4;
+component.vx = 0;
 
 var projectile:ProjectileEntity = <ProjectileEntity> game.addEntity("projectile");
 pc = <PositionComponent>projectile.getComponent("position");
@@ -107,18 +128,17 @@ pc.x = 100;
 pc.y = 500;
 pc.vx = 0
 
-
-placeField(350,300, "wheat", 50)
+//placeField(350,300, "wheat", 50)
 placeField(650,300, "corn", 50)
-placeField(350,600, "turnip", 50)
-placeField(650,600, "onion", 50)
+//placeField(350,600, "turnip", 50)
+//placeField(650,600, "onion", 50)
 
-function placeField(x:number,y:number, cropName:string, d:number=50){
+function placeField(x:number,y:number, cropName:string, d:number=50, width:number=5){
     var crop:CropEntity;
     var cc:CropComponent;
 
-    for(var i:number=0;i<5;i++){
-        for(var i2:number=0;i2<5;i2++){
+    for(var i:number=0;i<width;i++){
+        for(var i2:number=0;i2<width;i2++){
             crop = addCrop(x+i*d, y+i2*d);
             cc = <CropComponent>crop.getComponent("crop");
             cc.setCrop(cropName);
@@ -141,4 +161,5 @@ game.addSystem(RenderSystem.create(game));
 game.addSystem(WasdSystem.create(game));
 game.addSystem(CropSystem.create(game));
 game.addSystem(CollisionSystem.create(game));
+game.addSystem(ProjectileSystem.create(game));
 game.start();
