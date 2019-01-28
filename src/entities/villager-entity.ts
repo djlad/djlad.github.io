@@ -3,15 +3,16 @@ import { ComponentFactory } from '../components/component-factory';
 import { GameEvent } from '../events/event-manager';
 import { PositionComponent } from '../components/position-component';
 import { AnimationComponent } from '../components/animation-component';
+import { FightComponent } from '../components/fight-component';
 
 export class VillagerEntity extends Entity{
     constructor(cf:ComponentFactory){
         super(cf);
         var animation:AnimationComponent = <AnimationComponent>this.addComponent("animation");
-        var position = <PositionComponent>this.addComponent("position");
+        var position:PositionComponent = <PositionComponent>this.addComponent("position");
+        var fight:FightComponent = <FightComponent>this.addComponent("fight");
+        
         position.width = 70;
-        //animation.setSprite("fireball");
-        //animation.setSprite("");
     }
 
     handleEvents(events:{[key:string]:GameEvent}){

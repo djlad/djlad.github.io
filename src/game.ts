@@ -15,6 +15,8 @@ import { CollisionSystem } from './systems/collision-system';
 import { ProjectileEntity } from './entities/projectile-entity';
 import { ProjectileComponent } from './components/projectile-component';
 import { ProjectileSystem } from './systems/projectile-system';
+import { FightSystem } from './systems/fight-system';
+import { FightComponent } from './components/fight-component';
 
 export class Game {
     constructor(entityFactory:EntityFactory, renderer:Renderer, eventManager:EventManager){
@@ -25,6 +27,12 @@ export class Game {
     static create(){
         var game = new Game(EntityFactory.create(), HtmlRenderer.create(), EventManager.create());
         game.addEntity("first");
+        game.addSystem(RenderSystem.create(game));
+        game.addSystem(WasdSystem.create(game));
+        game.addSystem(CropSystem.create(game));
+        game.addSystem(CollisionSystem.create(game));
+        game.addSystem(ProjectileSystem.create(game));
+        game.addSystem(FightSystem.create(game));
         return game;
     }
 
@@ -93,6 +101,15 @@ export class Game {
         return entity;
     }
 
+    getById(entityId:number):Entity{
+        var entity:Entity;
+        for(var i=0;i<this.entities.length;i++){
+            entity = this.entities[i];
+            if(entityId == entity.id)return entity
+        }
+        return null;
+    }
+
     destroy(entity:Entity){
         entity.destroyed = true;
     }
@@ -107,7 +124,7 @@ export class Game {
         this.systems.push(system);
     }
 }
-var game = Game.create();
+export var game = Game.create();
 var player = game.addEntity("player");
 var pc= <PositionComponent>player.getComponent("position");
 var ac = <AnimationComponent>player.getComponent("animation");
@@ -117,10 +134,24 @@ pc.y = 380;
 
 var villager = game.addEntity("villager");
 var component = <PositionComponent>villager.getComponent("position");
+var fight = <FightComponent>villager.getComponent("fight");
 ac = <AnimationComponent> villager.getComponent("animation");
 component.x = 150;
 component.y = 300;
 component.vx = 0;
+fight.attack = true;
+
+var v2 = game.addEntity("villager");
+fight.target = v2;
+
+var component = <PositionComponent>v2.getComponent("position");
+ac = <AnimationComponent> v2.getComponent("animation");
+fight = <FightComponent>v2.getComponent("fight");
+component.x = 600;
+component.y = 800;
+component.vx = 0;
+fight.target = villager;
+fight.attack = true;
 
 var projectile:ProjectileEntity = <ProjectileEntity> game.addEntity("projectile");
 pc = <PositionComponent>projectile.getComponent("position");
@@ -128,8 +159,9 @@ pc.x = 100;
 pc.y = 500;
 pc.vx = 0
 
+
 //placeField(350,300, "wheat", 50)
-placeField(650,300, "corn", 50)
+//placeField(650,300, "corn", 50)
 //placeField(350,600, "turnip", 50)
 //placeField(650,600, "onion", 50)
 
@@ -157,9 +189,4 @@ function addCrop(x:number,y:number){
 
 
 
-game.addSystem(RenderSystem.create(game));
-game.addSystem(WasdSystem.create(game));
-game.addSystem(CropSystem.create(game));
-game.addSystem(CollisionSystem.create(game));
-game.addSystem(ProjectileSystem.create(game));
 game.start();

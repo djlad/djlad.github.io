@@ -81,7 +81,6 @@ export class CollisionSystem extends EntitySystem{
             entityTarget = this.movingEntities[i];
             collision = this.checkCol(entity, entityTarget);
             if(collision){
-                //console.log(collision)
                 this.addCollision(entity, entityTarget);
             }
         }
@@ -95,10 +94,11 @@ export class CollisionSystem extends EntitySystem{
 
         if(entity instanceof FirstEntity){
             var collidingEntities:Entity[];
+            //console.log(this.colliding)
             for(var key in this.colliding){
                 collidingEntities = this.colliding[key];
                 collision = this.checkCol(collidingEntities[0], collidingEntities[1])
-                if(collision){
+                if(collision && !collidingEntities[0].destroyed && !collidingEntities[1].destroyed){
                     this.emitCollision(collidingEntities[0], collidingEntities[1]);
                 } else {
                     this.removeCollision(collidingEntities[0], collidingEntities[1]);

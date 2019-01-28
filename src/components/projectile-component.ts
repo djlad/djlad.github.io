@@ -4,9 +4,11 @@ export class ProjectileComponent extends Component {
     constructor(){
         super("projectile");
     }
-    lifeSpan:number=30;
+    lifeSpan:number=90;
 
-    update(){}
+    update(){
+    }
+
     static create():ProjectileComponent{
         return new ProjectileComponent();
     }

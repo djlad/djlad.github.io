@@ -451,10 +451,11 @@ System.register("components/projectile-component", ["components/component"], fun
                 __extends(ProjectileComponent, _super);
                 function ProjectileComponent() {
                     var _this = _super.call(this, "projectile") || this;
-                    _this.lifeSpan = 30;
+                    _this.lifeSpan = 90;
                     return _this;
                 }
-                ProjectileComponent.prototype.update = function () { };
+                ProjectileComponent.prototype.update = function () {
+                };
                 ProjectileComponent.create = function () {
                     return new ProjectileComponent();
                 };
@@ -464,14 +465,58 @@ System.register("components/projectile-component", ["components/component"], fun
         }
     };
 });
-System.register("components/component-factory", ["components/component", "components/position-component", "components/animation-component", "components/wasd-component", "components/crop-component", "components/projectile-component"], function (exports_8, context_8) {
+System.register("components/fight-component", ["components/component"], function (exports_8, context_8) {
     "use strict";
-    var component_6, position_component_1, animation_component_1, wasd_component_1, crop_component_1, projectile_component_1, ComponentFactory;
+    var component_6, FightComponent;
     var __moduleName = context_8 && context_8.id;
     return {
         setters: [
             function (component_6_1) {
                 component_6 = component_6_1;
+            }
+        ],
+        execute: function () {
+            FightComponent = (function (_super) {
+                __extends(FightComponent, _super);
+                function FightComponent() {
+                    var _this = _super.call(this, "fight") || this;
+                    _this.attack = false;
+                    _this.maxSpeed = 5;
+                    _this.range = 300;
+                    _this.reloadTime = 30;
+                    _this.reloadTimer = 30;
+                    return _this;
+                }
+                FightComponent.prototype.attackTarget = function () {
+                };
+                FightComponent.prototype.canFire = function () {
+                    return this.reloadTime === this.reloadTimer;
+                };
+                FightComponent.prototype.update = function () {
+                    if (this.reloadTimer <= this.reloadTime) {
+                        this.reloadTimer--;
+                    }
+                    if (this.reloadTimer <= 0) {
+                        this.reloadTimer = this.reloadTime;
+                    }
+                };
+                FightComponent.create = function () {
+                    return new FightComponent();
+                };
+                return FightComponent;
+            }(component_6.Component));
+            exports_8("FightComponent", FightComponent);
+        }
+    };
+});
+System.register("components/component-factory", ["components/component", "components/position-component", "components/animation-component", "components/wasd-component", "components/crop-component", "components/projectile-component", "components/fight-component"], function (exports_9, context_9) {
+    "use strict";
+    var component_7, position_component_1, animation_component_1, wasd_component_1, crop_component_1, projectile_component_1, fight_component_1, ComponentFactory;
+    var __moduleName = context_9 && context_9.id;
+    return {
+        setters: [
+            function (component_7_1) {
+                component_7 = component_7_1;
             },
             function (position_component_1_1) {
                 position_component_1 = position_component_1_1;
@@ -487,6 +532,9 @@ System.register("components/component-factory", ["components/component", "compon
             },
             function (projectile_component_1_1) {
                 projectile_component_1 = projectile_component_1_1;
+            },
+            function (fight_component_1_1) {
+                fight_component_1 = fight_component_1_1;
             }
         ],
         execute: function () {
@@ -496,7 +544,7 @@ System.register("components/component-factory", ["components/component", "compon
                 }
                 ComponentFactory.prototype.registerComponent = function (ComponentClass) {
                     var obj = ComponentClass.create();
-                    if (ComponentClass.prototype instanceof component_6.Component) {
+                    if (ComponentClass.prototype instanceof component_7.Component) {
                         this.componentTypes[obj.componentName] = ComponentClass;
                     }
                     else {
@@ -516,18 +564,19 @@ System.register("components/component-factory", ["components/component", "compon
                     cf.registerComponent(wasd_component_1.WasdComponent);
                     cf.registerComponent(crop_component_1.CropComponent);
                     cf.registerComponent(projectile_component_1.ProjectileComponent);
+                    cf.registerComponent(fight_component_1.FightComponent);
                     return cf;
                 };
                 return ComponentFactory;
             }());
-            exports_8("ComponentFactory", ComponentFactory);
+            exports_9("ComponentFactory", ComponentFactory);
         }
     };
 });
-System.register("events/event-manager", [], function (exports_9, context_9) {
+System.register("events/event-manager", [], function (exports_10, context_10) {
     "use strict";
     var GameEvent, EventType, EventManager;
-    var __moduleName = context_9 && context_9.id;
+    var __moduleName = context_10 && context_10.id;
     return {
         setters: [],
         execute: function () {
@@ -545,7 +594,7 @@ System.register("events/event-manager", [], function (exports_9, context_9) {
                 };
                 return GameEvent;
             }());
-            exports_9("GameEvent", GameEvent);
+            exports_10("GameEvent", GameEvent);
             (function (EventType) {
                 EventType[EventType["wDown"] = 0] = "wDown";
                 EventType[EventType["aDown"] = 1] = "aDown";
@@ -562,7 +611,7 @@ System.register("events/event-manager", [], function (exports_9, context_9) {
                 EventType[EventType["collision"] = 12] = "collision";
                 EventType[EventType["fireProjectile"] = 13] = "fireProjectile";
             })(EventType || (EventType = {}));
-            exports_9("EventType", EventType);
+            exports_10("EventType", EventType);
             EventManager = (function () {
                 function EventManager() {
                     this.keys = Array(1000);
@@ -638,14 +687,14 @@ System.register("events/event-manager", [], function (exports_9, context_9) {
                 };
                 return EventManager;
             }());
-            exports_9("EventManager", EventManager);
+            exports_10("EventManager", EventManager);
         }
     };
 });
-System.register("entities/entity", [], function (exports_10, context_10) {
+System.register("entities/entity", [], function (exports_11, context_11) {
     "use strict";
     var Entity;
-    var __moduleName = context_10 && context_10.id;
+    var __moduleName = context_11 && context_11.id;
     return {
         setters: [],
         execute: function () {
@@ -692,14 +741,14 @@ System.register("entities/entity", [], function (exports_10, context_10) {
                 Entity.id = -1;
                 return Entity;
             }());
-            exports_10("Entity", Entity);
+            exports_11("Entity", Entity);
         }
     };
 });
-System.register("entities/player-entity", ["entities/entity", "components/component-factory"], function (exports_11, context_11) {
+System.register("entities/player-entity", ["entities/entity", "components/component-factory"], function (exports_12, context_12) {
     "use strict";
     var entity_1, component_factory_1, PlayerEntity;
-    var __moduleName = context_11 && context_11.id;
+    var __moduleName = context_12 && context_12.id;
     return {
         setters: [
             function (entity_1_1) {
@@ -733,14 +782,14 @@ System.register("entities/player-entity", ["entities/entity", "components/compon
                 };
                 return PlayerEntity;
             }(entity_1.Entity));
-            exports_11("PlayerEntity", PlayerEntity);
+            exports_12("PlayerEntity", PlayerEntity);
         }
     };
 });
-System.register("entities/villager-entity", ["entities/entity", "components/component-factory"], function (exports_12, context_12) {
+System.register("entities/villager-entity", ["entities/entity", "components/component-factory"], function (exports_13, context_13) {
     "use strict";
     var entity_2, component_factory_2, VillagerEntity;
-    var __moduleName = context_12 && context_12.id;
+    var __moduleName = context_13 && context_13.id;
     return {
         setters: [
             function (entity_2_1) {
@@ -757,6 +806,7 @@ System.register("entities/villager-entity", ["entities/entity", "components/comp
                     var _this = _super.call(this, cf) || this;
                     var animation = _this.addComponent("animation");
                     var position = _this.addComponent("position");
+                    var fight = _this.addComponent("fight");
                     position.width = 70;
                     return _this;
                 }
@@ -768,14 +818,14 @@ System.register("entities/villager-entity", ["entities/entity", "components/comp
                 };
                 return VillagerEntity;
             }(entity_2.Entity));
-            exports_12("VillagerEntity", VillagerEntity);
+            exports_13("VillagerEntity", VillagerEntity);
         }
     };
 });
-System.register("entities/crop-entity", ["entities/entity", "components/component-factory"], function (exports_13, context_13) {
+System.register("entities/crop-entity", ["entities/entity", "components/component-factory"], function (exports_14, context_14) {
     "use strict";
     var entity_3, component_factory_3, CropEntity;
-    var __moduleName = context_13 && context_13.id;
+    var __moduleName = context_14 && context_14.id;
     return {
         setters: [
             function (entity_3_1) {
@@ -804,14 +854,14 @@ System.register("entities/crop-entity", ["entities/entity", "components/componen
                 };
                 return CropEntity;
             }(entity_3.Entity));
-            exports_13("CropEntity", CropEntity);
+            exports_14("CropEntity", CropEntity);
         }
     };
 });
-System.register("entities/first-entity", ["entities/entity", "components/component-factory"], function (exports_14, context_14) {
+System.register("entities/first-entity", ["entities/entity", "components/component-factory"], function (exports_15, context_15) {
     "use strict";
     var entity_4, component_factory_4, FirstEntity;
-    var __moduleName = context_14 && context_14.id;
+    var __moduleName = context_15 && context_15.id;
     return {
         setters: [
             function (entity_4_1) {
@@ -838,14 +888,14 @@ System.register("entities/first-entity", ["entities/entity", "components/compone
                 };
                 return FirstEntity;
             }(entity_4.Entity));
-            exports_14("FirstEntity", FirstEntity);
+            exports_15("FirstEntity", FirstEntity);
         }
     };
 });
-System.register("entities/projectile-entity", ["entities/entity", "components/component-factory"], function (exports_15, context_15) {
+System.register("entities/projectile-entity", ["entities/entity", "components/component-factory"], function (exports_16, context_16) {
     "use strict";
     var entity_5, component_factory_5, ProjectileEntity;
-    var __moduleName = context_15 && context_15.id;
+    var __moduleName = context_16 && context_16.id;
     return {
         setters: [
             function (entity_5_1) {
@@ -875,14 +925,14 @@ System.register("entities/projectile-entity", ["entities/entity", "components/co
                 };
                 return ProjectileEntity;
             }(entity_5.Entity));
-            exports_15("ProjectileEntity", ProjectileEntity);
+            exports_16("ProjectileEntity", ProjectileEntity);
         }
     };
 });
-System.register("entities/entity-factory", ["entities/player-entity", "entities/entity", "entities/villager-entity", "entities/crop-entity", "entities/first-entity", "entities/projectile-entity"], function (exports_16, context_16) {
+System.register("entities/entity-factory", ["entities/player-entity", "entities/entity", "entities/villager-entity", "entities/crop-entity", "entities/first-entity", "entities/projectile-entity"], function (exports_17, context_17) {
     "use strict";
     var player_entity_1, entity_6, villager_entity_1, crop_entity_1, first_entity_1, projectile_entity_1, EntityFactory;
-    var __moduleName = context_16 && context_16.id;
+    var __moduleName = context_17 && context_17.id;
     function createEntityFactory() {
         var ef = new EntityFactory();
         ef.registerComponent("player", player_entity_1.PlayerEntity);
@@ -934,14 +984,14 @@ System.register("entities/entity-factory", ["entities/player-entity", "entities/
                 };
                 return EntityFactory;
             }());
-            exports_16("EntityFactory", EntityFactory);
+            exports_17("EntityFactory", EntityFactory);
         }
     };
 });
-System.register("render", ["sprite-manager"], function (exports_17, context_17) {
+System.register("render", ["sprite-manager"], function (exports_18, context_18) {
     "use strict";
     var sprite_manager_2, HtmlRenderer, hrf;
-    var __moduleName = context_17 && context_17.id;
+    var __moduleName = context_18 && context_18.id;
     function createHtmlRenderer() {
         var canvas = document.getElementById("canvas");
         canvas.width = 1000;
@@ -986,15 +1036,15 @@ System.register("render", ["sprite-manager"], function (exports_17, context_17) 
                 };
                 return HtmlRenderer;
             }());
-            exports_17("HtmlRenderer", HtmlRenderer);
+            exports_18("HtmlRenderer", HtmlRenderer);
             hrf = createHtmlRenderer();
         }
     };
 });
-System.register("systems/system", [], function (exports_18, context_18) {
+System.register("systems/system", [], function (exports_19, context_19) {
     "use strict";
     var EntitySystem;
-    var __moduleName = context_18 && context_18.id;
+    var __moduleName = context_19 && context_19.id;
     return {
         setters: [],
         execute: function () {
@@ -1015,14 +1065,14 @@ System.register("systems/system", [], function (exports_18, context_18) {
                 ;
                 return EntitySystem;
             }());
-            exports_18("EntitySystem", EntitySystem);
+            exports_19("EntitySystem", EntitySystem);
         }
     };
 });
-System.register("systems/render-system", ["systems/system", "render"], function (exports_19, context_19) {
+System.register("systems/render-system", ["systems/system", "render"], function (exports_20, context_20) {
     "use strict";
     var system_1, render_1, RenderSystem;
-    var __moduleName = context_19 && context_19.id;
+    var __moduleName = context_20 && context_20.id;
     return {
         setters: [
             function (system_1_1) {
@@ -1055,14 +1105,14 @@ System.register("systems/render-system", ["systems/system", "render"], function 
                 RenderSystem.prototype.applyEvents = function () { };
                 return RenderSystem;
             }(system_1.EntitySystem));
-            exports_19("RenderSystem", RenderSystem);
+            exports_20("RenderSystem", RenderSystem);
         }
     };
 });
-System.register("systems/wasd-system", ["systems/system", "events/event-manager"], function (exports_20, context_20) {
+System.register("systems/wasd-system", ["systems/system", "events/event-manager"], function (exports_21, context_21) {
     "use strict";
     var system_2, event_manager_1, WasdSystem;
-    var __moduleName = context_20 && context_20.id;
+    var __moduleName = context_21 && context_21.id;
     return {
         setters: [
             function (system_2_1) {
@@ -1146,14 +1196,14 @@ System.register("systems/wasd-system", ["systems/system", "events/event-manager"
                 };
                 return WasdSystem;
             }(system_2.EntitySystem));
-            exports_20("WasdSystem", WasdSystem);
+            exports_21("WasdSystem", WasdSystem);
         }
     };
 });
-System.register("systems/crop-system", ["systems/system", "events/event-manager", "entities/projectile-entity", "entities/player-entity"], function (exports_21, context_21) {
+System.register("systems/crop-system", ["systems/system", "events/event-manager", "entities/projectile-entity", "entities/player-entity"], function (exports_22, context_22) {
     "use strict";
     var system_3, event_manager_2, projectile_entity_2, player_entity_2, CropSystem;
-    var __moduleName = context_21 && context_21.id;
+    var __moduleName = context_22 && context_22.id;
     return {
         setters: [
             function (system_3_1) {
@@ -1221,14 +1271,14 @@ System.register("systems/crop-system", ["systems/system", "events/event-manager"
                 };
                 return CropSystem;
             }(system_3.EntitySystem));
-            exports_21("CropSystem", CropSystem);
+            exports_22("CropSystem", CropSystem);
         }
     };
 });
-System.register("systems/collision-system", ["systems/system", "events/event-manager", "entities/first-entity"], function (exports_22, context_22) {
+System.register("systems/collision-system", ["systems/system", "events/event-manager", "entities/first-entity"], function (exports_23, context_23) {
     "use strict";
     var system_4, event_manager_3, first_entity_2, CollisionSystem;
-    var __moduleName = context_22 && context_22.id;
+    var __moduleName = context_23 && context_23.id;
     return {
         setters: [
             function (system_4_1) {
@@ -1314,7 +1364,7 @@ System.register("systems/collision-system", ["systems/system", "events/event-man
                         for (var key in this.colliding) {
                             collidingEntities = this.colliding[key];
                             collision = this.checkCol(collidingEntities[0], collidingEntities[1]);
-                            if (collision) {
+                            if (collision && !collidingEntities[0].destroyed && !collidingEntities[1].destroyed) {
                                 this.emitCollision(collidingEntities[0], collidingEntities[1]);
                             }
                             else {
@@ -1331,14 +1381,14 @@ System.register("systems/collision-system", ["systems/system", "events/event-man
                 };
                 return CollisionSystem;
             }(system_4.EntitySystem));
-            exports_22("CollisionSystem", CollisionSystem);
+            exports_23("CollisionSystem", CollisionSystem);
         }
     };
 });
-System.register("systems/projectile-system", ["systems/system", "events/event-manager"], function (exports_23, context_23) {
+System.register("systems/projectile-system", ["systems/system", "events/event-manager"], function (exports_24, context_24) {
     "use strict";
     var system_5, event_manager_4, ProjectileSystem;
-    var __moduleName = context_23 && context_23.id;
+    var __moduleName = context_24 && context_24.id;
     return {
         setters: [
             function (system_5_1) {
@@ -1366,14 +1416,22 @@ System.register("systems/projectile-system", ["systems/system", "events/event-ma
                         this.game.destroy(entity);
                     }
                 };
-                ProjectileSystem.prototype.fireProjectile = function (entity) {
+                ProjectileSystem.prototype.fireProjectile = function (entity, vx, vy) {
+                    if (vx === void 0) { vx = null; }
+                    if (vy === void 0) { vy = null; }
                     var projectile = this.game.addEntity("projectile");
                     var projPosition = projectile.getComponent("position");
                     var position = entity.getComponent("position");
                     projPosition.x = position.x;
                     projPosition.y = position.y;
-                    projPosition.vx = position.faceX;
-                    projPosition.vy = position.faceY;
+                    if (vx !== null && vy !== null) {
+                        projPosition.vx = vx;
+                        projPosition.vy = vy;
+                    }
+                    else {
+                        projPosition.vx = position.faceX;
+                        projPosition.vy = position.faceY;
+                    }
                     projPosition.faceRight = position.faceRight;
                 };
                 ProjectileSystem.prototype.applyEvents = function (entity) {
@@ -1383,7 +1441,12 @@ System.register("systems/projectile-system", ["systems/system", "events/event-ma
                         event = events[i];
                         switch (event.eventName) {
                             case event_manager_4.EventType.fireProjectile:
-                                this.fireProjectile(entity);
+                                if (event.eventData !== null) {
+                                    this.fireProjectile(entity, event.eventData.vx, event.eventData.vy);
+                                }
+                                else {
+                                    this.fireProjectile(entity);
+                                }
                                 break;
                         }
                     }
@@ -1394,14 +1457,91 @@ System.register("systems/projectile-system", ["systems/system", "events/event-ma
                 };
                 return ProjectileSystem;
             }(system_5.EntitySystem));
-            exports_23("ProjectileSystem", ProjectileSystem);
+            exports_24("ProjectileSystem", ProjectileSystem);
         }
     };
 });
-System.register("game", ["entities/entity-factory", "render", "events/event-manager", "systems/render-system", "systems/wasd-system", "systems/crop-system", "systems/collision-system", "systems/projectile-system"], function (exports_24, context_24) {
+System.register("systems/fight-system", ["systems/system", "events/event-manager"], function (exports_25, context_25) {
     "use strict";
-    var entity_factory_1, render_2, event_manager_5, render_system_1, wasd_system_1, crop_system_1, collision_system_1, projectile_system_1, Game, game, player, pc, ac, villager, component, projectile;
-    var __moduleName = context_24 && context_24.id;
+    var system_6, event_manager_5, FightSystem;
+    var __moduleName = context_25 && context_25.id;
+    return {
+        setters: [
+            function (system_6_1) {
+                system_6 = system_6_1;
+            },
+            function (event_manager_5_1) {
+                event_manager_5 = event_manager_5_1;
+            }
+        ],
+        execute: function () {
+            FightSystem = (function (_super) {
+                __extends(FightSystem, _super);
+                function FightSystem(game) {
+                    return _super.call(this, game) || this;
+                }
+                FightSystem.prototype.get_entity_direction = function (origin, destination) {
+                    var position1 = origin.getComponent("position");
+                    var position2 = destination.getComponent("position");
+                    var dx = position2.x - position1.x;
+                    var dy = position2.y - position1.y;
+                    var hypotenuse = Math.sqrt(dx * dx + dy * dy);
+                    dx /= hypotenuse;
+                    dy /= hypotenuse;
+                    return {
+                        dx: dx,
+                        dy: dy
+                    };
+                };
+                FightSystem.prototype.hypotenuse = function (e1, e2) {
+                    var position1 = e1.getComponent("position");
+                    var position2 = e2.getComponent("position");
+                    var dx = position2.x - position1.x;
+                    var dy = position2.y - position1.y;
+                    var hypotenuse = Math.sqrt(dx * dx + dy * dy);
+                    return hypotenuse;
+                };
+                FightSystem.prototype.apply = function (entity, eventManager) {
+                    var fight = entity.getComponent("fight", true);
+                    if (fight == null)
+                        return;
+                    var position = entity.getComponent("position");
+                    if (!fight.attack)
+                        return;
+                    var hypotenuse = this.hypotenuse(entity, fight.target);
+                    var direction = this.get_entity_direction(entity, fight.target);
+                    if (hypotenuse > fight.range) {
+                        direction.dx *= fight.maxSpeed;
+                        direction.dy *= fight.maxSpeed;
+                        position.vx = direction.dx;
+                        position.vy = direction.dy;
+                    }
+                    else {
+                        position.vx = 0;
+                        position.vy = 0;
+                        if (fight.canFire()) {
+                            entity.emit(event_manager_5.GameEvent.create(event_manager_5.EventType.fireProjectile, { vx: direction.dx * 10, vy: direction.dy * 10 }));
+                            fight.reloadTimer--;
+                        }
+                    }
+                };
+                ;
+                FightSystem.prototype.applyEvents = function (entity, eventManager) {
+                };
+                FightSystem.create = function (game) {
+                    return new FightSystem(game);
+                };
+                ;
+                return FightSystem;
+            }(system_6.EntitySystem));
+            exports_25("FightSystem", FightSystem);
+        }
+    };
+});
+System.register("game", ["entities/entity-factory", "render", "events/event-manager", "systems/render-system", "systems/wasd-system", "systems/crop-system", "systems/collision-system", "systems/projectile-system", "systems/fight-system"], function (exports_26, context_26) {
+    "use strict";
+    var entity_factory_1, render_2, event_manager_6, render_system_1, wasd_system_1, crop_system_1, collision_system_1, projectile_system_1, fight_system_1, Game, game, player, pc, ac, villager, component, fight, v2, component, projectile;
+    var __moduleName = context_26 && context_26.id;
     function placeField(x, y, cropName, d, width) {
         if (d === void 0) { d = 50; }
         if (width === void 0) { width = 5; }
@@ -1430,8 +1570,8 @@ System.register("game", ["entities/entity-factory", "render", "events/event-mana
             function (render_2_1) {
                 render_2 = render_2_1;
             },
-            function (event_manager_5_1) {
-                event_manager_5 = event_manager_5_1;
+            function (event_manager_6_1) {
+                event_manager_6 = event_manager_6_1;
             },
             function (render_system_1_1) {
                 render_system_1 = render_system_1_1;
@@ -1447,6 +1587,9 @@ System.register("game", ["entities/entity-factory", "render", "events/event-mana
             },
             function (projectile_system_1_1) {
                 projectile_system_1 = projectile_system_1_1;
+            },
+            function (fight_system_1_1) {
+                fight_system_1 = fight_system_1_1;
             }
         ],
         execute: function () {
@@ -1460,8 +1603,14 @@ System.register("game", ["entities/entity-factory", "render", "events/event-mana
                     this.eventManager = eventManager;
                 }
                 Game.create = function () {
-                    var game = new Game(entity_factory_1.EntityFactory.create(), render_2.HtmlRenderer.create(), event_manager_5.EventManager.create());
+                    var game = new Game(entity_factory_1.EntityFactory.create(), render_2.HtmlRenderer.create(), event_manager_6.EventManager.create());
                     game.addEntity("first");
+                    game.addSystem(render_system_1.RenderSystem.create(game));
+                    game.addSystem(wasd_system_1.WasdSystem.create(game));
+                    game.addSystem(crop_system_1.CropSystem.create(game));
+                    game.addSystem(collision_system_1.CollisionSystem.create(game));
+                    game.addSystem(projectile_system_1.ProjectileSystem.create(game));
+                    game.addSystem(fight_system_1.FightSystem.create(game));
                     return game;
                 };
                 Object.defineProperty(Game.prototype, "entities", {
@@ -1513,6 +1662,15 @@ System.register("game", ["entities/entity-factory", "render", "events/event-mana
                     this.entities.push(entity);
                     return entity;
                 };
+                Game.prototype.getById = function (entityId) {
+                    var entity;
+                    for (var i = 0; i < this.entities.length; i++) {
+                        entity = this.entities[i];
+                        if (entityId == entity.id)
+                            return entity;
+                    }
+                    return null;
+                };
                 Game.prototype.destroy = function (entity) {
                     entity.destroyed = true;
                 };
@@ -1526,8 +1684,8 @@ System.register("game", ["entities/entity-factory", "render", "events/event-mana
                 };
                 return Game;
             }());
-            exports_24("Game", Game);
-            game = Game.create();
+            exports_26("Game", Game);
+            exports_26("game", game = Game.create());
             player = game.addEntity("player");
             pc = player.getComponent("position");
             ac = player.getComponent("animation");
@@ -1535,21 +1693,27 @@ System.register("game", ["entities/entity-factory", "render", "events/event-mana
             pc.y = 380;
             villager = game.addEntity("villager");
             component = villager.getComponent("position");
+            fight = villager.getComponent("fight");
             ac = villager.getComponent("animation");
             component.x = 150;
             component.y = 300;
             component.vx = 0;
+            fight.attack = true;
+            v2 = game.addEntity("villager");
+            fight.target = v2;
+            component = v2.getComponent("position");
+            ac = v2.getComponent("animation");
+            fight = v2.getComponent("fight");
+            component.x = 600;
+            component.y = 800;
+            component.vx = 0;
+            fight.target = villager;
+            fight.attack = true;
             projectile = game.addEntity("projectile");
             pc = projectile.getComponent("position");
             pc.x = 100;
             pc.y = 500;
             pc.vx = 0;
-            placeField(650, 300, "corn", 50);
-            game.addSystem(render_system_1.RenderSystem.create(game));
-            game.addSystem(wasd_system_1.WasdSystem.create(game));
-            game.addSystem(crop_system_1.CropSystem.create(game));
-            game.addSystem(collision_system_1.CollisionSystem.create(game));
-            game.addSystem(projectile_system_1.ProjectileSystem.create(game));
             game.start();
         }
     };

@@ -25,14 +25,19 @@ export class ProjectileSystem extends EntitySystem {
         }
     }
 
-    fireProjectile(entity:Entity){
+    fireProjectile(entity:Entity, vx:number=null, vy:number=null){
         var projectile:ProjectileEntity = <ProjectileEntity>this.game.addEntity("projectile");
         var projPosition:PositionComponent = <PositionComponent>projectile.getComponent("position");
         var position:PositionComponent = <PositionComponent>entity.getComponent("position");
         projPosition.x = position.x;
         projPosition.y = position.y;
-        projPosition.vx = position.faceX;
-        projPosition.vy = position.faceY;
+        if(vx !== null && vy !== null){
+            projPosition.vx = vx;
+            projPosition.vy = vy;
+        } else {
+            projPosition.vx = position.faceX;
+            projPosition.vy = position.faceY;
+        }
         projPosition.faceRight = position.faceRight;
     }
 
@@ -43,7 +48,11 @@ export class ProjectileSystem extends EntitySystem {
             event = events[i];
             switch(event.eventName){
                 case EventType.fireProjectile:
-                    this.fireProjectile(entity);
+                    if(event.eventData !== null){
+                        this.fireProjectile(entity, event.eventData.vx, event.eventData.vy);
+                    } else {
+                        this.fireProjectile(entity);
+                    }
                 break;
             }
         }

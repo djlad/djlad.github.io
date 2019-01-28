@@ -3,7 +3,10 @@
 <script src="app.js"></script>
 <canvas id="canvas"></canvas>
 <script>
+    var app;
+    var game;
     System.import("game")
     .then(function(app){
+        game = app.game;
     });
 </script>
