@@ -643,6 +643,7 @@ System.register("events/event-manager", [], function (exports_11, context_11) {
                 EventType[EventType["collision"] = 12] = "collision";
                 EventType[EventType["fireProjectile"] = 13] = "fireProjectile";
                 EventType[EventType["inflictDamage"] = 14] = "inflictDamage";
+                EventType[EventType["changeVelocity"] = 15] = "changeVelocity";
             })(EventType || (EventType = {}));
             exports_11("EventType", EventType);
             EventManager = (function () {
@@ -1653,10 +1654,60 @@ System.register("systems/health-system", ["systems/system", "events/event-manage
         }
     };
 });
-System.register("game", ["entities/entity-factory", "render", "events/event-manager", "systems/render-system", "systems/wasd-system", "systems/crop-system", "systems/collision-system", "systems/projectile-system", "systems/fight-system", "systems/health-system"], function (exports_28, context_28) {
+System.register("systems/position-system", ["systems/system", "events/event-manager"], function (exports_28, context_28) {
     "use strict";
-    var entity_factory_1, render_2, event_manager_7, render_system_1, wasd_system_1, crop_system_1, collision_system_1, projectile_system_1, fight_system_1, health_system_1, Game, game, player, pc, ac, villager, component, fight, v2, component, projectile;
+    var system_8, event_manager_7, PositionSystem;
     var __moduleName = context_28 && context_28.id;
+    return {
+        setters: [
+            function (system_8_1) {
+                system_8 = system_8_1;
+            },
+            function (event_manager_7_1) {
+                event_manager_7 = event_manager_7_1;
+            }
+        ],
+        execute: function () {
+            PositionSystem = (function (_super) {
+                __extends(PositionSystem, _super);
+                function PositionSystem(game) {
+                    return _super.call(this, game) || this;
+                }
+                PositionSystem.create = function (game) {
+                    return new PositionSystem(game);
+                };
+                PositionSystem.prototype.apply = function (entity) {
+                };
+                PositionSystem.prototype.applyEvents = function (entity) {
+                    var position = entity.getComponent("position");
+                    if (position === null)
+                        return;
+                    var events = entity.targetedEvents;
+                    var event;
+                    for (var i = 0; i < events.length; i++) {
+                        event = events[i];
+                        switch (event.eventName) {
+                            case event_manager_7.EventType.changeVelocity:
+                                if ("vx" in event.eventData) {
+                                    position.vx = event.eventData.vx;
+                                }
+                                if ("vy" in event.eventData) {
+                                    position.vy = event.eventData.vy;
+                                }
+                                break;
+                        }
+                    }
+                };
+                return PositionSystem;
+            }(system_8.EntitySystem));
+            exports_28("PositionSystem", PositionSystem);
+        }
+    };
+});
+System.register("game", ["entities/entity-factory", "render", "events/event-manager", "systems/render-system", "systems/wasd-system", "systems/crop-system", "systems/collision-system", "systems/projectile-system", "systems/fight-system", "systems/health-system", "systems/position-system"], function (exports_29, context_29) {
+    "use strict";
+    var entity_factory_1, render_2, event_manager_8, render_system_1, wasd_system_1, crop_system_1, collision_system_1, projectile_system_1, fight_system_1, health_system_1, position_system_1, Game, game, player, pc, ac, villager, component, fight, v2, component, projectile;
+    var __moduleName = context_29 && context_29.id;
     function placeField(x, y, cropName, d, width) {
         if (d === void 0) { d = 50; }
         if (width === void 0) { width = 5; }
@@ -1685,8 +1736,8 @@ System.register("game", ["entities/entity-factory", "render", "events/event-mana
             function (render_2_1) {
                 render_2 = render_2_1;
             },
-            function (event_manager_7_1) {
-                event_manager_7 = event_manager_7_1;
+            function (event_manager_8_1) {
+                event_manager_8 = event_manager_8_1;
             },
             function (render_system_1_1) {
                 render_system_1 = render_system_1_1;
@@ -1708,6 +1759,9 @@ System.register("game", ["entities/entity-factory", "render", "events/event-mana
             },
             function (health_system_1_1) {
                 health_system_1 = health_system_1_1;
+            },
+            function (position_system_1_1) {
+                position_system_1 = position_system_1_1;
             }
         ],
         execute: function () {
@@ -1721,7 +1775,7 @@ System.register("game", ["entities/entity-factory", "render", "events/event-mana
                     this.eventManager = eventManager;
                 }
                 Game.create = function () {
-                    var game = new Game(entity_factory_1.EntityFactory.create(), render_2.HtmlRenderer.create(), event_manager_7.EventManager.create());
+                    var game = new Game(entity_factory_1.EntityFactory.create(), render_2.HtmlRenderer.create(), event_manager_8.EventManager.create());
                     game.addEntity("first");
                     game.addSystem(render_system_1.RenderSystem.create(game));
                     game.addSystem(wasd_system_1.WasdSystem.create(game));
@@ -1730,6 +1784,7 @@ System.register("game", ["entities/entity-factory", "render", "events/event-mana
                     game.addSystem(projectile_system_1.ProjectileSystem.create(game));
                     game.addSystem(fight_system_1.FightSystem.create(game));
                     game.addSystem(health_system_1.HealthSystem.create(game));
+                    game.addSystem(position_system_1.PositionSystem.create(game));
                     return game;
                 };
                 Object.defineProperty(Game.prototype, "entities", {
@@ -1805,8 +1860,8 @@ System.register("game", ["entities/entity-factory", "render", "events/event-mana
                 };
                 return Game;
             }());
-            exports_28("Game", Game);
-            exports_28("game", game = Game.create());
+            exports_29("Game", Game);
+            exports_29("game", game = Game.create());
             player = game.addEntity("player");
             pc = player.getComponent("position");
             ac = player.getComponent("animation");

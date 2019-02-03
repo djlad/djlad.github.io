@@ -6,8 +6,15 @@
 <script>
     var app;
     var game;
+    var GameEvent;
+    var EventType;
     System.import("game")
     .then(function(app){
         game = app.game;
+    });
+
+    System.import("events/event-manager").then(function(app){
+        GameEvent = app.GameEvent;
+        EventType = app.EventType;
     });
 </script>

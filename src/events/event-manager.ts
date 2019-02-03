@@ -35,7 +35,9 @@ export enum EventType {
     collision,
     fireProjectile,
 
-    inflictDamage
+    inflictDamage,
+
+    changeVelocity
 }
 
 export class EventManager {

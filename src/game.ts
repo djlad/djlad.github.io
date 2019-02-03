@@ -18,6 +18,7 @@ import { ProjectileSystem } from './systems/projectile-system';
 import { FightSystem } from './systems/fight-system';
 import { FightComponent } from './components/fight-component';
 import { HealthSystem } from './systems/health-system';
+import { PositionSystem } from './systems/position-system';
 
 export class Game {
     constructor(entityFactory:EntityFactory, renderer:Renderer, eventManager:EventManager){
@@ -35,6 +36,7 @@ export class Game {
         game.addSystem(ProjectileSystem.create(game));
         game.addSystem(FightSystem.create(game));
         game.addSystem(HealthSystem.create(game));
+        game.addSystem(PositionSystem.create(game));
         return game;
     }
 
