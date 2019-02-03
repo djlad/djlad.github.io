@@ -33,7 +33,9 @@ export enum EventType {
     pUp,
 
     collision,
-    fireProjectile
+    fireProjectile,
+
+    inflictDamage
 }
 
 export class EventManager {
@@ -65,9 +67,9 @@ export class EventManager {
 
         //wasd controls
         var controls:EventType[] = [EventType.wDown, EventType.aDown, EventType.sDown,
-            EventType.dDown, EventType.spaceDown];
+            EventType.dDown, EventType.spaceDown, EventType.pDown];
         var controlRelease:EventType[] = [EventType.wUp, EventType.aUp, EventType.sUp,
-            EventType.dUp, EventType.spaceUp, EventType.pDown, EventType.pUp]
+            EventType.dUp, EventType.spaceUp, EventType.pUp]
         var controlKeys:number[] = [87, 65, 83, 68, 32, 80];
 
         for(var i:number=0;i<controls.length;i++){

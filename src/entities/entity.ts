@@ -13,6 +13,7 @@ export abstract class Entity {
     components:Component[] = [];
     componentFactory:ComponentFactory;
     targetedEvents:GameEvent[] = [];
+    delayedEvents:GameEvent[] = [];
     destroyed:boolean = false;
 
     addComponent(componentName:string):Component{
@@ -36,8 +37,12 @@ export abstract class Entity {
         return component;
     }
 
-    emit(event:GameEvent){
-        this.targetedEvents.push(event);
+    emit(event:GameEvent, delayed=false){
+        if(delayed){
+            this.delayedEvents.push(event);
+        } else {
+            this.targetedEvents.push(event);
+        }
     }
 
     update(){

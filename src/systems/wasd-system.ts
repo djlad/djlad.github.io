@@ -77,7 +77,7 @@ export class WasdSystem extends EntitySystem {
                     entity.emit(ge);
                 break;
                 case EventType.pUp:
-                    console.log("p up")
+                    //console.log("p up")
                     console.log(this.game)
                 break;
             }

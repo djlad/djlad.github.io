@@ -27,10 +27,15 @@ export class ProjectileSystem extends EntitySystem {
 
     fireProjectile(entity:Entity, vx:number=null, vy:number=null){
         var projectile:ProjectileEntity = <ProjectileEntity>this.game.addEntity("projectile");
+        var projectileComponent:ProjectileComponent = <ProjectileComponent>projectile.getComponent("projectile");
         var projPosition:PositionComponent = <PositionComponent>projectile.getComponent("position");
+        
         var position:PositionComponent = <PositionComponent>entity.getComponent("position");
+
+        projectileComponent.shooterId = entity.id;
         projPosition.x = position.x;
         projPosition.y = position.y;
+        
         if(vx !== null && vy !== null){
             projPosition.vx = vx;
             projPosition.vy = vy;
@@ -54,9 +59,30 @@ export class ProjectileSystem extends EntitySystem {
                         this.fireProjectile(entity);
                     }
                 break;
+                case EventType.collision:
+                    var isProj = entity instanceof ProjectileEntity;
+                    if(!isProj)break;
+                    var projectile:ProjectileComponent = <ProjectileComponent>entity.getComponent("projectile");
+                    var isShooter = projectile.shooterId === event.eventData.id;
+                    var isSelf = entity.id === event.eventData.id;
+                    var isProjectile = event.eventData instanceof ProjectileEntity;
+                    var collidedId:number = event.eventData.id;
+                    var collided:Entity = this.game.getById(collidedId);
+                    /*console.log(entity)
+                    console.log(event.eventData)
+                    console.log(isShooter)
+                    console.log("-")*/
+                    if(!isShooter && !isSelf && !isProjectile){
+                        var ge = GameEvent.create(EventType.inflictDamage)
+                        collided.emit(ge, true);
+                        //console.log(other.id)
+                        //console.log(other.targetedEvents.length);
+                        this.game.destroy(entity);
+                    }
+                break;
             }
         }
-        entity.targetedEvents = [];
+        //entity.targetedEvents = [];
     }
 
     static create(game:Game):ProjectileSystem{

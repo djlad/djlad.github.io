@@ -4,6 +4,7 @@ import { GameEvent } from '../events/event-manager';
 import { PositionComponent } from '../components/position-component';
 import { AnimationComponent } from '../components/animation-component';
 import { FightComponent } from '../components/fight-component';
+import { HealthComponent } from '../components/health-component';
 
 export class VillagerEntity extends Entity{
     constructor(cf:ComponentFactory){
@@ -11,6 +12,7 @@ export class VillagerEntity extends Entity{
         var animation:AnimationComponent = <AnimationComponent>this.addComponent("animation");
         var position:PositionComponent = <PositionComponent>this.addComponent("position");
         var fight:FightComponent = <FightComponent>this.addComponent("fight");
+        var health:HealthComponent = <HealthComponent>this.addComponent("health");
         
         position.width = 70;
     }

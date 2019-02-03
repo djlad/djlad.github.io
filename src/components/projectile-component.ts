@@ -5,6 +5,7 @@ export class ProjectileComponent extends Component {
         super("projectile");
     }
     lifeSpan:number=90;
+    shooterId:number;
 
     update(){
     }

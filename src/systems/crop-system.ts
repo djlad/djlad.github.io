@@ -33,7 +33,6 @@ export class CropSystem extends EntitySystem {
             event = entity.targetedEvents[i];
             this.handleEvent(event, entity);
         }
-        entity.targetedEvents = [];
     };
     static create(game:Game):EntitySystem{
         return new CropSystem(game);

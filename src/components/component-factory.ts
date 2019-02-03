@@ -5,6 +5,7 @@ import { WasdComponent } from './wasd-component';
 import { CropComponent } from './crop-component';
 import { ProjectileComponent } from './projectile-component';
 import { FightComponent } from './fight-component';
+import { HealthComponent } from './health-component';
 
 export class ComponentFactory {
     constructor(){
@@ -34,6 +35,7 @@ export class ComponentFactory {
         cf.registerComponent(CropComponent);
         cf.registerComponent(ProjectileComponent);
         cf.registerComponent(FightComponent);
+        cf.registerComponent(HealthComponent);
         return cf;
     }
 }

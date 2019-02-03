@@ -17,6 +17,7 @@ import { ProjectileComponent } from './components/projectile-component';
 import { ProjectileSystem } from './systems/projectile-system';
 import { FightSystem } from './systems/fight-system';
 import { FightComponent } from './components/fight-component';
+import { HealthSystem } from './systems/health-system';
 
 export class Game {
     constructor(entityFactory:EntityFactory, renderer:Renderer, eventManager:EventManager){
@@ -33,6 +34,7 @@ export class Game {
         game.addSystem(CollisionSystem.create(game));
         game.addSystem(ProjectileSystem.create(game));
         game.addSystem(FightSystem.create(game));
+        game.addSystem(HealthSystem.create(game));
         return game;
     }
 
@@ -54,18 +56,22 @@ export class Game {
         this.renderer.cbox();
         this.eventManager.update();
         for(var i=0;i<this.entities.length;i++){
-            for(var systemi=0;systemi<this.systems.length;systemi++){
-                this.systems[systemi].applyEvents(this.entities[i], this.eventManager);
-            }
-        }
-        for(var i=0;i<this.entities.length;i++){
             this.entities[i].update();
             for(var systemi=0;systemi<this.systems.length;systemi++){
                 this.systems[systemi].apply(this.entities[i], this.eventManager);
             }
         }
 
-        this.eventManager.fireCallbacks();
+        var numEvents:number;
+        for(var i=0;i<this.entities.length;i++){
+            for(var systemi=0;systemi<this.systems.length;systemi++){
+                this.systems[systemi].applyEvents(this.entities[i], this.eventManager);
+            }
+            this.entities[i].targetedEvents = this.entities[i].delayedEvents;
+            this.entities[i].delayedEvents = [];
+        }
+
+        //this.eventManager.fireCallbacks();
 
         this.entities.sort(function(a:Entity,b:Entity){
             var pa:PositionComponent = <PositionComponent>a.getComponent("position");
@@ -161,7 +167,7 @@ pc.vx = 0
 
 
 //placeField(350,300, "wheat", 50)
-//placeField(650,300, "corn", 50)
+placeField(650,300, "corn", 50)
 //placeField(350,600, "turnip", 50)
 //placeField(650,600, "onion", 50)
 
