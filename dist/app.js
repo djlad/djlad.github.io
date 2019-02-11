@@ -537,14 +537,40 @@ System.register("components/health-component", ["components/component"], functio
         }
     };
 });
-System.register("components/component-factory", ["components/component", "components/position-component", "components/animation-component", "components/wasd-component", "components/crop-component", "components/projectile-component", "components/fight-component", "components/health-component"], function (exports_10, context_10) {
+System.register("components/neural-fight-component", ["components/component"], function (exports_10, context_10) {
     "use strict";
-    var component_8, position_component_1, animation_component_1, wasd_component_1, crop_component_1, projectile_component_1, fight_component_1, health_component_1, ComponentFactory;
+    var component_8, NeuralFightComponent;
     var __moduleName = context_10 && context_10.id;
     return {
         setters: [
             function (component_8_1) {
                 component_8 = component_8_1;
+            }
+        ],
+        execute: function () {
+            NeuralFightComponent = (function (_super) {
+                __extends(NeuralFightComponent, _super);
+                function NeuralFightComponent() {
+                    return _super.call(this, "neural") || this;
+                }
+                NeuralFightComponent.prototype.update = function () { };
+                NeuralFightComponent.create = function () {
+                    return new NeuralFightComponent();
+                };
+                return NeuralFightComponent;
+            }(component_8.Component));
+            exports_10("NeuralFightComponent", NeuralFightComponent);
+        }
+    };
+});
+System.register("components/component-factory", ["components/component", "components/position-component", "components/animation-component", "components/wasd-component", "components/crop-component", "components/projectile-component", "components/fight-component", "components/health-component", "components/neural-fight-component"], function (exports_11, context_11) {
+    "use strict";
+    var component_9, position_component_1, animation_component_1, wasd_component_1, crop_component_1, projectile_component_1, fight_component_1, health_component_1, neural_fight_component_1, ComponentFactory;
+    var __moduleName = context_11 && context_11.id;
+    return {
+        setters: [
+            function (component_9_1) {
+                component_9 = component_9_1;
             },
             function (position_component_1_1) {
                 position_component_1 = position_component_1_1;
@@ -566,6 +592,9 @@ System.register("components/component-factory", ["components/component", "compon
             },
             function (health_component_1_1) {
                 health_component_1 = health_component_1_1;
+            },
+            function (neural_fight_component_1_1) {
+                neural_fight_component_1 = neural_fight_component_1_1;
             }
         ],
         execute: function () {
@@ -575,7 +604,7 @@ System.register("components/component-factory", ["components/component", "compon
                 }
                 ComponentFactory.prototype.registerComponent = function (ComponentClass) {
                     var obj = ComponentClass.create();
-                    if (ComponentClass.prototype instanceof component_8.Component) {
+                    if (ComponentClass.prototype instanceof component_9.Component) {
                         this.componentTypes[obj.componentName] = ComponentClass;
                     }
                     else {
@@ -597,18 +626,19 @@ System.register("components/component-factory", ["components/component", "compon
                     cf.registerComponent(projectile_component_1.ProjectileComponent);
                     cf.registerComponent(fight_component_1.FightComponent);
                     cf.registerComponent(health_component_1.HealthComponent);
+                    cf.registerComponent(neural_fight_component_1.NeuralFightComponent);
                     return cf;
                 };
                 return ComponentFactory;
             }());
-            exports_10("ComponentFactory", ComponentFactory);
+            exports_11("ComponentFactory", ComponentFactory);
         }
     };
 });
-System.register("events/event-manager", [], function (exports_11, context_11) {
+System.register("events/event-manager", [], function (exports_12, context_12) {
     "use strict";
     var GameEvent, EventType, EventManager;
-    var __moduleName = context_11 && context_11.id;
+    var __moduleName = context_12 && context_12.id;
     return {
         setters: [],
         execute: function () {
@@ -626,7 +656,7 @@ System.register("events/event-manager", [], function (exports_11, context_11) {
                 };
                 return GameEvent;
             }());
-            exports_11("GameEvent", GameEvent);
+            exports_12("GameEvent", GameEvent);
             (function (EventType) {
                 EventType[EventType["wDown"] = 0] = "wDown";
                 EventType[EventType["aDown"] = 1] = "aDown";
@@ -645,7 +675,7 @@ System.register("events/event-manager", [], function (exports_11, context_11) {
                 EventType[EventType["inflictDamage"] = 14] = "inflictDamage";
                 EventType[EventType["changeVelocity"] = 15] = "changeVelocity";
             })(EventType || (EventType = {}));
-            exports_11("EventType", EventType);
+            exports_12("EventType", EventType);
             EventManager = (function () {
                 function EventManager() {
                     this.keys = Array(1000);
@@ -721,14 +751,14 @@ System.register("events/event-manager", [], function (exports_11, context_11) {
                 };
                 return EventManager;
             }());
-            exports_11("EventManager", EventManager);
+            exports_12("EventManager", EventManager);
         }
     };
 });
-System.register("entities/entity", [], function (exports_12, context_12) {
+System.register("entities/entity", [], function (exports_13, context_13) {
     "use strict";
     var Entity;
-    var __moduleName = context_12 && context_12.id;
+    var __moduleName = context_13 && context_13.id;
     return {
         setters: [],
         execute: function () {
@@ -782,14 +812,14 @@ System.register("entities/entity", [], function (exports_12, context_12) {
                 Entity.id = -1;
                 return Entity;
             }());
-            exports_12("Entity", Entity);
+            exports_13("Entity", Entity);
         }
     };
 });
-System.register("entities/player-entity", ["entities/entity", "components/component-factory"], function (exports_13, context_13) {
+System.register("entities/player-entity", ["entities/entity", "components/component-factory"], function (exports_14, context_14) {
     "use strict";
     var entity_1, component_factory_1, PlayerEntity;
-    var __moduleName = context_13 && context_13.id;
+    var __moduleName = context_14 && context_14.id;
     return {
         setters: [
             function (entity_1_1) {
@@ -823,14 +853,132 @@ System.register("entities/player-entity", ["entities/entity", "components/compon
                 };
                 return PlayerEntity;
             }(entity_1.Entity));
-            exports_13("PlayerEntity", PlayerEntity);
+            exports_14("PlayerEntity", PlayerEntity);
         }
     };
 });
-System.register("entities/villager-entity", ["entities/entity", "components/component-factory"], function (exports_14, context_14) {
+System.register("render", ["sprite-manager"], function (exports_15, context_15) {
+    "use strict";
+    var sprite_manager_2, HtmlRenderer, hrf;
+    var __moduleName = context_15 && context_15.id;
+    function createHtmlRenderer() {
+        var canvas = document.getElementById("canvas");
+        canvas.width = 1000;
+        canvas.height = 850;
+        var hsm = sprite_manager_2.HtmlSpriteManager.create();
+        return new HtmlRenderer(canvas, hsm);
+    }
+    return {
+        setters: [
+            function (sprite_manager_2_1) {
+                sprite_manager_2 = sprite_manager_2_1;
+            }
+        ],
+        execute: function () {
+            HtmlRenderer = (function () {
+                function HtmlRenderer(context, spriteManager) {
+                    this.canvas = context;
+                    this.ctx = this.canvas.getContext("2d");
+                    this.spriteManager = spriteManager;
+                }
+                HtmlRenderer.prototype.cbox = function () {
+                    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                };
+                HtmlRenderer.prototype.sprite = function (spriteName, x, y, width, height, spriteNumber, flip) {
+                    if (flip === void 0) { flip = false; }
+                    var sprite = this.spriteManager.getSprite(spriteName);
+                    var spriteImg = sprite.sprite;
+                    var fc = sprite.frameCoords(spriteNumber);
+                    if (flip) {
+                        this.ctx.translate(2 * x, 0);
+                        this.ctx.scale(-1, 1);
+                    }
+                    this.ctx.drawImage(spriteImg, fc[0], fc[1], sprite.frameWidth, sprite.frameHeight, x - width / 2, y - height, width, height);
+                    if (flip) {
+                        this.ctx.scale(-1, 1);
+                        this.ctx.translate(-2 * x, 0);
+                    }
+                };
+                HtmlRenderer.create = function () {
+                    return createHtmlRenderer();
+                };
+                return HtmlRenderer;
+            }());
+            exports_15("HtmlRenderer", HtmlRenderer);
+            hrf = createHtmlRenderer();
+        }
+    };
+});
+System.register("systems/system", [], function (exports_16, context_16) {
+    "use strict";
+    var EntitySystem;
+    var __moduleName = context_16 && context_16.id;
+    return {
+        setters: [],
+        execute: function () {
+            EntitySystem = (function () {
+                function EntitySystem(game) {
+                    this.game = game;
+                }
+                EntitySystem.prototype.apply = function (entity, eventManager) {
+                    throw "an entity system did not implement apply method.";
+                };
+                ;
+                EntitySystem.prototype.applyEvents = function (entity, eventManager) {
+                    throw "an did not implement apply Events";
+                };
+                EntitySystem.create = function (game) {
+                    throw "an entity system has no create method.";
+                };
+                ;
+                return EntitySystem;
+            }());
+            exports_16("EntitySystem", EntitySystem);
+        }
+    };
+});
+System.register("systems/neural-fight-system", ["systems/system"], function (exports_17, context_17) {
+    "use strict";
+    var system_1, NeuralFightSystem;
+    var __moduleName = context_17 && context_17.id;
+    return {
+        setters: [
+            function (system_1_1) {
+                system_1 = system_1_1;
+            }
+        ],
+        execute: function () {
+            NeuralFightSystem = (function (_super) {
+                __extends(NeuralFightSystem, _super);
+                function NeuralFightSystem(game) {
+                    return _super.call(this, game) || this;
+                }
+                NeuralFightSystem.create = function (game) {
+                    return new NeuralFightSystem(game);
+                };
+                NeuralFightSystem.prototype.apply = function (entity) {
+                    var neural = entity.getComponent("neural", true);
+                    if (neural == null) {
+                        return;
+                    }
+                };
+                NeuralFightSystem.prototype.applyEvents = function (entity) {
+                    var events = entity.targetedEvents;
+                    var event;
+                    for (var i = 0; i < events.length; i++) {
+                        event = events[i];
+                    }
+                };
+                return NeuralFightSystem;
+            }(system_1.EntitySystem));
+            exports_17("NeuralFightSystem", NeuralFightSystem);
+        }
+    };
+});
+System.register("entities/villager-entity", ["entities/entity", "components/component-factory"], function (exports_18, context_18) {
     "use strict";
     var entity_2, component_factory_2, VillagerEntity;
-    var __moduleName = context_14 && context_14.id;
+    var __moduleName = context_18 && context_18.id;
     return {
         setters: [
             function (entity_2_1) {
@@ -849,6 +997,7 @@ System.register("entities/villager-entity", ["entities/entity", "components/comp
                     var position = _this.addComponent("position");
                     var fight = _this.addComponent("fight");
                     var health = _this.addComponent("health");
+                    var neural = _this.addComponent("neural");
                     position.width = 70;
                     return _this;
                 }
@@ -860,14 +1009,14 @@ System.register("entities/villager-entity", ["entities/entity", "components/comp
                 };
                 return VillagerEntity;
             }(entity_2.Entity));
-            exports_14("VillagerEntity", VillagerEntity);
+            exports_18("VillagerEntity", VillagerEntity);
         }
     };
 });
-System.register("entities/crop-entity", ["entities/entity", "components/component-factory"], function (exports_15, context_15) {
+System.register("entities/crop-entity", ["entities/entity", "components/component-factory"], function (exports_19, context_19) {
     "use strict";
     var entity_3, component_factory_3, CropEntity;
-    var __moduleName = context_15 && context_15.id;
+    var __moduleName = context_19 && context_19.id;
     return {
         setters: [
             function (entity_3_1) {
@@ -896,14 +1045,14 @@ System.register("entities/crop-entity", ["entities/entity", "components/componen
                 };
                 return CropEntity;
             }(entity_3.Entity));
-            exports_15("CropEntity", CropEntity);
+            exports_19("CropEntity", CropEntity);
         }
     };
 });
-System.register("entities/first-entity", ["entities/entity", "components/component-factory"], function (exports_16, context_16) {
+System.register("entities/first-entity", ["entities/entity", "components/component-factory"], function (exports_20, context_20) {
     "use strict";
     var entity_4, component_factory_4, FirstEntity;
-    var __moduleName = context_16 && context_16.id;
+    var __moduleName = context_20 && context_20.id;
     return {
         setters: [
             function (entity_4_1) {
@@ -930,14 +1079,14 @@ System.register("entities/first-entity", ["entities/entity", "components/compone
                 };
                 return FirstEntity;
             }(entity_4.Entity));
-            exports_16("FirstEntity", FirstEntity);
+            exports_20("FirstEntity", FirstEntity);
         }
     };
 });
-System.register("entities/projectile-entity", ["entities/entity", "components/component-factory"], function (exports_17, context_17) {
+System.register("entities/projectile-entity", ["entities/entity", "components/component-factory"], function (exports_21, context_21) {
     "use strict";
     var entity_5, component_factory_5, ProjectileEntity;
-    var __moduleName = context_17 && context_17.id;
+    var __moduleName = context_21 && context_21.id;
     return {
         setters: [
             function (entity_5_1) {
@@ -967,14 +1116,14 @@ System.register("entities/projectile-entity", ["entities/entity", "components/co
                 };
                 return ProjectileEntity;
             }(entity_5.Entity));
-            exports_17("ProjectileEntity", ProjectileEntity);
+            exports_21("ProjectileEntity", ProjectileEntity);
         }
     };
 });
-System.register("entities/entity-factory", ["entities/player-entity", "entities/entity", "entities/villager-entity", "entities/crop-entity", "entities/first-entity", "entities/projectile-entity"], function (exports_18, context_18) {
+System.register("entities/entity-factory", ["entities/player-entity", "entities/entity", "entities/villager-entity", "entities/crop-entity", "entities/first-entity", "entities/projectile-entity"], function (exports_22, context_22) {
     "use strict";
     var player_entity_1, entity_6, villager_entity_1, crop_entity_1, first_entity_1, projectile_entity_1, EntityFactory;
-    var __moduleName = context_18 && context_18.id;
+    var __moduleName = context_22 && context_22.id;
     function createEntityFactory() {
         var ef = new EntityFactory();
         ef.registerComponent("player", player_entity_1.PlayerEntity);
@@ -1026,99 +1175,18 @@ System.register("entities/entity-factory", ["entities/player-entity", "entities/
                 };
                 return EntityFactory;
             }());
-            exports_18("EntityFactory", EntityFactory);
+            exports_22("EntityFactory", EntityFactory);
         }
     };
 });
-System.register("render", ["sprite-manager"], function (exports_19, context_19) {
+System.register("systems/render-system", ["systems/system", "render"], function (exports_23, context_23) {
     "use strict";
-    var sprite_manager_2, HtmlRenderer, hrf;
-    var __moduleName = context_19 && context_19.id;
-    function createHtmlRenderer() {
-        var canvas = document.getElementById("canvas");
-        canvas.width = 1000;
-        canvas.height = 850;
-        var hsm = sprite_manager_2.HtmlSpriteManager.create();
-        return new HtmlRenderer(canvas, hsm);
-    }
+    var system_2, render_1, RenderSystem;
+    var __moduleName = context_23 && context_23.id;
     return {
         setters: [
-            function (sprite_manager_2_1) {
-                sprite_manager_2 = sprite_manager_2_1;
-            }
-        ],
-        execute: function () {
-            HtmlRenderer = (function () {
-                function HtmlRenderer(context, spriteManager) {
-                    this.canvas = context;
-                    this.ctx = this.canvas.getContext("2d");
-                    this.spriteManager = spriteManager;
-                }
-                HtmlRenderer.prototype.cbox = function () {
-                    this.ctx.fillStyle = "#00ffff";
-                    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-                };
-                HtmlRenderer.prototype.sprite = function (spriteName, x, y, width, height, spriteNumber, flip) {
-                    if (flip === void 0) { flip = false; }
-                    var sprite = this.spriteManager.getSprite(spriteName);
-                    var spriteImg = sprite.sprite;
-                    var fc = sprite.frameCoords(spriteNumber);
-                    if (flip) {
-                        this.ctx.translate(2 * x, 0);
-                        this.ctx.scale(-1, 1);
-                    }
-                    this.ctx.drawImage(spriteImg, fc[0], fc[1], sprite.frameWidth, sprite.frameHeight, x - width / 2, y - height, width, height);
-                    if (flip) {
-                        this.ctx.scale(-1, 1);
-                        this.ctx.translate(-2 * x, 0);
-                    }
-                };
-                HtmlRenderer.create = function () {
-                    return createHtmlRenderer();
-                };
-                return HtmlRenderer;
-            }());
-            exports_19("HtmlRenderer", HtmlRenderer);
-            hrf = createHtmlRenderer();
-        }
-    };
-});
-System.register("systems/system", [], function (exports_20, context_20) {
-    "use strict";
-    var EntitySystem;
-    var __moduleName = context_20 && context_20.id;
-    return {
-        setters: [],
-        execute: function () {
-            EntitySystem = (function () {
-                function EntitySystem(game) {
-                    this.game = game;
-                }
-                EntitySystem.prototype.apply = function (entity, eventManager) {
-                    throw "an entity system did not implement apply method.";
-                };
-                ;
-                EntitySystem.prototype.applyEvents = function (entity, eventManager) {
-                    throw "an did not implement apply Events";
-                };
-                EntitySystem.create = function (game) {
-                    throw "an entity system has no create method.";
-                };
-                ;
-                return EntitySystem;
-            }());
-            exports_20("EntitySystem", EntitySystem);
-        }
-    };
-});
-System.register("systems/render-system", ["systems/system", "render"], function (exports_21, context_21) {
-    "use strict";
-    var system_1, render_1, RenderSystem;
-    var __moduleName = context_21 && context_21.id;
-    return {
-        setters: [
-            function (system_1_1) {
-                system_1 = system_1_1;
+            function (system_2_1) {
+                system_2 = system_2_1;
             },
             function (render_1_1) {
                 render_1 = render_1_1;
@@ -1146,19 +1214,19 @@ System.register("systems/render-system", ["systems/system", "render"], function 
                 };
                 RenderSystem.prototype.applyEvents = function () { };
                 return RenderSystem;
-            }(system_1.EntitySystem));
-            exports_21("RenderSystem", RenderSystem);
+            }(system_2.EntitySystem));
+            exports_23("RenderSystem", RenderSystem);
         }
     };
 });
-System.register("systems/wasd-system", ["systems/system", "events/event-manager"], function (exports_22, context_22) {
+System.register("systems/wasd-system", ["systems/system", "events/event-manager"], function (exports_24, context_24) {
     "use strict";
-    var system_2, event_manager_1, WasdSystem;
-    var __moduleName = context_22 && context_22.id;
+    var system_3, event_manager_1, WasdSystem;
+    var __moduleName = context_24 && context_24.id;
     return {
         setters: [
-            function (system_2_1) {
-                system_2 = system_2_1;
+            function (system_3_1) {
+                system_3 = system_3_1;
             },
             function (event_manager_1_1) {
                 event_manager_1 = event_manager_1_1;
@@ -1236,19 +1304,19 @@ System.register("systems/wasd-system", ["systems/system", "events/event-manager"
                     }
                 };
                 return WasdSystem;
-            }(system_2.EntitySystem));
-            exports_22("WasdSystem", WasdSystem);
+            }(system_3.EntitySystem));
+            exports_24("WasdSystem", WasdSystem);
         }
     };
 });
-System.register("systems/crop-system", ["systems/system", "events/event-manager", "entities/projectile-entity", "entities/player-entity"], function (exports_23, context_23) {
+System.register("systems/crop-system", ["systems/system", "events/event-manager", "entities/projectile-entity", "entities/player-entity"], function (exports_25, context_25) {
     "use strict";
-    var system_3, event_manager_2, projectile_entity_2, player_entity_2, CropSystem;
-    var __moduleName = context_23 && context_23.id;
+    var system_4, event_manager_2, projectile_entity_2, player_entity_2, CropSystem;
+    var __moduleName = context_25 && context_25.id;
     return {
         setters: [
-            function (system_3_1) {
-                system_3 = system_3_1;
+            function (system_4_1) {
+                system_4 = system_4_1;
             },
             function (event_manager_2_1) {
                 event_manager_2 = event_manager_2_1;
@@ -1310,19 +1378,19 @@ System.register("systems/crop-system", ["systems/system", "events/event-manager"
                     }
                 };
                 return CropSystem;
-            }(system_3.EntitySystem));
-            exports_23("CropSystem", CropSystem);
+            }(system_4.EntitySystem));
+            exports_25("CropSystem", CropSystem);
         }
     };
 });
-System.register("systems/collision-system", ["systems/system", "events/event-manager", "entities/first-entity"], function (exports_24, context_24) {
+System.register("systems/collision-system", ["systems/system", "events/event-manager", "entities/first-entity"], function (exports_26, context_26) {
     "use strict";
-    var system_4, event_manager_3, first_entity_2, CollisionSystem;
-    var __moduleName = context_24 && context_24.id;
+    var system_5, event_manager_3, first_entity_2, CollisionSystem;
+    var __moduleName = context_26 && context_26.id;
     return {
         setters: [
-            function (system_4_1) {
-                system_4 = system_4_1;
+            function (system_5_1) {
+                system_5 = system_5_1;
             },
             function (event_manager_3_1) {
                 event_manager_3 = event_manager_3_1;
@@ -1420,19 +1488,19 @@ System.register("systems/collision-system", ["systems/system", "events/event-man
                     return new CollisionSystem(game);
                 };
                 return CollisionSystem;
-            }(system_4.EntitySystem));
-            exports_24("CollisionSystem", CollisionSystem);
+            }(system_5.EntitySystem));
+            exports_26("CollisionSystem", CollisionSystem);
         }
     };
 });
-System.register("systems/projectile-system", ["systems/system", "entities/projectile-entity", "events/event-manager"], function (exports_25, context_25) {
+System.register("systems/projectile-system", ["systems/system", "entities/projectile-entity", "events/event-manager"], function (exports_27, context_27) {
     "use strict";
-    var system_5, projectile_entity_3, event_manager_4, ProjectileSystem;
-    var __moduleName = context_25 && context_25.id;
+    var system_6, projectile_entity_3, event_manager_4, ProjectileSystem;
+    var __moduleName = context_27 && context_27.id;
     return {
         setters: [
-            function (system_5_1) {
-                system_5 = system_5_1;
+            function (system_6_1) {
+                system_6 = system_6_1;
             },
             function (projectile_entity_3_1) {
                 projectile_entity_3 = projectile_entity_3_1;
@@ -1516,19 +1584,19 @@ System.register("systems/projectile-system", ["systems/system", "entities/projec
                     return new ProjectileSystem(game);
                 };
                 return ProjectileSystem;
-            }(system_5.EntitySystem));
-            exports_25("ProjectileSystem", ProjectileSystem);
+            }(system_6.EntitySystem));
+            exports_27("ProjectileSystem", ProjectileSystem);
         }
     };
 });
-System.register("systems/fight-system", ["systems/system", "events/event-manager"], function (exports_26, context_26) {
+System.register("systems/fight-system", ["systems/system", "events/event-manager"], function (exports_28, context_28) {
     "use strict";
-    var system_6, event_manager_5, FightSystem;
-    var __moduleName = context_26 && context_26.id;
+    var system_7, event_manager_5, FightSystem;
+    var __moduleName = context_28 && context_28.id;
     return {
         setters: [
-            function (system_6_1) {
-                system_6 = system_6_1;
+            function (system_7_1) {
+                system_7 = system_7_1;
             },
             function (event_manager_5_1) {
                 event_manager_5 = event_manager_5_1;
@@ -1593,19 +1661,19 @@ System.register("systems/fight-system", ["systems/system", "events/event-manager
                 };
                 ;
                 return FightSystem;
-            }(system_6.EntitySystem));
-            exports_26("FightSystem", FightSystem);
+            }(system_7.EntitySystem));
+            exports_28("FightSystem", FightSystem);
         }
     };
 });
-System.register("systems/health-system", ["systems/system", "events/event-manager"], function (exports_27, context_27) {
+System.register("systems/health-system", ["systems/system", "events/event-manager"], function (exports_29, context_29) {
     "use strict";
-    var system_7, event_manager_6, HealthSystem;
-    var __moduleName = context_27 && context_27.id;
+    var system_8, event_manager_6, HealthSystem;
+    var __moduleName = context_29 && context_29.id;
     return {
         setters: [
-            function (system_7_1) {
-                system_7 = system_7_1;
+            function (system_8_1) {
+                system_8 = system_8_1;
             },
             function (event_manager_6_1) {
                 event_manager_6 = event_manager_6_1;
@@ -1649,19 +1717,19 @@ System.register("systems/health-system", ["systems/system", "events/event-manage
                     return new HealthSystem(game);
                 };
                 return HealthSystem;
-            }(system_7.EntitySystem));
-            exports_27("HealthSystem", HealthSystem);
+            }(system_8.EntitySystem));
+            exports_29("HealthSystem", HealthSystem);
         }
     };
 });
-System.register("systems/position-system", ["systems/system", "events/event-manager"], function (exports_28, context_28) {
+System.register("systems/position-system", ["systems/system", "events/event-manager"], function (exports_30, context_30) {
     "use strict";
-    var system_8, event_manager_7, PositionSystem;
-    var __moduleName = context_28 && context_28.id;
+    var system_9, event_manager_7, PositionSystem;
+    var __moduleName = context_30 && context_30.id;
     return {
         setters: [
-            function (system_8_1) {
-                system_8 = system_8_1;
+            function (system_9_1) {
+                system_9 = system_9_1;
             },
             function (event_manager_7_1) {
                 event_manager_7 = event_manager_7_1;
@@ -1699,15 +1767,15 @@ System.register("systems/position-system", ["systems/system", "events/event-mana
                     }
                 };
                 return PositionSystem;
-            }(system_8.EntitySystem));
-            exports_28("PositionSystem", PositionSystem);
+            }(system_9.EntitySystem));
+            exports_30("PositionSystem", PositionSystem);
         }
     };
 });
-System.register("game", ["entities/entity-factory", "render", "events/event-manager", "systems/render-system", "systems/wasd-system", "systems/crop-system", "systems/collision-system", "systems/projectile-system", "systems/fight-system", "systems/health-system", "systems/position-system"], function (exports_29, context_29) {
+System.register("game", ["entities/entity-factory", "render", "events/event-manager", "systems/render-system", "systems/wasd-system", "systems/crop-system", "systems/collision-system", "systems/projectile-system", "systems/fight-system", "systems/health-system", "systems/position-system", "systems/neural-fight-system"], function (exports_31, context_31) {
     "use strict";
-    var entity_factory_1, render_2, event_manager_8, render_system_1, wasd_system_1, crop_system_1, collision_system_1, projectile_system_1, fight_system_1, health_system_1, position_system_1, Game, game, player, pc, ac, villager, component, fight, v2, component, projectile;
-    var __moduleName = context_29 && context_29.id;
+    var entity_factory_1, render_2, event_manager_8, render_system_1, wasd_system_1, crop_system_1, collision_system_1, projectile_system_1, fight_system_1, health_system_1, position_system_1, neural_fight_system_1, Game, game, player, pc, ac, villager, component, fight, v2, component, projectile;
+    var __moduleName = context_31 && context_31.id;
     function placeField(x, y, cropName, d, width) {
         if (d === void 0) { d = 50; }
         if (width === void 0) { width = 5; }
@@ -1762,6 +1830,9 @@ System.register("game", ["entities/entity-factory", "render", "events/event-mana
             },
             function (position_system_1_1) {
                 position_system_1 = position_system_1_1;
+            },
+            function (neural_fight_system_1_1) {
+                neural_fight_system_1 = neural_fight_system_1_1;
             }
         ],
         execute: function () {
@@ -1785,6 +1856,7 @@ System.register("game", ["entities/entity-factory", "render", "events/event-mana
                     game.addSystem(fight_system_1.FightSystem.create(game));
                     game.addSystem(health_system_1.HealthSystem.create(game));
                     game.addSystem(position_system_1.PositionSystem.create(game));
+                    game.addSystem(neural_fight_system_1.NeuralFightSystem.create(game));
                     return game;
                 };
                 Object.defineProperty(Game.prototype, "entities", {
@@ -1860,8 +1932,8 @@ System.register("game", ["entities/entity-factory", "render", "events/event-mana
                 };
                 return Game;
             }());
-            exports_29("Game", Game);
-            exports_29("game", game = Game.create());
+            exports_31("Game", Game);
+            exports_31("game", game = Game.create());
             player = game.addEntity("player");
             pc = player.getComponent("position");
             ac = player.getComponent("animation");
@@ -1890,7 +1962,6 @@ System.register("game", ["entities/entity-factory", "render", "events/event-mana
             pc.x = 100;
             pc.y = 500;
             pc.vx = 0;
-            placeField(650, 300, "corn", 50);
             game.start();
         }
     };

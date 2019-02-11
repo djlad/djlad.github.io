@@ -6,6 +6,7 @@ import { CropComponent } from './crop-component';
 import { ProjectileComponent } from './projectile-component';
 import { FightComponent } from './fight-component';
 import { HealthComponent } from './health-component';
+import { NeuralFightComponent } from './neural-fight-component';
 
 export class ComponentFactory {
     constructor(){
@@ -36,6 +37,7 @@ export class ComponentFactory {
         cf.registerComponent(ProjectileComponent);
         cf.registerComponent(FightComponent);
         cf.registerComponent(HealthComponent);
+        cf.registerComponent(NeuralFightComponent);
         return cf;
     }
 }

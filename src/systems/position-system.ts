@@ -2,10 +2,9 @@ import { EntitySystem } from './system';
 import { HtmlRenderer } from '../render';
 import { Game } from '../game';
 import { Entity } from '../entities/entity';
-import { AnimationComponent } from '../components/animation-component';
 import { PositionComponent } from '../components/position-component';
 import { GameEvent, EventType } from '../events/event-manager';
-import { RenderSystem } from './render-system';
+//import * as Synaptic from "synaptic";
 
 export class PositionSystem extends EntitySystem{
     /**
@@ -21,6 +20,7 @@ export class PositionSystem extends EntitySystem{
     }
 
     apply(entity:Entity){
+        //console.log(Synaptic)
     }
     applyEvents(entity:Entity){
         var position:PositionComponent = <PositionComponent>entity.getComponent("position");

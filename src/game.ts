@@ -20,6 +20,12 @@ import { FightComponent } from './components/fight-component';
 import { HealthSystem } from './systems/health-system';
 import { PositionSystem } from './systems/position-system';
 
+import * as Synaptic from "synaptic"; // Need this to refer to Synaptic from within the `declare global`
+import { NeuralFightSystem } from './systems/neural-fight-system';
+declare var synaptic:any;
+//console.log(Synaptic.Neuron)
+
+
 export class Game {
     constructor(entityFactory:EntityFactory, renderer:Renderer, eventManager:EventManager){
         this.entityFactory = entityFactory;
@@ -37,6 +43,7 @@ export class Game {
         game.addSystem(FightSystem.create(game));
         game.addSystem(HealthSystem.create(game));
         game.addSystem(PositionSystem.create(game));
+        game.addSystem(NeuralFightSystem.create(game));
         return game;
     }
 
@@ -72,21 +79,15 @@ export class Game {
             this.entities[i].targetedEvents = this.entities[i].delayedEvents;
             this.entities[i].delayedEvents = [];
         }
-
+        
         //this.eventManager.fireCallbacks();
-
+        
         this.entities.sort(function(a:Entity,b:Entity){
             var pa:PositionComponent = <PositionComponent>a.getComponent("position");
             var pb:PositionComponent = <PositionComponent>b.getComponent("position");
             return pa.y - pb.y;
         });
         this.cleanDestroyedEntities();
-        /*
-        this.entitiesX.sort(function(a:Entity,b:Entity){
-            var pa:PositionComponent = <PositionComponent>a.getComponent("position");
-            var pb:PositionComponent = <PositionComponent>b.getComponent("position");
-            return pa.x - pb.x;
-        });*/
     }
     render(){
 
@@ -169,7 +170,7 @@ pc.vx = 0
 
 
 //placeField(350,300, "wheat", 50)
-placeField(650,300, "corn", 50)
+//placeField(650,300, "corn", 50)
 //placeField(350,600, "turnip", 50)
 //placeField(650,600, "onion", 50)
 

@@ -5,6 +5,8 @@ import { PositionComponent } from '../components/position-component';
 import { AnimationComponent } from '../components/animation-component';
 import { FightComponent } from '../components/fight-component';
 import { HealthComponent } from '../components/health-component';
+import { NeuralFightSystem } from '../systems/neural-fight-system';
+import { NeuralFightComponent } from '../components/neural-fight-component';
 
 export class VillagerEntity extends Entity{
     constructor(cf:ComponentFactory){
@@ -13,6 +15,7 @@ export class VillagerEntity extends Entity{
         var position:PositionComponent = <PositionComponent>this.addComponent("position");
         var fight:FightComponent = <FightComponent>this.addComponent("fight");
         var health:HealthComponent = <HealthComponent>this.addComponent("health");
+        var neural:NeuralFightComponent = <NeuralFightComponent>this.addComponent("neural");
         
         position.width = 70;
     }
