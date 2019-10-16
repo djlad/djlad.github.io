@@ -1966,4 +1966,606 @@ System.register("game", ["entities/entity-factory", "render", "events/event-mana
         }
     };
 });
+System.register("engine/component/component", [], function (exports_32, context_32) {
+    "use strict";
+    var Component;
+    var __moduleName = context_32 && context_32.id;
+    return {
+        setters: [],
+        execute: function () {
+            Component = (function () {
+                function Component(componentName) {
+                    this.componentName = componentName;
+                }
+                Component.create = function () {
+                    throw "Component must implement static create function";
+                };
+                ;
+                return Component;
+            }());
+            exports_32("Component", Component);
+        }
+    };
+});
+System.register("engine/component/component-factory", ["engine/component/component"], function (exports_33, context_33) {
+    "use strict";
+    var component_10, ComponentFactory;
+    var __moduleName = context_33 && context_33.id;
+    return {
+        setters: [
+            function (component_10_1) {
+                component_10 = component_10_1;
+            }
+        ],
+        execute: function () {
+            ComponentFactory = (function () {
+                function ComponentFactory() {
+                    this.componentTypes = {};
+                }
+                ComponentFactory.prototype.registerComponent = function (ComponentClass) {
+                    var obj = ComponentClass.create();
+                    if (ComponentClass.prototype instanceof component_10.Component) {
+                        this.componentTypes[obj.componentName] = ComponentClass;
+                    }
+                    else {
+                        console.log("component " + obj.componentName + "must extend class Component to be registered");
+                    }
+                };
+                ComponentFactory.prototype.createComponent = function (componentName) {
+                    if (!(componentName in this.componentTypes)) {
+                        throw "component " + componentName + " not registered in componentFactory testing";
+                    }
+                    return this.componentTypes[componentName].create();
+                };
+                ComponentFactory.create = function () {
+                    var cf = new ComponentFactory();
+                    return cf;
+                };
+                return ComponentFactory;
+            }());
+            exports_33("ComponentFactory", ComponentFactory);
+        }
+    };
+});
+System.register("engine/events/event-manager", [], function (exports_34, context_34) {
+    "use strict";
+    var GameEvent, EventType, EventManager;
+    var __moduleName = context_34 && context_34.id;
+    return {
+        setters: [],
+        execute: function () {
+            GameEvent = (function () {
+                function GameEvent(eventName, eventData, componentTarget) {
+                    if (componentTarget === void 0) { componentTarget = null; }
+                    this.eventName = eventName;
+                    this.eventData = eventData;
+                    this.eventDescription = EventType[eventName];
+                }
+                GameEvent.create = function (eventName, eventData) {
+                    if (eventData === void 0) { eventData = null; }
+                    var ge = new GameEvent(eventName, eventData);
+                    return ge;
+                };
+                return GameEvent;
+            }());
+            exports_34("GameEvent", GameEvent);
+            (function (EventType) {
+                EventType[EventType["wDown"] = 0] = "wDown";
+                EventType[EventType["aDown"] = 1] = "aDown";
+                EventType[EventType["sDown"] = 2] = "sDown";
+                EventType[EventType["dDown"] = 3] = "dDown";
+                EventType[EventType["wUp"] = 4] = "wUp";
+                EventType[EventType["aUp"] = 5] = "aUp";
+                EventType[EventType["sUp"] = 6] = "sUp";
+                EventType[EventType["dUp"] = 7] = "dUp";
+                EventType[EventType["spaceDown"] = 8] = "spaceDown";
+                EventType[EventType["spaceUp"] = 9] = "spaceUp";
+                EventType[EventType["pDown"] = 10] = "pDown";
+                EventType[EventType["pUp"] = 11] = "pUp";
+                EventType[EventType["collision"] = 12] = "collision";
+                EventType[EventType["fireProjectile"] = 13] = "fireProjectile";
+                EventType[EventType["inflictDamage"] = 14] = "inflictDamage";
+                EventType[EventType["changeVelocity"] = 15] = "changeVelocity";
+            })(EventType || (EventType = {}));
+            exports_34("EventType", EventType);
+            EventManager = (function () {
+                function EventManager() {
+                    this.keys = Array(1000);
+                    this.keysReleased = Array(1000);
+                    this.events = [];
+                    this.callbacks = {};
+                    this.keys = this.createKeyListener();
+                }
+                EventManager.prototype.createKeyListener = function () {
+                    var keys = Array(1000);
+                    window.addEventListener("keydown", function (e) {
+                        keys[e.keyCode] = true;
+                    });
+                    window.addEventListener("keyup", function (e) {
+                        keys[e.keyCode] = false;
+                    });
+                    return keys;
+                };
+                EventManager.prototype.update = function () {
+                    this.events = [];
+                    var controls = [EventType.wDown, EventType.aDown, EventType.sDown,
+                        EventType.dDown, EventType.spaceDown, EventType.pDown];
+                    var controlRelease = [EventType.wUp, EventType.aUp, EventType.sUp,
+                        EventType.dUp, EventType.spaceUp, EventType.pUp];
+                    var controlKeys = [87, 65, 83, 68, 32, 80];
+                    for (var i = 0; i < controls.length; i++) {
+                        if (this.keys[controlKeys[i]]) {
+                            this.emit(controls[i]);
+                            this.keysReleased[controlKeys[i]] = true;
+                        }
+                        else {
+                            if (this.keysReleased[controlKeys[i]]) {
+                                this.emit(controlRelease[i]);
+                                this.keysReleased[controlKeys[i]] = false;
+                            }
+                        }
+                    }
+                };
+                EventManager.prototype.emit = function (eventName, eventData) {
+                    if (eventData === void 0) { eventData = {}; }
+                    var ge = new GameEvent(eventName, eventData);
+                    this.events.push(ge);
+                };
+                EventManager.prototype.fireCallbacks = function () {
+                    var events;
+                    var callbacks;
+                    for (var eventName in this.events) {
+                        events = this.events;
+                        callbacks = this.callbacks[eventName];
+                        events.forEach(function (event) {
+                            callbacks.forEach(function (callback) {
+                                callback(event);
+                            });
+                        });
+                    }
+                };
+                EventManager.prototype.addListener = function (eventName, callback) {
+                    this.callbacks[eventName].push(callback);
+                };
+                EventManager.prototype.createEvent = function (eventName) {
+                    if (eventName in this.events)
+                        return;
+                    this.events = [];
+                    this.callbacks[eventName] = [];
+                };
+                EventManager.create = function () {
+                    var em = new EventManager();
+                    em.createEvent(EventType.wDown);
+                    em.createEvent(EventType.aDown);
+                    em.createEvent(EventType.sDown);
+                    em.createEvent(EventType.dDown);
+                    return em;
+                };
+                return EventManager;
+            }());
+            exports_34("EventManager", EventManager);
+        }
+    };
+});
+System.register("engine/entity/entity", [], function (exports_35, context_35) {
+    "use strict";
+    var Entity;
+    var __moduleName = context_35 && context_35.id;
+    return {
+        setters: [],
+        execute: function () {
+            Entity = (function () {
+                function Entity(componentFactory) {
+                    this.id = -1;
+                    this.components = [];
+                    this.targetedEvents = [];
+                    this.delayedEvents = [];
+                    this.destroyed = false;
+                    this.componentFactory = componentFactory;
+                    Entity.id++;
+                    this.id = Entity.id;
+                }
+                Entity.prototype.addComponent = function (componentName) {
+                    var component = this.componentFactory.createComponent(componentName);
+                    this.components.push(component);
+                    return component;
+                };
+                Entity.prototype.getComponent = function (componentName, allowUndefined) {
+                    if (allowUndefined === void 0) { allowUndefined = false; }
+                    var component = undefined;
+                    for (var i = 0; i < this.components.length; i++) {
+                        if (this.components[i].componentName == componentName) {
+                            return this.components[i];
+                        }
+                    }
+                    if (!allowUndefined) {
+                        console.log(this);
+                        throw "entity has no component " + componentName;
+                    }
+                    return component;
+                };
+                Entity.prototype.emit = function (event, delayed) {
+                    if (delayed === void 0) { delayed = false; }
+                    if (delayed) {
+                        this.delayedEvents.push(event);
+                    }
+                    else {
+                        this.targetedEvents.push(event);
+                    }
+                };
+                Entity.prototype.update = function () {
+                    for (var i = 0; i < this.components.length; i++) {
+                        this.components[i].update();
+                    }
+                };
+                Entity.create = function () {
+                    return null;
+                };
+                Entity.id = -1;
+                return Entity;
+            }());
+            exports_35("Entity", Entity);
+        }
+    };
+});
+System.register("engine/entity/entity-factory", ["engine/entity/entity"], function (exports_36, context_36) {
+    "use strict";
+    var entity_7, EntityFactory;
+    var __moduleName = context_36 && context_36.id;
+    function createEntityFactory() {
+        var ef = new EntityFactory();
+        return ef;
+    }
+    return {
+        setters: [
+            function (entity_7_1) {
+                entity_7 = entity_7_1;
+            }
+        ],
+        execute: function () {
+            EntityFactory = (function () {
+                function EntityFactory() {
+                    this.entityTypes = {};
+                }
+                EntityFactory.prototype.registerComponent = function (componentName, EntityClass) {
+                    if (EntityClass.prototype instanceof entity_7.Entity) {
+                        this.entityTypes[componentName] = EntityClass;
+                    }
+                    else {
+                        console.log("EntityClass must extend class Entity");
+                    }
+                };
+                EntityFactory.prototype.create = function (entityName) {
+                    return this.entityTypes[entityName].create();
+                };
+                EntityFactory.create = function () {
+                    return createEntityFactory();
+                };
+                return EntityFactory;
+            }());
+            exports_36("EntityFactory", EntityFactory);
+        }
+    };
+});
+System.register("engine/system/system", [], function (exports_37, context_37) {
+    "use strict";
+    var EntitySystem;
+    var __moduleName = context_37 && context_37.id;
+    return {
+        setters: [],
+        execute: function () {
+            EntitySystem = (function () {
+                function EntitySystem(game) {
+                    this.game = game;
+                }
+                EntitySystem.prototype.apply = function (entity) {
+                    throw "an entity system did not implement apply method.";
+                };
+                ;
+                EntitySystem.prototype.applyEvents = function (entity) {
+                    throw "an did not implement apply Events";
+                };
+                EntitySystem.create = function (game) {
+                    throw "an entity system has no create method.";
+                };
+                ;
+                return EntitySystem;
+            }());
+            exports_37("EntitySystem", EntitySystem);
+        }
+    };
+});
+System.register("engine/renderers/sprite-manager", [], function (exports_38, context_38) {
+    "use strict";
+    var HtmlSprite, SpriteAnimation, HtmlSpriteManager;
+    var __moduleName = context_38 && context_38.id;
+    function createSpriteManager() {
+        var sm = new HtmlSpriteManager();
+        sm.loadSprite("blondDress", "blond.png", 4, 8);
+        sm.loadSprite("blond", "blondWalk.png", 4, 2);
+        sm.addAnimation("blond", "blondWalk", [4, 5, 6, 7], 5);
+        sm.addAnimation("blond", "blond", [4], 5);
+        sm.loadSprite("fantasySprites", "fantasysprites.png", 12, 8);
+        sm.addAnimation("fantasySprites", "redHair", [24, 25, 26, 25], 6);
+        sm.loadSprite("crops", "crops.png", 12, 8);
+        sm.addAnimation("crops", "turnip0", [0]);
+        sm.addAnimation("crops", "turnip1", [1]);
+        sm.addAnimation("crops", "turnip2", [2]);
+        sm.addAnimation("crops", "corn0", [30]);
+        sm.addAnimation("crops", "corn1", [31]);
+        sm.addAnimation("crops", "corn2", [32]);
+        sm.addAnimation("crops", "wheat0", [33]);
+        sm.addAnimation("crops", "wheat1", [34]);
+        sm.addAnimation("crops", "wheat2", [35]);
+        sm.addAnimation("crops", "pumpkin0", [54]);
+        sm.addAnimation("crops", "pumpkin1", [55]);
+        sm.addAnimation("crops", "pumpkin2", [56]);
+        sm.loadSprite("scrops", "scrops.png", 24, 23);
+        sm.addAnimation("scrops", "onion0", [0]);
+        sm.addAnimation("scrops", "onion1", [1]);
+        sm.addAnimation("scrops", "onion2", [2]);
+        sm.addAnimation("scrops", "onion3", [3]);
+        sm.addAnimation("scrops", "onion4", [4]);
+        sm.addAnimation("scrops", "onion5", [5]);
+        sm.addAnimation("scrops", "onion", [6]);
+        var cn = 24 * 8 + 18;
+        sm.addAnimation("scrops", "corn", [cn]);
+        sm.loadSprite("victorian", "victoriansprites.png", 12, 8);
+        sm.addAnimation("victorian", "bluecloak", [24]);
+        sm.addAnimation("victorian", "bluecloakwalk", [24, 25, 26, 25], 5);
+        cn = 12 * 6;
+        sm.addAnimation("victorian", "grey", [cn], 5);
+        sm.addAnimation("victorian", "greyWalk", [cn, cn + 1, cn + 2, cn + 1], 5);
+        cn = 8 * 4;
+        sm.loadSprite("fireball", "fireball.png", 8, 8);
+        sm.addAnimation("fireball", "fireball", [cn, cn + 1, cn + 2, cn + 3, cn + 4, cn + 5, cn + 6, cn + 7]);
+        sm.loadSprite("tilesetcrops", "tilesets/submission_daneeklu/tilesets/plants.png", 9, 6);
+        cn = 6;
+        sm.addAnimation("tilesetcrops", "tomato0", [cn + 0]);
+        sm.addAnimation("tilesetcrops", "tomato1", [cn + 9]);
+        sm.addAnimation("tilesetcrops", "tomato2", [cn + 18]);
+        sm.addAnimation("tilesetcrops", "tomato3", [cn + 27]);
+        sm.addAnimation("tilesetcrops", "tomato4", [cn + 36]);
+        return sm;
+    }
+    return {
+        setters: [],
+        execute: function () {
+            HtmlSprite = (function () {
+                function HtmlSprite(fileName, widthImgs, heightImgs) {
+                    this.spriteDir = "../sprites/";
+                    var spriteImg = new Image();
+                    spriteImg.src = this.spriteDir + fileName;
+                    this.sprite = spriteImg;
+                    this.widthImgs = widthImgs;
+                    this.heightImgs = heightImgs;
+                    spriteImg.onload = this.setFrameDimensions(this);
+                }
+                HtmlSprite.prototype.setFrameDimensions = function (sprite) {
+                    return function () {
+                        sprite.frameWidth = sprite.sprite.width / sprite.widthImgs;
+                        sprite.frameHeight = sprite.sprite.height / sprite.heightImgs;
+                    };
+                };
+                HtmlSprite.prototype.frameCoords = function (spriteNum) {
+                    var frameWidth = this.sprite.width / this.widthImgs;
+                    var frameHeight = this.sprite.height / this.heightImgs;
+                    var framex = spriteNum % this.widthImgs * frameWidth;
+                    var framey = Math.floor(spriteNum / this.widthImgs) * frameHeight;
+                    return [framex, framey];
+                };
+                return HtmlSprite;
+            }());
+            SpriteAnimation = (function () {
+                function SpriteAnimation(animationName, spriteName, spriteNumbers, delay) {
+                    this.spriteNumbers = spriteNumbers;
+                    this.animationName = animationName;
+                    this.spriteName = spriteName;
+                    this.delay = delay;
+                }
+                SpriteAnimation.create = function (animationName, spriteName, spriteNumbers, delay) {
+                    if (delay === void 0) { delay = 1; }
+                    var sa = new SpriteAnimation(animationName, spriteName, spriteNumbers, delay);
+                    return sa;
+                };
+                return SpriteAnimation;
+            }());
+            exports_38("SpriteAnimation", SpriteAnimation);
+            HtmlSpriteManager = (function () {
+                function HtmlSpriteManager(spriteDir) {
+                    if (spriteDir === void 0) { spriteDir = "../sprites/"; }
+                    this.sprites = {};
+                    this.animations = {};
+                }
+                HtmlSpriteManager.prototype.createSprite = function (fileName, widthImgs, heightImgs) {
+                    return new HtmlSprite(fileName, widthImgs, heightImgs);
+                };
+                HtmlSpriteManager.prototype.addSprite = function (spriteName, sprite) {
+                    this.sprites[spriteName] = sprite;
+                };
+                HtmlSpriteManager.prototype.getSprite = function (spriteName) {
+                    if (!(spriteName in this.sprites)) {
+                        throw "sprite " + spriteName + " does not exist";
+                    }
+                    return this.sprites[spriteName];
+                };
+                HtmlSpriteManager.prototype.loadSprite = function (spriteName, fileName, widthImgs, heightImgs) {
+                    var sprite = this.createSprite(fileName, widthImgs, heightImgs);
+                    this.addSprite(spriteName, sprite);
+                };
+                HtmlSpriteManager.prototype.addAnimation = function (spriteName, animationName, spriteNumbers, delay) {
+                    if (delay === void 0) { delay = 1; }
+                    var sa = SpriteAnimation.create(animationName, spriteName, spriteNumbers, delay);
+                    if (!(spriteName in this.sprites)) {
+                        throw "error adding animation "
+                            + animationName
+                            + ". spriteName "
+                            + spriteName
+                            + "doesn't exist. sprites must be added through addSprite method first";
+                    }
+                    this.animations[animationName] = sa;
+                };
+                HtmlSpriteManager.prototype.getAnimation = function (animationName) {
+                    return this.animations[animationName];
+                };
+                HtmlSpriteManager.create = function () {
+                    return createSpriteManager();
+                };
+                return HtmlSpriteManager;
+            }());
+            exports_38("HtmlSpriteManager", HtmlSpriteManager);
+        }
+    };
+});
+System.register("engine/renderers/render", ["engine/renderers/sprite-manager"], function (exports_39, context_39) {
+    "use strict";
+    var sprite_manager_3, HtmlRenderer, hrf;
+    var __moduleName = context_39 && context_39.id;
+    function createHtmlRenderer() {
+        var canvas = document.getElementById("canvas");
+        canvas.width = 1000;
+        canvas.height = 850;
+        var hsm = sprite_manager_3.HtmlSpriteManager.create();
+        return new HtmlRenderer(canvas, hsm);
+    }
+    return {
+        setters: [
+            function (sprite_manager_3_1) {
+                sprite_manager_3 = sprite_manager_3_1;
+            }
+        ],
+        execute: function () {
+            HtmlRenderer = (function () {
+                function HtmlRenderer(context, spriteManager) {
+                    this.canvas = context;
+                    this.ctx = this.canvas.getContext("2d");
+                    this.spriteManager = spriteManager;
+                }
+                HtmlRenderer.prototype.cbox = function () {
+                    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                };
+                HtmlRenderer.prototype.sprite = function (spriteName, x, y, width, height, spriteNumber, flip) {
+                    if (flip === void 0) { flip = false; }
+                    var sprite = this.spriteManager.getSprite(spriteName);
+                    var spriteImg = sprite.sprite;
+                    var fc = sprite.frameCoords(spriteNumber);
+                    if (flip) {
+                        this.ctx.translate(2 * x, 0);
+                        this.ctx.scale(-1, 1);
+                    }
+                    this.ctx.drawImage(spriteImg, fc[0], fc[1], sprite.frameWidth, sprite.frameHeight, x - width / 2, y - height, width, height);
+                    if (flip) {
+                        this.ctx.scale(-1, 1);
+                        this.ctx.translate(-2 * x, 0);
+                    }
+                };
+                HtmlRenderer.create = function () {
+                    return createHtmlRenderer();
+                };
+                return HtmlRenderer;
+            }());
+            exports_39("HtmlRenderer", HtmlRenderer);
+            hrf = createHtmlRenderer();
+        }
+    };
+});
+System.register("engine/game", ["engine/entity/entity-factory", "engine/renderers/render"], function (exports_40, context_40) {
+    "use strict";
+    var entity_factory_2, render_3, Game, game;
+    var __moduleName = context_40 && context_40.id;
+    return {
+        setters: [
+            function (entity_factory_2_1) {
+                entity_factory_2 = entity_factory_2_1;
+            },
+            function (render_3_1) {
+                render_3 = render_3_1;
+            }
+        ],
+        execute: function () {
+            Game = (function () {
+                function Game(entityFactory, renderer) {
+                    this._entities = [];
+                    this.systems = [];
+                    this.i = 0;
+                    this.entityFactory = entityFactory;
+                    this.renderer = renderer;
+                }
+                Game.create = function () {
+                    var game = new Game(entity_factory_2.EntityFactory.create(), render_3.HtmlRenderer.create());
+                    return game;
+                };
+                Object.defineProperty(Game.prototype, "entities", {
+                    get: function () {
+                        return this._entities;
+                    },
+                    set: function (entities) {
+                        this._entities = entities;
+                    },
+                    enumerable: true,
+                    configurable: true
+                });
+                Game.prototype.update = function () {
+                    this.renderer.cbox();
+                    for (var i = 0; i < this.entities.length; i++) {
+                        this.entities[i].update();
+                        for (var systemi = 0; systemi < this.systems.length; systemi++) {
+                            this.systems[systemi].apply(this.entities[i]);
+                        }
+                    }
+                    var numEvents;
+                    for (var i = 0; i < this.entities.length; i++) {
+                        for (var systemi = 0; systemi < this.systems.length; systemi++) {
+                            this.systems[systemi].applyEvents(this.entities[i]);
+                        }
+                        this.entities[i].targetedEvents = this.entities[i].delayedEvents;
+                        this.entities[i].delayedEvents = [];
+                    }
+                    this.cleanDestroyedEntities();
+                };
+                Game.prototype.render = function () {
+                };
+                Game.prototype.step = function () {
+                    this.update();
+                    this.render();
+                };
+                Game.prototype.start = function () {
+                    console.log("starting game");
+                    setInterval((function (game) {
+                        return function () { game.step(); };
+                    })(this), 1000 / 30);
+                };
+                Game.prototype.addEntity = function (entityName) {
+                    var entity = this.entityFactory.create(entityName);
+                    this.entities.push(entity);
+                    return entity;
+                };
+                Game.prototype.getById = function (entityId) {
+                    var entity;
+                    for (var i = 0; i < this.entities.length; i++) {
+                        entity = this.entities[i];
+                        if (entityId == entity.id)
+                            return entity;
+                    }
+                    return null;
+                };
+                Game.prototype.destroy = function (entity) {
+                    entity.destroyed = true;
+                };
+                Game.prototype.cleanDestroyedEntities = function () {
+                    this.entities = this.entities.filter(function (e) {
+                        return !e.destroyed;
+                    });
+                };
+                Game.prototype.addSystem = function (system) {
+                    this.systems.push(system);
+                };
+                return Game;
+            }());
+            exports_40("Game", Game);
+            exports_40("game", game = Game.create());
+            game.start();
+        }
+    };
+});
 //# sourceMappingURL=app.js.map
