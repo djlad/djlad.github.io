@@ -1,18 +1,18 @@
-import { EntitySystem } from './system';
-import { Entity } from '../entities/entity';
+import { EntitySystem } from '../engine/system/system';
+import { Entity } from '../engine/entity/entity';
 import { AnimationComponent } from '../components/animation-component';
 import { CropComponent } from '../components/crop-component';
-import { GameEvent, EventManager, EventType } from '../events/event-manager';
+import { GameEvent, EventManager, EventType } from '../engine/events/event-manager';
 import { ProjectileEntity } from '../entities/projectile-entity';
 import { PlayerEntity } from '../entities/player-entity';
 import { PositionComponent } from '../components/position-component';
-import { Game } from '../game';
+import { Game } from '../engine/game';
 
 export class CropSystem extends EntitySystem {
     constructor(game:Game){
         super(game);
     }
-    apply(entity:Entity, eventManager:EventManager):void{
+    apply(entity:Entity):void{
         var a:AnimationComponent = <AnimationComponent>entity.getComponent("animation", true);
         var c:CropComponent = <CropComponent>entity.getComponent("crop", true);
         var p:PositionComponent = <PositionComponent>entity.getComponent("position", true);
@@ -24,7 +24,7 @@ export class CropSystem extends EntitySystem {
         }
     };
 
-    applyEvents(entity:Entity, eventManager:EventManager):void{
+    applyEvents(entity:Entity):void{
         var c:CropComponent = <CropComponent>entity.getComponent("crop", true);
         if(c==null)return;
 

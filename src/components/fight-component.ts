@@ -1,5 +1,5 @@
 import { Component } from './component';
-import { Entity } from '../entities/entity';
+import { Entity } from '../engine/entity/entity';
 
 export class FightComponent extends Component{
     constructor(){

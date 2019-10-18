@@ -1,11 +1,9 @@
-import { Entity } from './entities/entity';
-import { EntityFactory } from './entities/entity-factory';
-import { ComponentFactory } from './components/component-factory';
-import { EntitySystem } from './systems/system';
+import { Entity } from './engine/entity/entity';
+import { EntitySystem } from './engine/system/system';
 import { PositionComponent } from './components/position-component';
 import { AnimationComponent } from './components/animation-component';
 import { HtmlRenderer, Renderer } from './render';
-import { EventManager } from './events/event-manager';
+import { EventManager } from './engine/events/event-manager';
 import { CropEntity } from './entities/crop-entity';
 import { CropComponent } from './components/crop-component';
 import { RenderSystem } from './systems/render-system';
@@ -22,119 +20,21 @@ import { PositionSystem } from './systems/position-system';
 
 import * as Synaptic from "synaptic"; // Need this to refer to Synaptic from within the `declare global`
 import { NeuralFightSystem } from './systems/neural-fight-system';
+import { populateEntityFactory } from './entities/entity-factory';
+import { EntityFactory } from './engine/entity/entity-factory';
+import { Game } from './engine/game';
+import { populateComponentFactory } from './components/component-factory';
 declare var synaptic:any;
 //console.log(Synaptic.Neuron)
 
 
-export class Game {
-    constructor(entityFactory:EntityFactory, renderer:Renderer, eventManager:EventManager){
-        this.entityFactory = entityFactory;
-        this.renderer = renderer;
-        this.eventManager = eventManager;
-    }
-    static create(){
-        var game = new Game(EntityFactory.create(), HtmlRenderer.create(), EventManager.create());
-        game.addEntity("first");
-        game.addSystem(RenderSystem.create(game));
-        game.addSystem(WasdSystem.create(game));
-        game.addSystem(CropSystem.create(game));
-        game.addSystem(CollisionSystem.create(game));
-        game.addSystem(ProjectileSystem.create(game));
-        game.addSystem(FightSystem.create(game));
-        game.addSystem(HealthSystem.create(game));
-        game.addSystem(PositionSystem.create(game));
-        game.addSystem(NeuralFightSystem.create(game));
-        return game;
-    }
-
-    private _entities:Entity[] = [];
-    get entities():Entity[]{
-        return this._entities;
-    }
-    set entities(entities:Entity[]){
-        //console.log(entities)
-        this._entities = entities;
-    }
-    //entitiesX:Entity[] = [];
-    entityFactory:EntityFactory;
-    systems:EntitySystem[] = [];
-    renderer:Renderer;
-    eventManager:EventManager;
-    i:number=0;
-    update(){
-        this.renderer.cbox();
-        this.eventManager.update();
-        for(var i=0;i<this.entities.length;i++){
-            this.entities[i].update();
-            for(var systemi=0;systemi<this.systems.length;systemi++){
-                this.systems[systemi].apply(this.entities[i], this.eventManager);
-            }
-        }
-
-        var numEvents:number;
-        for(var i=0;i<this.entities.length;i++){
-            for(var systemi=0;systemi<this.systems.length;systemi++){
-                this.systems[systemi].applyEvents(this.entities[i], this.eventManager);
-            }
-            this.entities[i].targetedEvents = this.entities[i].delayedEvents;
-            this.entities[i].delayedEvents = [];
-        }
-        
-        //this.eventManager.fireCallbacks();
-        
-        this.entities.sort(function(a:Entity,b:Entity){
-            var pa:PositionComponent = <PositionComponent>a.getComponent("position");
-            var pb:PositionComponent = <PositionComponent>b.getComponent("position");
-            return pa.y - pb.y;
-        });
-        this.cleanDestroyedEntities();
-    }
-    render(){
-
-    }
-    step(){
-        this.update();
-        this.render();
-    }
-    start(){
-        console.log("starting game")
-        setInterval((function(game){
-            return function(){game.step()}
-        })(this), 1000/30);
-    }
-
-    addEntity(entityName:string){
-        var entity:Entity = this.entityFactory.create(entityName);
-        this.entities.push(entity);
-        //this.entitiesX.push(entity);
-        return entity;
-    }
-
-    getById(entityId:number):Entity{
-        var entity:Entity;
-        for(var i=0;i<this.entities.length;i++){
-            entity = this.entities[i];
-            if(entityId == entity.id)return entity
-        }
-        return null;
-    }
-
-    destroy(entity:Entity){
-        entity.destroyed = true;
-    }
-
-    cleanDestroyedEntities(){
-        this.entities = this.entities.filter(function(e){
-            return !e.destroyed;
-        })
-    }
-
-    addSystem(system:EntitySystem){
-        this.systems.push(system);
-    }
-}
 export var game = Game.create();
+populateEntityFactory(game);
+populateComponentFactory(game);
+
 var player = game.addEntity("player");
+//var player = game.addEntity("player");
+
 var pc= <PositionComponent>player.getComponent("position");
 var ac = <AnimationComponent>player.getComponent("animation");
 pc.x = 300;

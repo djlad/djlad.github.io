@@ -1,10 +1,10 @@
-import { EntitySystem } from './system';
-import { Entity } from '../entities/entity';
-import { GameEvent, EventManager, EventType } from '../events/event-manager';
+import { EntitySystem } from '../engine/system/system';
+import { Entity } from '../engine/entity/entity';
+import { GameEvent, EventManager, EventType } from '../engine/events/event-manager';
 import { WasdComponent } from '../components/wasd-component';
 import { PositionComponent } from '../components/position-component';
 import { AnimationComponent } from '../components/animation-component';
-import { Game } from '../game';
+import { Game } from '../engine/game';
 import { VillagerEntity } from '../entities/villager-entity';
 import { ProjectileEntity } from '../entities/projectile-entity';
 

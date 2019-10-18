@@ -6,10 +6,12 @@ export class ComponentFactory {
     componentTypes:{[key:string]:any}={};
     registerComponent(ComponentClass:any){
         var obj = ComponentClass.create()
+        console.log(ComponentClass.prototype);
+        console.log(ComponentClass.prototype instanceof Component);
         if (ComponentClass.prototype instanceof Component){
             this.componentTypes[obj.componentName] = ComponentClass;
         } else {
-            console.log("component " + obj.componentName + "must extend class Component to be registered");
+            console.log("component " + obj.componentName + " must extend class Component to be registered");
         }
     }
 

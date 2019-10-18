@@ -1,9 +1,9 @@
-import { EntitySystem } from './system';
+import { EntitySystem } from '../engine/system/system';
 import { HtmlRenderer } from '../render';
 import { AnimationComponent } from '../components/animation-component';
-import { Entity } from '../entities/entity';
+import { Entity } from '../engine/entity/entity';
 import { PositionComponent } from '../components/position-component';
-import { Game } from '../game';
+import { Game } from '../engine/game';
 
 export class RenderSystem extends EntitySystem{
     /**

@@ -1,8 +1,8 @@
-import { EntitySystem } from './system';
-import { Game } from '../game';
-import { Entity } from '../entities/entity';
+import { EntitySystem } from '../engine/system/system';
+import { Entity } from '../engine/entity/entity';
+import { Game } from '../engine/game';
 import { HealthComponent } from '../components/health-component';
-import { GameEvent, EventType } from '../events/event-manager';
+import { GameEvent, EventType } from '../engine/events/event-manager';
 export class HealthSystem extends EntitySystem{
     constructor(game:Game){
         super(game)

@@ -1,7 +1,7 @@
-import { EntitySystem } from './system';
-import { Entity } from '../entities/entity';
-import { Game } from '../game';
-import { GameEvent } from '../events/event-manager';
+import { EntitySystem } from '../engine/system/system';
+import { Entity } from '../engine/entity/entity';
+import { Game } from '../engine/game';
+import { GameEvent } from '../engine/events/event-manager';
 import { NeuralFightComponent } from '../components/neural-fight-component';
 
 declare var synaptic:any;

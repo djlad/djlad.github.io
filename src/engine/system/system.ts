@@ -1,6 +1,7 @@
 import { Component } from '../component/component';
 import { Entity } from '../entity/entity';
 import { Game } from '../game';
+import { EventManager } from '../events/event-manager';
 
 export class EntitySystem {
     /**
@@ -15,15 +16,15 @@ export class EntitySystem {
     game:Game;
 
 
-    apply(entity:Entity):void{
+    apply(entity:Entity, eventManager:EventManager):void{
         throw "an entity system did not implement apply method.";
     };
-    applyEvents(entity:Entity):void{
+    applyEvents(entity:Entity, eventManager:EventManager):void{
         throw "an did not implement apply Events";
     }
 
-    static create(game:Game):EntitySystem{
-        throw "an entity system has no create method."
-    };
+    //static create(game:Game):EntitySystem{
+    //    throw "an entity system has no create method."
+    //};
 }
 

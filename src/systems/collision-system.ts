@@ -1,11 +1,10 @@
-import { EntitySystem } from './system';
-import { Entity } from '../entities/entity';
-import { GameEvent, EventManager, EventType } from '../events/event-manager';
+import { EntitySystem } from '../engine/system/system';
+import { Entity } from '../engine/entity/entity';
+import { GameEvent, EventManager, EventType } from '../engine/events/event-manager';
 import { PositionComponent } from '../components/position-component';
 import { FirstEntity } from '../entities/first-entity';
 import { AnimationComponent } from '../components/animation-component';
-import { Game } from '../game';
-
+import { Game } from '../engine/game';
 
 export class CollisionSystem extends EntitySystem{
     constructor(game:Game){
@@ -68,7 +67,7 @@ export class CollisionSystem extends EntitySystem{
         ));
     }
 
-    apply(entity:Entity, eventManager:EventManager):void{
+    apply(entity:Entity):void{
         if(entity instanceof FirstEntity){
             this.movingEntities = [];
         }
@@ -107,7 +106,7 @@ export class CollisionSystem extends EntitySystem{
         }
     };
 
-    applyEvents(entity:Entity, eventManager:EventManager):void{
+    applyEvents(entity:Entity):void{
     }
 
     static create(game:Game):CollisionSystem{

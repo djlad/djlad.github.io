@@ -1,12 +1,12 @@
-import { Entity } from './entity';
-import { ComponentFactory } from '../components/component-factory';
-import { GameEvent } from '../events/event-manager';
+import { Entity } from '../engine/entity/entity';
+import { GameEvent } from '../engine/events/event-manager';
 import { PositionComponent } from '../components/position-component';
 import { AnimationComponent } from '../components/animation-component';
 import { FightComponent } from '../components/fight-component';
 import { HealthComponent } from '../components/health-component';
 import { NeuralFightSystem } from '../systems/neural-fight-system';
 import { NeuralFightComponent } from '../components/neural-fight-component';
+import { ComponentFactory } from '../engine/component/component-factory';
 
 export class VillagerEntity extends Entity{
     constructor(cf:ComponentFactory){

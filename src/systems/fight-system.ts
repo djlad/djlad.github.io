@@ -1,7 +1,7 @@
-import { EntitySystem } from './system';
-import { Game } from '../game';
-import { Entity } from '../entities/entity';
-import { EventManager, GameEvent, EventType } from '../events/event-manager';
+import { EntitySystem } from '../engine/system/system';
+import { Entity } from '../engine/entity/entity';
+import { Game } from '../engine/game';
+import { EventManager, GameEvent, EventType } from '../engine/events/event-manager';
 import { FightComponent } from '../components/fight-component';
 import { PositionComponent } from '../components/position-component';
 
@@ -34,7 +34,7 @@ export class FightSystem extends EntitySystem {
         return hypotenuse;
     }
 
-    apply(entity:Entity, eventManager:EventManager):void{
+    apply(entity:Entity):void{
         var fight:FightComponent = <FightComponent>entity.getComponent("fight", true);
         if(fight == null)return;
         var position:PositionComponent = <PositionComponent>entity.getComponent("position");
@@ -58,7 +58,7 @@ export class FightSystem extends EntitySystem {
             }
         }
     };
-    applyEvents(entity:Entity, eventManager:EventManager):void{
+    applyEvents(entity:Entity):void{
     }
 
     static create(game:Game):EntitySystem{
