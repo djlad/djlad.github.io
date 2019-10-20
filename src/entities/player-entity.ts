@@ -4,6 +4,7 @@ import { PositionComponent } from '../components/position-component';
 import { WasdComponent } from '../components/wasd-component';
 import { AnimationComponent } from '../components/animation-component';
 import { ComponentFactory } from '../engine/component/component-factory';
+import { createComponentFactory } from '../components/component-factory';
 
 export class PlayerEntity extends Entity{
     constructor(componentFactory:ComponentFactory){
@@ -25,7 +26,8 @@ export class PlayerEntity extends Entity{
     }
 
     static create():PlayerEntity{
-        var entity = new PlayerEntity(ComponentFactory.create());
+        let cf:ComponentFactory = createComponentFactory();
+        var entity = new PlayerEntity(cf);
         return entity;
     }
 }

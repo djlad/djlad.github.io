@@ -1,6 +1,6 @@
-import { Component } from './component';
+import { Component } from "../engine/component/component";
 
-export class NeuralFightComponent extends Component{
+export class NeuralFightComponent extends Component {
     constructor(){
         super("neural");
     }

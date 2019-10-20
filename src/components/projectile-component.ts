@@ -1,4 +1,4 @@
-import { Component } from './component';
+import { Component } from "../engine/component/component";
 
 export class ProjectileComponent extends Component {
     constructor(){

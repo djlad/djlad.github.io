@@ -47,8 +47,8 @@ export class HtmlRenderer implements Renderer {
 
 function createHtmlRenderer():HtmlRenderer{
     var canvas:HTMLCanvasElement = <HTMLCanvasElement>document.getElementById("canvas");
-    canvas.width = 1000;
-    canvas.height = 850;
+    canvas.width = 1400;
+    canvas.height = 780;
     var hsm:HtmlSpriteManager = HtmlSpriteManager.create();
     return new HtmlRenderer(canvas, hsm);
 }

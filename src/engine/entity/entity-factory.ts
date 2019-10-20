@@ -1,5 +1,4 @@
 import { Entity } from './entity';
-import { Component } from '../../components/component';
 import { ComponentFactory } from '../component/component-factory';
 
 export class EntityFactory {
@@ -22,8 +21,7 @@ export class EntityFactory {
     }
 
     create(entityName:string){
-        console.log(this.entityTypes[entityName]);
-        console.log(entityName);
+        let entityClass = this.entityTypes[entityName];
         return this.entityTypes[entityName].create();
     }
 

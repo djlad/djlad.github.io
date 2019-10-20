@@ -21,6 +21,7 @@ export class RenderSystem extends EntitySystem{
     }
 
     apply(entity:Entity){
+        console.log(5);
         var a:AnimationComponent = <AnimationComponent>entity.getComponent("animation", true);
         var p:PositionComponent = <PositionComponent>entity.getComponent("position", true);
         if (a == null || p == null)return;

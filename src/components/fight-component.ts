@@ -1,4 +1,4 @@
-import { Component } from './component';
+import { Component } from '../engine/component/component';
 import { Entity } from '../engine/entity/entity';
 
 export class FightComponent extends Component{

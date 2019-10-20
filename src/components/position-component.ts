@@ -1,7 +1,7 @@
-import { Component } from './component';
+import { Component } from "../engine/component/component";
 
 
-export class PositionComponent extends Component{
+export class PositionComponent extends Component {
     constructor(){
         super("position");
     }

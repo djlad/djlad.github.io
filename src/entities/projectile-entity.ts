@@ -3,6 +3,7 @@ import { GameEvent } from '../engine/events/event-manager';
 import { AnimationComponent } from '../components/animation-component';
 import { PositionComponent } from '../components/position-component';
 import { ComponentFactory } from '../engine/component/component-factory';
+import { createComponentFactory } from '../components/component-factory';
 
 export class ProjectileEntity extends Entity {
     constructor(cf:ComponentFactory){
@@ -16,7 +17,8 @@ export class ProjectileEntity extends Entity {
     };
 
     static create(){
-        var pe:ProjectileEntity = new ProjectileEntity(ComponentFactory.create());
+        let cf:ComponentFactory = createComponentFactory();
+        var pe:ProjectileEntity = new ProjectileEntity(cf);
         return pe;
     }
 }

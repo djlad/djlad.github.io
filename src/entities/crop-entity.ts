@@ -3,6 +3,7 @@ import { GameEvent } from '../engine/events/event-manager';
 import { AnimationComponent } from '../components/animation-component';
 import { PositionComponent } from '../components/position-component';
 import { ComponentFactory } from '../engine/component/component-factory';
+import { createComponentFactory } from '../components/component-factory';
 
 export class CropEntity extends Entity{
     constructor(cf:ComponentFactory){
@@ -18,6 +19,7 @@ export class CropEntity extends Entity{
     }
     
     static create(){
-        return new CropEntity(ComponentFactory.create());
+        let cf:ComponentFactory = createComponentFactory();
+        return new CropEntity(cf);
     }
 }

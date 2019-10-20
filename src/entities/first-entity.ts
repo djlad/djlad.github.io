@@ -2,6 +2,7 @@ import { Entity } from '../engine/entity/entity';
 import { GameEvent } from '../engine/events/event-manager';
 import { PositionComponent } from '../components/position-component';
 import { ComponentFactory } from '../engine/component/component-factory';
+import { createComponentFactory } from '../components/component-factory';
 
 export class FirstEntity extends Entity{
     /**
@@ -19,7 +20,8 @@ export class FirstEntity extends Entity{
     }
 
     static create():FirstEntity{
-        var entity = new FirstEntity(ComponentFactory.create());
+        let cf:ComponentFactory = createComponentFactory();
+        var entity = new FirstEntity(cf);
         return entity;
     }
 }

@@ -7,6 +7,7 @@ import { HealthComponent } from '../components/health-component';
 import { NeuralFightSystem } from '../systems/neural-fight-system';
 import { NeuralFightComponent } from '../components/neural-fight-component';
 import { ComponentFactory } from '../engine/component/component-factory';
+import { createComponentFactory } from '../components/component-factory';
 
 export class VillagerEntity extends Entity{
     constructor(cf:ComponentFactory){
@@ -24,7 +25,8 @@ export class VillagerEntity extends Entity{
     }
 
     static create():VillagerEntity{
-        var entity = new VillagerEntity(ComponentFactory.create());
+        let cf:ComponentFactory = createComponentFactory();
+        var entity = new VillagerEntity(cf);
         return entity;
     }
 }

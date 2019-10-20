@@ -1,6 +1,6 @@
-import { Component } from './component';
+import { Component } from "../engine/component/component";
 
-export class WasdComponent extends Component{
+export class WasdComponent extends Component {
     constructor(){
         super("wasd");
     }

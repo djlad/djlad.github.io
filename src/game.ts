@@ -27,13 +27,27 @@ import { populateComponentFactory } from './components/component-factory';
 declare var synaptic:any;
 //console.log(Synaptic.Neuron)
 
+function createGame():Game{
+    let game:Game = Game.create()
+    game.addSystem(RenderSystem.create(game));
+    game.addSystem(WasdSystem.create(game));
+    game.addSystem(CropSystem.create(game));
+    game.addSystem(CollisionSystem.create(game));
+    game.addSystem(ProjectileSystem.create(game));
+    //game.addSystem(FightSystem.create(game));
+    game.addSystem(HealthSystem.create(game));
+    game.addSystem(PositionSystem.create(game));
+    game.addSystem(NeuralFightSystem.create(game));
+    return game;
+}
 
-export var game = Game.create();
+export let game = createGame();
 populateEntityFactory(game);
 populateComponentFactory(game);
+console.log(game.entityFactory.componentFactory.componentTypes);
+console.log(game.entityFactory.componentFactory.createComponent("animation"));
 
 var player = game.addEntity("player");
-//var player = game.addEntity("player");
 
 var pc= <PositionComponent>player.getComponent("position");
 var ac = <AnimationComponent>player.getComponent("animation");
@@ -69,10 +83,10 @@ pc.y = 500;
 pc.vx = 0
 
 
-//placeField(350,300, "wheat", 50)
-//placeField(650,300, "corn", 50)
-//placeField(350,600, "turnip", 50)
-//placeField(650,600, "onion", 50)
+placeField(350,300, "wheat", 50)
+placeField(650,300, "corn", 50)
+placeField(350,600, "turnip", 50)
+placeField(650,600, "onion", 50)
 
 function placeField(x:number,y:number, cropName:string, d:number=50, width:number=5){
     var crop:CropEntity;
@@ -89,13 +103,10 @@ function placeField(x:number,y:number, cropName:string, d:number=50, width:numbe
 
 function addCrop(x:number,y:number){
     var crop = game.addEntity("crop");
-    component = <PositionComponent>crop.getComponent("position");
+    var component = <PositionComponent>crop.getComponent("position");
     component.x = x;
     component.y = y;
     return crop
 }
-
-
-
 
 game.start();

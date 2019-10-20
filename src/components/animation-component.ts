@@ -1,5 +1,5 @@
-import { Component } from './component';
 import { HtmlSpriteManager, SpriteAnimation } from '../sprite-manager';
+import { Component } from '../engine/component/component';
 
 export class AnimationComponent extends Component {
     constructor(animationName:string, delay:number, spriteManager:HtmlSpriteManager){
