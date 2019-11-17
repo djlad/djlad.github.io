@@ -2240,4 +2240,39 @@ System.register("game", ["systems/render-system", "systems/wasd-system", "system
         }
     };
 });
+System.register("components/inventory-component", ["engine/component/component"], function (exports_37, context_37) {
+    "use strict";
+    var component_10, InventoryItem, InventoryComponent;
+    var __moduleName = context_37 && context_37.id;
+    return {
+        setters: [
+            function (component_10_1) {
+                component_10 = component_10_1;
+            }
+        ],
+        execute: function () {
+            InventoryItem = (function () {
+                function InventoryItem() {
+                    this.itemNumber = 0;
+                }
+                return InventoryItem;
+            }());
+            exports_37("InventoryItem", InventoryItem);
+            InventoryComponent = (function (_super) {
+                __extends(InventoryComponent, _super);
+                function InventoryComponent() {
+                    var _this = _super.call(this, "inventory") || this;
+                    _this.inventory = [];
+                    return _this;
+                }
+                InventoryComponent.prototype.update = function () { };
+                InventoryComponent.create = function () {
+                    return new InventoryComponent();
+                };
+                return InventoryComponent;
+            }(component_10.Component));
+            exports_37("InventoryComponent", InventoryComponent);
+        }
+    };
+});
 //# sourceMappingURL=app.js.map
