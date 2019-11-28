@@ -1,3 +1,5 @@
+import { SpriteAnimation } from "./sprite-animation";
+
 interface SpriteManager {
 
 }
@@ -36,29 +38,6 @@ class HtmlSprite implements Sprite {
         var framex:number = spriteNum%this.widthImgs * frameWidth;
         var framey:number = Math.floor(spriteNum/this.widthImgs) * frameHeight;
         return [framex, framey];
-    }
-}
-
-export class SpriteAnimation{
-    constructor(animationName:string, spriteName:string, spriteNumbers:number[], delay:number){
-        this.spriteNumbers = spriteNumbers;
-        this.animationName = animationName;
-        this.spriteName = spriteName;
-        this.delay = delay;
-    }
-    spriteNumbers:number[];
-    animationName:string;
-    spriteName:string;
-    delay:number;
-
-    static create(animationName:string, spriteName:string, spriteNumbers:number[], delay:number=1){
-        var sa:SpriteAnimation = new SpriteAnimation(
-            animationName,
-            spriteName,
-            spriteNumbers,
-            delay
-        );
-        return sa;
     }
 }
 
