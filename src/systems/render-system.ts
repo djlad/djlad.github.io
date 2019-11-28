@@ -1,5 +1,5 @@
 import { EntitySystem } from '../engine/system/system';
-import { HtmlRenderer } from '../render';
+import { HtmlRenderer } from '../engine/renderers/render';
 import { AnimationComponent } from '../components/animation-component';
 import { Entity } from '../engine/entity/entity';
 import { PositionComponent } from '../components/position-component';

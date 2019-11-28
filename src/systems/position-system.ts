@@ -1,5 +1,4 @@
 import { EntitySystem } from '../engine/system/system';
-import { HtmlRenderer } from '../render';
 import { Game } from '../engine/game';
 import { Entity } from '../engine/entity/entity';
 import { PositionComponent } from '../components/position-component';
@@ -13,8 +12,6 @@ export class PositionSystem extends EntitySystem{
     constructor(game:Game){
         super(game);
     }
-    renderer:HtmlRenderer;
-
     static create(game:Game):PositionSystem{
         return new PositionSystem(game);
     }

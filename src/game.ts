@@ -2,7 +2,7 @@ import { Entity } from './engine/entity/entity';
 import { EntitySystem } from './engine/system/system';
 import { PositionComponent } from './components/position-component';
 import { AnimationComponent } from './components/animation-component';
-import { HtmlRenderer, Renderer } from './render';
+import { HtmlRenderer, Renderer } from './engine/renderers/render';
 import { EventManager } from './engine/events/event-manager';
 import { CropEntity } from './entities/crop-entity';
 import { CropComponent } from './components/crop-component';
