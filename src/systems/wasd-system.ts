@@ -72,7 +72,7 @@ export class WasdSystem extends EntitySystem {
                     animation.setSprite(sprite);
                     position.vx = 0;
                 break;
-                case EventType.spaceUp:
+                case EventType.spaceDown:
                     var ge:GameEvent = GameEvent.create(EventType.fireProjectile);
                     entity.emit(ge);
                 break;

@@ -40,72 +40,82 @@ function createGame():Game{
     return game;
 }
 
-export let game = createGame();
-populateEntityFactory(game);
-populateComponentFactory(game);
-console.log(game.entityFactory.componentFactory.componentTypes);
-console.log(game.entityFactory.componentFactory.createComponent("animation"));
 
-var player = game.addEntity("player");
+export function startGame(){
+    let game = createGame();
+    populateEntityFactory(game);
+    populateComponentFactory(game);
+    console.log(game.entityFactory.componentFactory.componentTypes);
+    console.log(game.entityFactory.componentFactory.createComponent("animation"));
 
-var pc= <PositionComponent>player.getComponent("position");
-var ac = <AnimationComponent>player.getComponent("animation");
-pc.x = 300;
-pc.y = 380;
-//ac.setSprite("onion");
+    var player = game.addEntity("player");
 
-var villager = game.addEntity("villager");
-var component = <PositionComponent>villager.getComponent("position");
-var fight = <FightComponent>villager.getComponent("fight");
-ac = <AnimationComponent> villager.getComponent("animation");
-component.x = 150;
-component.y = 300;
-component.vx = 0;
-fight.attack = true;
+    var pc= <PositionComponent>player.getComponent("position");
+    var ac = <AnimationComponent>player.getComponent("animation");
+    pc.x = 300;
+    pc.y = 380;
+    //ac.setSprite("onion");
 
-var v2 = game.addEntity("villager");
-fight.target = v2;
+    var villager = game.addEntity("villager");
+    var component = <PositionComponent>villager.getComponent("position");
+    var fight = <FightComponent>villager.getComponent("fight");
+    ac = <AnimationComponent> villager.getComponent("animation");
+    component.x = 150;
+    component.y = 300;
+    component.vx = 0;
+    fight.attack = true;
 
-var component = <PositionComponent>v2.getComponent("position");
-ac = <AnimationComponent> v2.getComponent("animation");
-fight = <FightComponent>v2.getComponent("fight");
-component.x = 600;
-component.y = 800;
-component.vx = 0;
-fight.target = villager;
-fight.attack = true;
+    var v2 = game.addEntity("villager");
+    fight.target = v2;
 
-var projectile:ProjectileEntity = <ProjectileEntity> game.addEntity("projectile");
-pc = <PositionComponent>projectile.getComponent("position");
-pc.x = 100;
-pc.y = 500;
-pc.vx = 0
+    var component = <PositionComponent>v2.getComponent("position");
+    ac = <AnimationComponent> v2.getComponent("animation");
+    fight = <FightComponent>v2.getComponent("fight");
+    component.x = 600;
+    component.y = 800;
+    component.vx = 0;
+    fight.target = villager;
+    fight.attack = true;
+
+    var projectile:ProjectileEntity = <ProjectileEntity> game.addEntity("projectile");
+    pc = <PositionComponent>projectile.getComponent("position");
+    pc.x = 100;
+    pc.y = 500;
+    pc.vx = 0
 
 
-placeField(350,300, "wheat", 50)
-placeField(650,300, "corn", 50)
-placeField(350,600, "turnip", 50)
-placeField(650,600, "onion", 50)
+    placeField(350,300, "wheat", 50)
+    placeField(650,300, "corn", 50)
+    placeField(350,600, "turnip", 50)
+    placeField(650,600, "onion", 50)
 
-function placeField(x:number,y:number, cropName:string, d:number=50, width:number=5){
-    var crop:CropEntity;
-    var cc:CropComponent;
+    function placeField(x:number,y:number, cropName:string, d:number=50, width:number=5){
+        var crop:CropEntity;
+        var cc:CropComponent;
 
-    for(var i:number=0;i<width;i++){
-        for(var i2:number=0;i2<width;i2++){
-            crop = addCrop(x+i*d, y+i2*d);
-            cc = <CropComponent>crop.getComponent("crop");
-            cc.setCrop(cropName);
+        for(var i:number=0;i<width;i++){
+            for(var i2:number=0;i2<width;i2++){
+                crop = addCrop(x+i*d, y+i2*d);
+                cc = <CropComponent>crop.getComponent("crop");
+                cc.setCrop(cropName);
+            }
         }
     }
-}
 
-function addCrop(x:number,y:number){
-    var crop = game.addEntity("crop");
-    var component = <PositionComponent>crop.getComponent("position");
-    component.x = x;
-    component.y = y;
-    return crop
+    function addCrop(x:number,y:number){
+        var crop = game.addEntity("crop");
+        var component = <PositionComponent>crop.getComponent("position");
+        component.x = x;
+        component.y = y;
+        return crop
+    }
+    let intervalId:number = game.start();
+    setTimeout(()=>{game.stop()},10000);
 }
+(function(){
+    startGame();
+})();
 
-game.start();
+(function(){
+    setTimeout(startGame, 12000);
+})();

@@ -26,9 +26,9 @@ export class ProjectileSystem extends EntitySystem {
     }
 
     fireProjectile(entity:Entity, vx:number=null, vy:number=null){
-        var projectile:ProjectileEntity = <ProjectileEntity>this.game.addEntity("projectile");
-        var projectileComponent:ProjectileComponent = <ProjectileComponent>projectile.getComponent("projectile");
-        var projPosition:PositionComponent = <PositionComponent>projectile.getComponent("position");
+        let projectile:ProjectileEntity = <ProjectileEntity>this.game.addEntity("projectile");
+        let projectileComponent:ProjectileComponent = <ProjectileComponent>projectile.getComponent("projectile");
+        let projPosition:PositionComponent = <PositionComponent>projectile.getComponent("position");
         
         var position:PositionComponent = <PositionComponent>entity.getComponent("position");
 

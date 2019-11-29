@@ -32,7 +32,7 @@ export class Game {
     systems:EntitySystem[] = [];
     renderer:Renderer;
     eventManager:EventManager;
-    i:number=0;
+    intervalId:number;
     update(){
         this.renderer.cbox();
         this.eventManager.update();
@@ -68,11 +68,16 @@ export class Game {
         this.update();
         this.render();
     }
-    start(){
+    start():number{
         console.log("starting game")
-        setInterval((function(game){
+        this.intervalId = setInterval((function(game){
             return function(){game.step()}
         })(this), 1000/30);
+        return this.intervalId;
+    }
+
+    stop(){
+        clearInterval(this.intervalId);
     }
 
     addEntity(entityName:string){
@@ -96,9 +101,16 @@ export class Game {
     }
 
     cleanDestroyedEntities(){
-        this.entities = this.entities.filter(function(e){
-            return !e.destroyed;
-        })
+        let newEntities:Entity[] = [];
+        for(let i:number=0;i<this.entities.length;i++){
+            if(!this.entities[i].destroyed){
+                newEntities.push(this.entities[i]);
+            } else {
+                delete this.entities[i];
+            }
+        }
+        delete this.entities;
+        this.entities = newEntities;
     }
 
     addSystem(system:EntitySystem):void{

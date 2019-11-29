@@ -502,7 +502,7 @@ System.register("engine/renderers/html-renderer", ["engine/renderers/sprite-mana
                 HtmlRenderer.create = function () {
                     var canvas = document.getElementById("canvas");
                     canvas.width = 1000;
-                    canvas.height = 850;
+                    canvas.height = 760;
                     var hsm = sprite_manager_1.HtmlSpriteManager.create();
                     return new HtmlRenderer(canvas, hsm);
                 };
@@ -533,7 +533,6 @@ System.register("engine/game", ["engine/entity/entity-factory", "engine/events/e
                 function Game(entityFactory, renderer, eventManager) {
                     this._entities = [];
                     this.systems = [];
-                    this.i = 0;
                     this.entityFactory = entityFactory;
                     this.renderer = renderer;
                     this.eventManager = eventManager;
@@ -579,9 +578,13 @@ System.register("engine/game", ["engine/entity/entity-factory", "engine/events/e
                 };
                 Game.prototype.start = function () {
                     console.log("starting game");
-                    setInterval((function (game) {
+                    this.intervalId = setInterval((function (game) {
                         return function () { game.step(); };
                     })(this), 1000 / 30);
+                    return this.intervalId;
+                };
+                Game.prototype.stop = function () {
+                    clearInterval(this.intervalId);
                 };
                 Game.prototype.addEntity = function (entityName) {
                     var entity = this.entityFactory.create(entityName);
@@ -601,9 +604,17 @@ System.register("engine/game", ["engine/entity/entity-factory", "engine/events/e
                     entity.destroyed = true;
                 };
                 Game.prototype.cleanDestroyedEntities = function () {
-                    this.entities = this.entities.filter(function (e) {
-                        return !e.destroyed;
-                    });
+                    var newEntities = [];
+                    for (var i = 0; i < this.entities.length; i++) {
+                        if (!this.entities[i].destroyed) {
+                            newEntities.push(this.entities[i]);
+                        }
+                        else {
+                            delete this.entities[i];
+                        }
+                    }
+                    delete this.entities;
+                    this.entities = newEntities;
                 };
                 Game.prototype.addSystem = function (system) {
                     this.systems.push(system);
@@ -1361,7 +1372,7 @@ System.register("systems/wasd-system", ["engine/system/system", "engine/events/e
                                 animation.setSprite(sprite);
                                 position.vx = 0;
                                 break;
-                            case event_manager_2.EventType.spaceUp:
+                            case event_manager_2.EventType.spaceDown:
                                 var ge = event_manager_2.GameEvent.create(event_manager_2.EventType.fireProjectile);
                                 entity.emit(ge);
                                 break;
@@ -1953,7 +1964,7 @@ System.register("entities/entity-factory", ["entities/player-entity", "entities/
 });
 System.register("game", ["systems/render-system", "systems/wasd-system", "systems/crop-system", "systems/collision-system", "systems/projectile-system", "systems/health-system", "systems/position-system", "systems/neural-fight-system", "entities/entity-factory", "engine/game", "components/component-factory"], function (exports_36, context_36) {
     "use strict";
-    var render_system_1, wasd_system_1, crop_system_1, collision_system_1, projectile_system_1, health_system_1, position_system_1, neural_fight_system_1, entity_factory_2, game_1, component_factory_8, game, player, pc, ac, villager, component, fight, v2, component, projectile;
+    var render_system_1, wasd_system_1, crop_system_1, collision_system_1, projectile_system_1, health_system_1, position_system_1, neural_fight_system_1, entity_factory_2, game_1, component_factory_8;
     var __moduleName = context_36 && context_36.id;
     function createGame() {
         var game = game_1.Game.create();
@@ -1967,26 +1978,68 @@ System.register("game", ["systems/render-system", "systems/wasd-system", "system
         game.addSystem(neural_fight_system_1.NeuralFightSystem.create(game));
         return game;
     }
-    function placeField(x, y, cropName, d, width) {
-        if (d === void 0) { d = 50; }
-        if (width === void 0) { width = 5; }
-        var crop;
-        var cc;
-        for (var i = 0; i < width; i++) {
-            for (var i2 = 0; i2 < width; i2++) {
-                crop = addCrop(x + i * d, y + i2 * d);
-                cc = crop.getComponent("crop");
-                cc.setCrop(cropName);
+    function startGame() {
+        var game = createGame();
+        entity_factory_2.populateEntityFactory(game);
+        component_factory_8.populateComponentFactory(game);
+        console.log(game.entityFactory.componentFactory.componentTypes);
+        console.log(game.entityFactory.componentFactory.createComponent("animation"));
+        var player = game.addEntity("player");
+        var pc = player.getComponent("position");
+        var ac = player.getComponent("animation");
+        pc.x = 300;
+        pc.y = 380;
+        var villager = game.addEntity("villager");
+        var component = villager.getComponent("position");
+        var fight = villager.getComponent("fight");
+        ac = villager.getComponent("animation");
+        component.x = 150;
+        component.y = 300;
+        component.vx = 0;
+        fight.attack = true;
+        var v2 = game.addEntity("villager");
+        fight.target = v2;
+        var component = v2.getComponent("position");
+        ac = v2.getComponent("animation");
+        fight = v2.getComponent("fight");
+        component.x = 600;
+        component.y = 800;
+        component.vx = 0;
+        fight.target = villager;
+        fight.attack = true;
+        var projectile = game.addEntity("projectile");
+        pc = projectile.getComponent("position");
+        pc.x = 100;
+        pc.y = 500;
+        pc.vx = 0;
+        placeField(350, 300, "wheat", 50);
+        placeField(650, 300, "corn", 50);
+        placeField(350, 600, "turnip", 50);
+        placeField(650, 600, "onion", 50);
+        function placeField(x, y, cropName, d, width) {
+            if (d === void 0) { d = 50; }
+            if (width === void 0) { width = 5; }
+            var crop;
+            var cc;
+            for (var i = 0; i < width; i++) {
+                for (var i2 = 0; i2 < width; i2++) {
+                    crop = addCrop(x + i * d, y + i2 * d);
+                    cc = crop.getComponent("crop");
+                    cc.setCrop(cropName);
+                }
             }
         }
+        function addCrop(x, y) {
+            var crop = game.addEntity("crop");
+            var component = crop.getComponent("position");
+            component.x = x;
+            component.y = y;
+            return crop;
+        }
+        var intervalId = game.start();
+        setTimeout(function () { game.stop(); }, 10000);
     }
-    function addCrop(x, y) {
-        var crop = game.addEntity("crop");
-        var component = crop.getComponent("position");
-        component.x = x;
-        component.y = y;
-        return crop;
-    }
+    exports_36("startGame", startGame);
     return {
         setters: [
             function (render_system_1_1) {
@@ -2024,44 +2077,12 @@ System.register("game", ["systems/render-system", "systems/wasd-system", "system
             }
         ],
         execute: function () {
-            exports_36("game", game = createGame());
-            entity_factory_2.populateEntityFactory(game);
-            component_factory_8.populateComponentFactory(game);
-            console.log(game.entityFactory.componentFactory.componentTypes);
-            console.log(game.entityFactory.componentFactory.createComponent("animation"));
-            player = game.addEntity("player");
-            pc = player.getComponent("position");
-            ac = player.getComponent("animation");
-            pc.x = 300;
-            pc.y = 380;
-            villager = game.addEntity("villager");
-            component = villager.getComponent("position");
-            fight = villager.getComponent("fight");
-            ac = villager.getComponent("animation");
-            component.x = 150;
-            component.y = 300;
-            component.vx = 0;
-            fight.attack = true;
-            v2 = game.addEntity("villager");
-            fight.target = v2;
-            component = v2.getComponent("position");
-            ac = v2.getComponent("animation");
-            fight = v2.getComponent("fight");
-            component.x = 600;
-            component.y = 800;
-            component.vx = 0;
-            fight.target = villager;
-            fight.attack = true;
-            projectile = game.addEntity("projectile");
-            pc = projectile.getComponent("position");
-            pc.x = 100;
-            pc.y = 500;
-            pc.vx = 0;
-            placeField(350, 300, "wheat", 50);
-            placeField(650, 300, "corn", 50);
-            placeField(350, 600, "turnip", 50);
-            placeField(650, 600, "onion", 50);
-            game.start();
+            (function () {
+                startGame();
+            })();
+            (function () {
+                setTimeout(startGame, 12000);
+            })();
         }
     };
 });
