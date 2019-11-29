@@ -1,8 +1,9 @@
 import { Entity } from './entity/entity';
 import { EntityFactory } from './entity/entity-factory';
 import { EntitySystem } from './system/system';
-import { HtmlRenderer, Renderer } from './renderers/render';
 import { EventManager } from './events/event-manager';
+import { Renderer } from './renderers/render';
+import { HtmlRenderer } from './renderers/html-renderer';
 
 
 

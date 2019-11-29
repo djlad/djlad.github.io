@@ -15,12 +15,11 @@ export class EntitySystem {
     targetComponents:Component[];
     game:Game;
 
-
     apply(entity:Entity, eventManager:EventManager):void{
         throw "an entity system did not implement apply method.";
     };
     applyEvents(entity:Entity, eventManager:EventManager):void{
-        throw "an did not implement apply Events";
+        throw "an entity did not implement apply Events";
     }
 
     //static create(game:Game):EntitySystem{

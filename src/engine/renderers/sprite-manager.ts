@@ -1,17 +1,17 @@
 import { SpriteAnimation } from "./sprite-animation";
 
 interface SpriteManager {
-
 }
 
 interface Sprite {
     widthImgs:number,
-    heightImgs:number
+    heightImgs:number,
+    frameCoords(spriteNumber:number):number[]
 }
 
-class HtmlSprite implements Sprite {
+export class HtmlSprite implements Sprite {
     constructor(fileName:string, widthImgs:number, heightImgs:number){
-        var spriteImg = new Image();
+        var spriteImg:HTMLImageElement = new Image();
         spriteImg.src = this.spriteDir + fileName;
         this.sprite = spriteImg;
         this.widthImgs = widthImgs;
@@ -32,7 +32,7 @@ class HtmlSprite implements Sprite {
         }
     }
 
-    frameCoords(spriteNum:number){
+    public frameCoords(spriteNum:number){
         var frameWidth:number = this.sprite.width/this.widthImgs;
         var frameHeight:number = this.sprite.height/this.heightImgs;
         var framex:number = spriteNum%this.widthImgs * frameWidth;
@@ -43,7 +43,7 @@ class HtmlSprite implements Sprite {
 
 export class HtmlSpriteManager implements SpriteManager{
     constructor(spriteDir:string="../sprites/"){}
-    sprites:{ [key: string]: HtmlSprite } = {};
+    sprites:{ [key: string]: Sprite} = {};
     animations:{ [key: string]: SpriteAnimation} = {};
     
     createSprite(fileName:string, widthImgs:number, heightImgs:number):HtmlSprite{
@@ -54,7 +54,7 @@ export class HtmlSpriteManager implements SpriteManager{
         this.sprites[spriteName] = sprite;
     }
 
-    getSprite(spriteName:string):HtmlSprite{
+    getSprite(spriteName:string):Sprite{
         if(! (spriteName in this.sprites)){
             throw "sprite "+spriteName+" does not exist";
         }

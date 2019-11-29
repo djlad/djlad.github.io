@@ -1,3 +1,5 @@
+import { Renderer } from "./render";
+import { HtmlSpriteManager, HtmlSprite } from "./sprite-manager";
 
 export class HtmlRenderer implements Renderer {
     canvas:HTMLCanvasElement;
@@ -16,7 +18,7 @@ export class HtmlRenderer implements Renderer {
     }
 
     sprite(spriteName:string, x:number, y:number, width:number, height:number, spriteNumber:number, flip:boolean=false){
-        var sprite = this.spriteManager.getSprite(spriteName);
+        var sprite:HtmlSprite = <HtmlSprite>this.spriteManager.getSprite(spriteName);
         var spriteImg = sprite.sprite;
         var fc = sprite.frameCoords(spriteNumber);
 
@@ -35,14 +37,10 @@ export class HtmlRenderer implements Renderer {
     }
 
     static create():HtmlRenderer{
-        return createHtmlRenderer();
+        var canvas:HTMLCanvasElement = <HTMLCanvasElement>document.getElementById("canvas");
+        canvas.width = 1000;
+        canvas.height = 850;
+        var hsm:HtmlSpriteManager = HtmlSpriteManager.create();
+        return new HtmlRenderer(canvas, hsm);
     }
-}
-
-function createHtmlRenderer():HtmlRenderer{
-    var canvas:HTMLCanvasElement = <HTMLCanvasElement>document.getElementById("canvas");
-    canvas.width = 1000;
-    canvas.height = 850;
-    var hsm:HtmlSpriteManager = HtmlSpriteManager.create();
-    return new HtmlRenderer(canvas, hsm);
 }

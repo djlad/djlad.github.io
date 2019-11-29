@@ -1,9 +1,10 @@
 import { EntitySystem } from '../engine/system/system';
-import { HtmlRenderer } from '../engine/renderers/render';
 import { AnimationComponent } from '../components/animation-component';
 import { Entity } from '../engine/entity/entity';
 import { PositionComponent } from '../components/position-component';
 import { Game } from '../engine/game';
+import { HtmlRenderer } from '../engine/renderers/html-renderer';
+import { Renderer } from '../engine/renderers/render';
 
 export class RenderSystem extends EntitySystem{
     /**
@@ -13,7 +14,7 @@ export class RenderSystem extends EntitySystem{
         super(game);
         this.renderer = renderer;
     }
-    renderer:HtmlRenderer;
+    renderer:Renderer;
 
     static create(game:Game):RenderSystem{
         var hr:HtmlRenderer = HtmlRenderer.create();
@@ -21,11 +22,10 @@ export class RenderSystem extends EntitySystem{
     }
 
     apply(entity:Entity){
-        console.log(5);
         var a:AnimationComponent = <AnimationComponent>entity.getComponent("animation", true);
         var p:PositionComponent = <PositionComponent>entity.getComponent("position", true);
         if (a == null || p == null)return;
-        var r:HtmlRenderer = this.renderer;
+        var r:Renderer = this.renderer;
         r.sprite(a.spriteName, p.x, p.y, p.width, p.height, a.getSpriteNumber(), !p.faceRight);
     }
     applyEvents(){}
