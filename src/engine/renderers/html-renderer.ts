@@ -1,5 +1,6 @@
 import { Renderer } from "./render";
-import { HtmlSpriteManager, HtmlSprite } from "./sprite-manager";
+import { HtmlSpriteManager} from "./sprite-manager";
+import { HtmlSprite } from "./html-sprite";
 
 export class HtmlRenderer implements Renderer {
     canvas:HTMLCanvasElement;

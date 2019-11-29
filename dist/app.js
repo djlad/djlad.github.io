@@ -32,14 +32,332 @@ System.register("engine/component/component", [], function (exports_1, context_1
         }
     };
 });
-System.register("engine/component/component-factory", ["engine/component/component"], function (exports_2, context_2) {
+System.register("components/position-component", ["engine/component/component"], function (exports_2, context_2) {
     "use strict";
-    var component_1, ComponentFactory;
+    var component_1, PositionComponent;
     var __moduleName = context_2 && context_2.id;
     return {
         setters: [
             function (component_1_1) {
                 component_1 = component_1_1;
+            }
+        ],
+        execute: function () {
+            PositionComponent = (function (_super) {
+                __extends(PositionComponent, _super);
+                function PositionComponent() {
+                    var _this = _super.call(this, "position") || this;
+                    _this._vx = 0;
+                    _this._vy = 0;
+                    _this.x = 0;
+                    _this.y = 0;
+                    _this.width = 100;
+                    _this.height = 100;
+                    _this.faceRight = true;
+                    _this.faceX = 0;
+                    _this.faceY = 0;
+                    _this.moved = false;
+                    return _this;
+                }
+                Object.defineProperty(PositionComponent.prototype, "vx", {
+                    get: function () {
+                        return this._vx;
+                    },
+                    set: function (vx) {
+                        this._vx = vx;
+                        if (vx == 0) {
+                            if (this.faceY !== 0) {
+                                this.faceX = vx;
+                            }
+                        }
+                        else {
+                            this.faceX = vx;
+                            if (this.faceY !== 0 && this.vy == 0) {
+                                this.faceY = 0;
+                            }
+                        }
+                    },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(PositionComponent.prototype, "vy", {
+                    get: function () {
+                        return this._vy;
+                    },
+                    set: function (vy) {
+                        this._vy = vy;
+                        if (vy == 0) {
+                            if (this.faceX !== 0) {
+                                this.faceY = vy;
+                            }
+                        }
+                        else {
+                            this.faceY = vy;
+                            if (this.faceX !== 0 && this.vx == 0) {
+                                this.faceX = 0;
+                            }
+                        }
+                    },
+                    enumerable: true,
+                    configurable: true
+                });
+                PositionComponent.prototype.update = function () {
+                    this.x += this.vx;
+                    this.y += this.vy;
+                    this.moved = !(this.vx === 0 && this.vy === 0);
+                };
+                PositionComponent.create = function () {
+                    return new PositionComponent();
+                };
+                return PositionComponent;
+            }(component_1.Component));
+            exports_2("PositionComponent", PositionComponent);
+        }
+    };
+});
+System.register("engine/renderers/sprite-animation", [], function (exports_3, context_3) {
+    "use strict";
+    var SpriteAnimation;
+    var __moduleName = context_3 && context_3.id;
+    return {
+        setters: [],
+        execute: function () {
+            SpriteAnimation = (function () {
+                function SpriteAnimation(animationName, spriteName, spriteNumbers, delay) {
+                    this.spriteNumbers = spriteNumbers;
+                    this.animationName = animationName;
+                    this.spriteName = spriteName;
+                    this.delay = delay;
+                }
+                SpriteAnimation.create = function (animationName, spriteName, spriteNumbers, delay) {
+                    if (delay === void 0) { delay = 1; }
+                    var sa = new SpriteAnimation(animationName, spriteName, spriteNumbers, delay);
+                    return sa;
+                };
+                return SpriteAnimation;
+            }());
+            exports_3("SpriteAnimation", SpriteAnimation);
+        }
+    };
+});
+System.register("engine/renderers/html-sprite", [], function (exports_4, context_4) {
+    "use strict";
+    var HtmlSprite;
+    var __moduleName = context_4 && context_4.id;
+    return {
+        setters: [],
+        execute: function () {
+            HtmlSprite = (function () {
+                function HtmlSprite(fileName, widthImgs, heightImgs) {
+                    this.spriteDir = "../sprites/";
+                    var spriteImg = new Image();
+                    spriteImg.src = this.spriteDir + fileName;
+                    this.sprite = spriteImg;
+                    this.widthImgs = widthImgs;
+                    this.heightImgs = heightImgs;
+                    spriteImg.onload = this.setFrameDimensions(this);
+                }
+                HtmlSprite.prototype.setFrameDimensions = function (sprite) {
+                    return function () {
+                        sprite.frameWidth = sprite.sprite.width / sprite.widthImgs;
+                        sprite.frameHeight = sprite.sprite.height / sprite.heightImgs;
+                    };
+                };
+                HtmlSprite.prototype.frameCoords = function (spriteNum) {
+                    var frameWidth = this.sprite.width / this.widthImgs;
+                    var frameHeight = this.sprite.height / this.heightImgs;
+                    var framex = spriteNum % this.widthImgs * frameWidth;
+                    var framey = Math.floor(spriteNum / this.widthImgs) * frameHeight;
+                    return [framex, framey];
+                };
+                return HtmlSprite;
+            }());
+            exports_4("HtmlSprite", HtmlSprite);
+        }
+    };
+});
+System.register("engine/renderers/sprite-manager", ["engine/renderers/sprite-animation", "engine/renderers/html-sprite"], function (exports_5, context_5) {
+    "use strict";
+    var sprite_animation_1, html_sprite_1, HtmlSpriteManager;
+    var __moduleName = context_5 && context_5.id;
+    function createSpriteManager() {
+        var sm = new HtmlSpriteManager();
+        sm.loadSprite("blondDress", "blond.png", 4, 8);
+        sm.loadSprite("blond", "blondWalk.png", 4, 2);
+        sm.addAnimation("blond", "blondWalk", [4, 5, 6, 7], 5);
+        sm.addAnimation("blond", "blond", [4], 5);
+        sm.loadSprite("fantasySprites", "fantasysprites.png", 12, 8);
+        sm.addAnimation("fantasySprites", "redHair", [24, 25, 26, 25], 6);
+        sm.loadSprite("crops", "crops.png", 12, 8);
+        sm.addAnimation("crops", "turnip0", [0]);
+        sm.addAnimation("crops", "turnip1", [1]);
+        sm.addAnimation("crops", "turnip2", [2]);
+        sm.addAnimation("crops", "corn0", [30]);
+        sm.addAnimation("crops", "corn1", [31]);
+        sm.addAnimation("crops", "corn2", [32]);
+        sm.addAnimation("crops", "wheat0", [33]);
+        sm.addAnimation("crops", "wheat1", [34]);
+        sm.addAnimation("crops", "wheat2", [35]);
+        sm.addAnimation("crops", "pumpkin0", [54]);
+        sm.addAnimation("crops", "pumpkin1", [55]);
+        sm.addAnimation("crops", "pumpkin2", [56]);
+        sm.loadSprite("scrops", "scrops.png", 24, 23);
+        sm.addAnimation("scrops", "onion0", [0]);
+        sm.addAnimation("scrops", "onion1", [1]);
+        sm.addAnimation("scrops", "onion2", [2]);
+        sm.addAnimation("scrops", "onion3", [3]);
+        sm.addAnimation("scrops", "onion4", [4]);
+        sm.addAnimation("scrops", "onion5", [5]);
+        sm.addAnimation("scrops", "onion", [6]);
+        var cn = 24 * 8 + 18;
+        sm.addAnimation("scrops", "corn", [cn]);
+        sm.loadSprite("victorian", "victoriansprites.png", 12, 8);
+        sm.addAnimation("victorian", "bluecloak", [24]);
+        sm.addAnimation("victorian", "bluecloakwalk", [24, 25, 26, 25], 5);
+        cn = 12 * 6;
+        sm.addAnimation("victorian", "grey", [cn], 5);
+        sm.addAnimation("victorian", "greyWalk", [cn, cn + 1, cn + 2, cn + 1], 5);
+        cn = 8 * 4;
+        sm.loadSprite("fireball", "fireball.png", 8, 8);
+        sm.addAnimation("fireball", "fireball", [cn, cn + 1, cn + 2, cn + 3, cn + 4, cn + 5, cn + 6, cn + 7]);
+        sm.loadSprite("tilesetcrops", "tilesets/submission_daneeklu/tilesets/plants.png", 9, 6);
+        cn = 6;
+        sm.addAnimation("tilesetcrops", "tomato0", [cn + 0]);
+        sm.addAnimation("tilesetcrops", "tomato1", [cn + 9]);
+        sm.addAnimation("tilesetcrops", "tomato2", [cn + 18]);
+        sm.addAnimation("tilesetcrops", "tomato3", [cn + 27]);
+        sm.addAnimation("tilesetcrops", "tomato4", [cn + 36]);
+        return sm;
+    }
+    return {
+        setters: [
+            function (sprite_animation_1_1) {
+                sprite_animation_1 = sprite_animation_1_1;
+            },
+            function (html_sprite_1_1) {
+                html_sprite_1 = html_sprite_1_1;
+            }
+        ],
+        execute: function () {
+            HtmlSpriteManager = (function () {
+                function HtmlSpriteManager(spriteDir) {
+                    if (spriteDir === void 0) { spriteDir = "../sprites/"; }
+                    this.sprites = {};
+                    this.animations = {};
+                }
+                HtmlSpriteManager.prototype.createSprite = function (fileName, widthImgs, heightImgs) {
+                    return new html_sprite_1.HtmlSprite(fileName, widthImgs, heightImgs);
+                };
+                HtmlSpriteManager.prototype.addSprite = function (spriteName, sprite) {
+                    this.sprites[spriteName] = sprite;
+                };
+                HtmlSpriteManager.prototype.getSprite = function (spriteName) {
+                    if (!(spriteName in this.sprites)) {
+                        throw "sprite " + spriteName + " does not exist";
+                    }
+                    return this.sprites[spriteName];
+                };
+                HtmlSpriteManager.prototype.loadSprite = function (spriteName, fileName, widthImgs, heightImgs) {
+                    var sprite = this.createSprite(fileName, widthImgs, heightImgs);
+                    this.addSprite(spriteName, sprite);
+                };
+                HtmlSpriteManager.prototype.addAnimation = function (spriteName, animationName, spriteNumbers, delay) {
+                    if (delay === void 0) { delay = 1; }
+                    var sa = sprite_animation_1.SpriteAnimation.create(animationName, spriteName, spriteNumbers, delay);
+                    if (!(spriteName in this.sprites)) {
+                        throw "error adding animation "
+                            + animationName
+                            + ". spriteName "
+                            + spriteName
+                            + "doesn't exist. sprites must be added through addSprite method first";
+                    }
+                    this.animations[animationName] = sa;
+                };
+                HtmlSpriteManager.prototype.getAnimation = function (animationName) {
+                    return this.animations[animationName];
+                };
+                HtmlSpriteManager.create = function () {
+                    return createSpriteManager();
+                };
+                return HtmlSpriteManager;
+            }());
+            exports_5("HtmlSpriteManager", HtmlSpriteManager);
+        }
+    };
+});
+System.register("components/animation-component", ["engine/component/component", "engine/renderers/sprite-manager"], function (exports_6, context_6) {
+    "use strict";
+    var component_2, sprite_manager_1, AnimationComponent;
+    var __moduleName = context_6 && context_6.id;
+    return {
+        setters: [
+            function (component_2_1) {
+                component_2 = component_2_1;
+            },
+            function (sprite_manager_1_1) {
+                sprite_manager_1 = sprite_manager_1_1;
+            }
+        ],
+        execute: function () {
+            AnimationComponent = (function (_super) {
+                __extends(AnimationComponent, _super);
+                function AnimationComponent(animationName, delay, spriteManager) {
+                    var _this = _super.call(this, "animation") || this;
+                    _this.frameNum = 0;
+                    _this.spriteNum = 0;
+                    _this.delay = delay;
+                    _this.currentDelay = delay;
+                    _this.spriteManager = spriteManager;
+                    _this.setSprite(animationName);
+                    _this.animationName = animationName;
+                    return _this;
+                }
+                AnimationComponent.prototype.getSpriteNumber = function () {
+                    var frameNum = this.frameNum;
+                    var spriteNum = this.spriteNumbers[frameNum];
+                    return spriteNum;
+                };
+                AnimationComponent.prototype.setSprite = function (animationName) {
+                    if (animationName == this.animationName) {
+                        return;
+                    }
+                    this.animationName = animationName;
+                    var animation = this.spriteManager.getAnimation(animationName);
+                    this.spriteNumbers = animation.spriteNumbers;
+                    this.spriteName = animation.spriteName;
+                    this.delay = animation.delay;
+                    this.frameNum = 0;
+                };
+                AnimationComponent.prototype.update = function () {
+                    if (this.currentDelay == 0) {
+                        this.frameNum++;
+                        this.frameNum %= this.spriteNumbers.length;
+                        this.spriteNum = this.getSpriteNumber();
+                        this.currentDelay = this.delay;
+                    }
+                    else {
+                        this.currentDelay--;
+                    }
+                };
+                AnimationComponent.create = function () {
+                    var spriteManager = sprite_manager_1.HtmlSpriteManager.create();
+                    var ac = new AnimationComponent("blond", 2, spriteManager);
+                    return ac;
+                };
+                return AnimationComponent;
+            }(component_2.Component));
+            exports_6("AnimationComponent", AnimationComponent);
+        }
+    };
+});
+System.register("engine/component/component-factory", ["engine/component/component"], function (exports_7, context_7) {
+    "use strict";
+    var component_3, ComponentFactory;
+    var __moduleName = context_7 && context_7.id;
+    return {
+        setters: [
+            function (component_3_1) {
+                component_3 = component_3_1;
             }
         ],
         execute: function () {
@@ -49,7 +367,7 @@ System.register("engine/component/component-factory", ["engine/component/compone
                 }
                 ComponentFactory.prototype.registerComponent = function (ComponentClass) {
                     var obj = ComponentClass.create();
-                    if (ComponentClass.prototype instanceof component_1.Component) {
+                    if (ComponentClass.prototype instanceof component_3.Component) {
                         this.componentTypes[obj.componentName] = ComponentClass;
                     }
                     else {
@@ -68,14 +386,14 @@ System.register("engine/component/component-factory", ["engine/component/compone
                 };
                 return ComponentFactory;
             }());
-            exports_2("ComponentFactory", ComponentFactory);
+            exports_7("ComponentFactory", ComponentFactory);
         }
     };
 });
-System.register("engine/events/event-manager", [], function (exports_3, context_3) {
+System.register("engine/events/event-manager", [], function (exports_8, context_8) {
     "use strict";
     var GameEvent, EventType, EventManager;
-    var __moduleName = context_3 && context_3.id;
+    var __moduleName = context_8 && context_8.id;
     return {
         setters: [],
         execute: function () {
@@ -93,7 +411,7 @@ System.register("engine/events/event-manager", [], function (exports_3, context_
                 };
                 return GameEvent;
             }());
-            exports_3("GameEvent", GameEvent);
+            exports_8("GameEvent", GameEvent);
             (function (EventType) {
                 EventType[EventType["wDown"] = 0] = "wDown";
                 EventType[EventType["aDown"] = 1] = "aDown";
@@ -112,7 +430,7 @@ System.register("engine/events/event-manager", [], function (exports_3, context_
                 EventType[EventType["inflictDamage"] = 14] = "inflictDamage";
                 EventType[EventType["changeVelocity"] = 15] = "changeVelocity";
             })(EventType || (EventType = {}));
-            exports_3("EventType", EventType);
+            exports_8("EventType", EventType);
             EventManager = (function () {
                 function EventManager() {
                     this.keys = Array(1000);
@@ -188,14 +506,14 @@ System.register("engine/events/event-manager", [], function (exports_3, context_
                 };
                 return EventManager;
             }());
-            exports_3("EventManager", EventManager);
+            exports_8("EventManager", EventManager);
         }
     };
 });
-System.register("engine/entity/entity", [], function (exports_4, context_4) {
+System.register("engine/entity/entity", [], function (exports_9, context_9) {
     "use strict";
     var Entity;
-    var __moduleName = context_4 && context_4.id;
+    var __moduleName = context_9 && context_9.id;
     return {
         setters: [],
         execute: function () {
@@ -249,14 +567,255 @@ System.register("engine/entity/entity", [], function (exports_4, context_4) {
                 Entity.id = -1;
                 return Entity;
             }());
-            exports_4("Entity", Entity);
+            exports_9("Entity", Entity);
         }
     };
 });
-System.register("engine/entity/entity-factory", ["engine/entity/entity", "engine/component/component-factory"], function (exports_5, context_5) {
+System.register("components/wasd-component", ["engine/component/component"], function (exports_10, context_10) {
+    "use strict";
+    var component_4, WasdComponent;
+    var __moduleName = context_10 && context_10.id;
+    return {
+        setters: [
+            function (component_4_1) {
+                component_4 = component_4_1;
+            }
+        ],
+        execute: function () {
+            WasdComponent = (function (_super) {
+                __extends(WasdComponent, _super);
+                function WasdComponent() {
+                    var _this = _super.call(this, "wasd") || this;
+                    _this.speed = 5;
+                    _this.sprite = "grey";
+                    _this.walkSprite = "greyWalk";
+                    return _this;
+                }
+                WasdComponent.prototype.update = function () { };
+                WasdComponent.create = function () {
+                    return new WasdComponent();
+                };
+                return WasdComponent;
+            }(component_4.Component));
+            exports_10("WasdComponent", WasdComponent);
+        }
+    };
+});
+System.register("components/crop-component", ["engine/component/component"], function (exports_11, context_11) {
+    "use strict";
+    var component_5, CropComponent;
+    var __moduleName = context_11 && context_11.id;
+    return {
+        setters: [
+            function (component_5_1) {
+                component_5 = component_5_1;
+            }
+        ],
+        execute: function () {
+            CropComponent = (function (_super) {
+                __extends(CropComponent, _super);
+                function CropComponent() {
+                    var _this = _super.call(this, "crop") || this;
+                    _this.timeSinceGrowth = 0;
+                    _this.growthLengths = [5, 5, 5];
+                    _this.growthStage = 0;
+                    _this.cropName = "turnip";
+                    _this.setCrop(_this.cropName);
+                    return _this;
+                }
+                CropComponent.prototype.setSprites = function (sprites) {
+                    this.growthSprites = sprites;
+                    this.growthStage = 0;
+                };
+                CropComponent.prototype.isGrown = function () {
+                    return this.growthStage == this.growthSprites.length - 1;
+                };
+                CropComponent.prototype.setCrop = function (cropName) {
+                    var cropLength = 30;
+                    this.growthLengths = [cropLength, cropLength, cropLength];
+                    switch (cropName) {
+                        case "turnip":
+                            this.growthSprites = ["turnip0", "turnip1", "turnip2"];
+                            this.growthLengths = [cropLength, cropLength, cropLength];
+                            break;
+                        case "corn":
+                            this.growthSprites = ["corn0", "corn1", "corn2"];
+                            this.growthLengths = [cropLength, cropLength, cropLength];
+                            break;
+                        case "wheat":
+                            this.growthSprites = ["wheat0", "wheat1", "wheat2"];
+                            this.growthLengths = [cropLength, cropLength, cropLength];
+                            break;
+                        case "pumpkin":
+                            this.growthSprites = ["pumpkin0", "pumpkin1", "pumpkin2"];
+                            this.growthLengths = [cropLength, cropLength, cropLength];
+                            break;
+                        case "onion":
+                            this.growthSprites = ["onion0", "onion1", "onion2", "onion3", "onion4", "onion5"];
+                            this.growthLengths = [cropLength, cropLength, cropLength, cropLength, cropLength, cropLength];
+                            break;
+                        case "tomato":
+                            this.growthSprites = ["tomato0", "tomato1", "tomato2", "tomato3"];
+                            this.growthLengths = [cropLength, cropLength, cropLength, cropLength];
+                            break;
+                    }
+                    this.growthStage = 0;
+                    this.cropName = cropName;
+                };
+                CropComponent.prototype.update = function () {
+                    if (this.isGrown()) {
+                        return;
+                    }
+                    this.timeSinceGrowth++;
+                    var gs = this.growthStage;
+                    var gl = this.growthLengths[gs];
+                    if (this.timeSinceGrowth > gl) {
+                        this.growthStage = (this.growthStage + 1) % this.growthLengths.length;
+                        this.timeSinceGrowth = 0;
+                    }
+                };
+                ;
+                CropComponent.create = function () {
+                    return new CropComponent();
+                };
+                ;
+                return CropComponent;
+            }(component_5.Component));
+            exports_11("CropComponent", CropComponent);
+        }
+    };
+});
+System.register("components/projectile-component", ["engine/component/component"], function (exports_12, context_12) {
+    "use strict";
+    var component_6, ProjectileComponent;
+    var __moduleName = context_12 && context_12.id;
+    return {
+        setters: [
+            function (component_6_1) {
+                component_6 = component_6_1;
+            }
+        ],
+        execute: function () {
+            ProjectileComponent = (function (_super) {
+                __extends(ProjectileComponent, _super);
+                function ProjectileComponent() {
+                    var _this = _super.call(this, "projectile") || this;
+                    _this.lifeSpan = 90;
+                    return _this;
+                }
+                ProjectileComponent.prototype.update = function () {
+                };
+                ProjectileComponent.create = function () {
+                    return new ProjectileComponent();
+                };
+                return ProjectileComponent;
+            }(component_6.Component));
+            exports_12("ProjectileComponent", ProjectileComponent);
+        }
+    };
+});
+System.register("components/fight-component", ["engine/component/component"], function (exports_13, context_13) {
+    "use strict";
+    var component_7, FightComponent;
+    var __moduleName = context_13 && context_13.id;
+    return {
+        setters: [
+            function (component_7_1) {
+                component_7 = component_7_1;
+            }
+        ],
+        execute: function () {
+            FightComponent = (function (_super) {
+                __extends(FightComponent, _super);
+                function FightComponent() {
+                    var _this = _super.call(this, "fight") || this;
+                    _this.attack = false;
+                    _this.maxSpeed = 5;
+                    _this.range = 300;
+                    _this.reloadTime = 30;
+                    _this.reloadTimer = 30;
+                    return _this;
+                }
+                FightComponent.prototype.attackTarget = function () {
+                };
+                FightComponent.prototype.canFire = function () {
+                    return this.reloadTime === this.reloadTimer;
+                };
+                FightComponent.prototype.update = function () {
+                    if (this.reloadTimer <= this.reloadTime) {
+                        this.reloadTimer--;
+                    }
+                    if (this.reloadTimer <= 0) {
+                        this.reloadTimer = this.reloadTime;
+                    }
+                };
+                FightComponent.create = function () {
+                    return new FightComponent();
+                };
+                return FightComponent;
+            }(component_7.Component));
+            exports_13("FightComponent", FightComponent);
+        }
+    };
+});
+System.register("components/health-component", ["engine/component/component"], function (exports_14, context_14) {
+    "use strict";
+    var component_8, HealthComponent;
+    var __moduleName = context_14 && context_14.id;
+    return {
+        setters: [
+            function (component_8_1) {
+                component_8 = component_8_1;
+            }
+        ],
+        execute: function () {
+            HealthComponent = (function (_super) {
+                __extends(HealthComponent, _super);
+                function HealthComponent() {
+                    var _this = _super.call(this, "health") || this;
+                    _this.health = 100;
+                    return _this;
+                }
+                HealthComponent.prototype.update = function () { };
+                HealthComponent.create = function () {
+                    return new HealthComponent();
+                };
+                return HealthComponent;
+            }(component_8.Component));
+            exports_14("HealthComponent", HealthComponent);
+        }
+    };
+});
+System.register("components/neural-fight-component", ["engine/component/component"], function (exports_15, context_15) {
+    "use strict";
+    var component_9, NeuralFightComponent;
+    var __moduleName = context_15 && context_15.id;
+    return {
+        setters: [
+            function (component_9_1) {
+                component_9 = component_9_1;
+            }
+        ],
+        execute: function () {
+            NeuralFightComponent = (function (_super) {
+                __extends(NeuralFightComponent, _super);
+                function NeuralFightComponent() {
+                    return _super.call(this, "neural") || this;
+                }
+                NeuralFightComponent.prototype.update = function () { };
+                NeuralFightComponent.create = function () {
+                    return new NeuralFightComponent();
+                };
+                return NeuralFightComponent;
+            }(component_9.Component));
+            exports_15("NeuralFightComponent", NeuralFightComponent);
+        }
+    };
+});
+System.register("engine/entity/entity-factory", ["engine/entity/entity", "engine/component/component-factory"], function (exports_16, context_16) {
     "use strict";
     var entity_1, component_factory_1, EntityFactory;
-    var __moduleName = context_5 && context_5.id;
+    var __moduleName = context_16 && context_16.id;
     return {
         setters: [
             function (entity_1_1) {
@@ -294,184 +853,51 @@ System.register("engine/entity/entity-factory", ["engine/entity/entity", "engine
                 };
                 return EntityFactory;
             }());
-            exports_5("EntityFactory", EntityFactory);
+            exports_16("EntityFactory", EntityFactory);
         }
     };
 });
-System.register("engine/renderers/render", [], function (exports_6, context_6) {
+System.register("engine/system/system", [], function (exports_17, context_17) {
     "use strict";
-    var __moduleName = context_6 && context_6.id;
+    var EntitySystem;
+    var __moduleName = context_17 && context_17.id;
+    return {
+        setters: [],
+        execute: function () {
+            EntitySystem = (function () {
+                function EntitySystem(game) {
+                    this.game = game;
+                }
+                EntitySystem.prototype.apply = function (entity, eventManager) {
+                    throw "an entity system did not implement apply method.";
+                };
+                ;
+                EntitySystem.prototype.applyEvents = function (entity, eventManager) {
+                    throw "an entity did not implement apply Events";
+                };
+                return EntitySystem;
+            }());
+            exports_17("EntitySystem", EntitySystem);
+        }
+    };
+});
+System.register("engine/renderers/render", [], function (exports_18, context_18) {
+    "use strict";
+    var __moduleName = context_18 && context_18.id;
     return {
         setters: [],
         execute: function () {
         }
     };
 });
-System.register("engine/renderers/sprite-animation", [], function (exports_7, context_7) {
+System.register("engine/renderers/html-renderer", ["engine/renderers/sprite-manager"], function (exports_19, context_19) {
     "use strict";
-    var SpriteAnimation;
-    var __moduleName = context_7 && context_7.id;
-    return {
-        setters: [],
-        execute: function () {
-            SpriteAnimation = (function () {
-                function SpriteAnimation(animationName, spriteName, spriteNumbers, delay) {
-                    this.spriteNumbers = spriteNumbers;
-                    this.animationName = animationName;
-                    this.spriteName = spriteName;
-                    this.delay = delay;
-                }
-                SpriteAnimation.create = function (animationName, spriteName, spriteNumbers, delay) {
-                    if (delay === void 0) { delay = 1; }
-                    var sa = new SpriteAnimation(animationName, spriteName, spriteNumbers, delay);
-                    return sa;
-                };
-                return SpriteAnimation;
-            }());
-            exports_7("SpriteAnimation", SpriteAnimation);
-        }
-    };
-});
-System.register("engine/renderers/sprite-manager", ["engine/renderers/sprite-animation"], function (exports_8, context_8) {
-    "use strict";
-    var sprite_animation_1, HtmlSprite, HtmlSpriteManager;
-    var __moduleName = context_8 && context_8.id;
-    function createSpriteManager() {
-        var sm = new HtmlSpriteManager();
-        sm.loadSprite("blondDress", "blond.png", 4, 8);
-        sm.loadSprite("blond", "blondWalk.png", 4, 2);
-        sm.addAnimation("blond", "blondWalk", [4, 5, 6, 7], 5);
-        sm.addAnimation("blond", "blond", [4], 5);
-        sm.loadSprite("fantasySprites", "fantasysprites.png", 12, 8);
-        sm.addAnimation("fantasySprites", "redHair", [24, 25, 26, 25], 6);
-        sm.loadSprite("crops", "crops.png", 12, 8);
-        sm.addAnimation("crops", "turnip0", [0]);
-        sm.addAnimation("crops", "turnip1", [1]);
-        sm.addAnimation("crops", "turnip2", [2]);
-        sm.addAnimation("crops", "corn0", [30]);
-        sm.addAnimation("crops", "corn1", [31]);
-        sm.addAnimation("crops", "corn2", [32]);
-        sm.addAnimation("crops", "wheat0", [33]);
-        sm.addAnimation("crops", "wheat1", [34]);
-        sm.addAnimation("crops", "wheat2", [35]);
-        sm.addAnimation("crops", "pumpkin0", [54]);
-        sm.addAnimation("crops", "pumpkin1", [55]);
-        sm.addAnimation("crops", "pumpkin2", [56]);
-        sm.loadSprite("scrops", "scrops.png", 24, 23);
-        sm.addAnimation("scrops", "onion0", [0]);
-        sm.addAnimation("scrops", "onion1", [1]);
-        sm.addAnimation("scrops", "onion2", [2]);
-        sm.addAnimation("scrops", "onion3", [3]);
-        sm.addAnimation("scrops", "onion4", [4]);
-        sm.addAnimation("scrops", "onion5", [5]);
-        sm.addAnimation("scrops", "onion", [6]);
-        var cn = 24 * 8 + 18;
-        sm.addAnimation("scrops", "corn", [cn]);
-        sm.loadSprite("victorian", "victoriansprites.png", 12, 8);
-        sm.addAnimation("victorian", "bluecloak", [24]);
-        sm.addAnimation("victorian", "bluecloakwalk", [24, 25, 26, 25], 5);
-        cn = 12 * 6;
-        sm.addAnimation("victorian", "grey", [cn], 5);
-        sm.addAnimation("victorian", "greyWalk", [cn, cn + 1, cn + 2, cn + 1], 5);
-        cn = 8 * 4;
-        sm.loadSprite("fireball", "fireball.png", 8, 8);
-        sm.addAnimation("fireball", "fireball", [cn, cn + 1, cn + 2, cn + 3, cn + 4, cn + 5, cn + 6, cn + 7]);
-        sm.loadSprite("tilesetcrops", "tilesets/submission_daneeklu/tilesets/plants.png", 9, 6);
-        cn = 6;
-        sm.addAnimation("tilesetcrops", "tomato0", [cn + 0]);
-        sm.addAnimation("tilesetcrops", "tomato1", [cn + 9]);
-        sm.addAnimation("tilesetcrops", "tomato2", [cn + 18]);
-        sm.addAnimation("tilesetcrops", "tomato3", [cn + 27]);
-        sm.addAnimation("tilesetcrops", "tomato4", [cn + 36]);
-        return sm;
-    }
+    var sprite_manager_2, HtmlRenderer;
+    var __moduleName = context_19 && context_19.id;
     return {
         setters: [
-            function (sprite_animation_1_1) {
-                sprite_animation_1 = sprite_animation_1_1;
-            }
-        ],
-        execute: function () {
-            HtmlSprite = (function () {
-                function HtmlSprite(fileName, widthImgs, heightImgs) {
-                    this.spriteDir = "../sprites/";
-                    var spriteImg = new Image();
-                    spriteImg.src = this.spriteDir + fileName;
-                    this.sprite = spriteImg;
-                    this.widthImgs = widthImgs;
-                    this.heightImgs = heightImgs;
-                    spriteImg.onload = this.setFrameDimensions(this);
-                }
-                HtmlSprite.prototype.setFrameDimensions = function (sprite) {
-                    return function () {
-                        sprite.frameWidth = sprite.sprite.width / sprite.widthImgs;
-                        sprite.frameHeight = sprite.sprite.height / sprite.heightImgs;
-                    };
-                };
-                HtmlSprite.prototype.frameCoords = function (spriteNum) {
-                    var frameWidth = this.sprite.width / this.widthImgs;
-                    var frameHeight = this.sprite.height / this.heightImgs;
-                    var framex = spriteNum % this.widthImgs * frameWidth;
-                    var framey = Math.floor(spriteNum / this.widthImgs) * frameHeight;
-                    return [framex, framey];
-                };
-                return HtmlSprite;
-            }());
-            exports_8("HtmlSprite", HtmlSprite);
-            HtmlSpriteManager = (function () {
-                function HtmlSpriteManager(spriteDir) {
-                    if (spriteDir === void 0) { spriteDir = "../sprites/"; }
-                    this.sprites = {};
-                    this.animations = {};
-                }
-                HtmlSpriteManager.prototype.createSprite = function (fileName, widthImgs, heightImgs) {
-                    return new HtmlSprite(fileName, widthImgs, heightImgs);
-                };
-                HtmlSpriteManager.prototype.addSprite = function (spriteName, sprite) {
-                    this.sprites[spriteName] = sprite;
-                };
-                HtmlSpriteManager.prototype.getSprite = function (spriteName) {
-                    if (!(spriteName in this.sprites)) {
-                        throw "sprite " + spriteName + " does not exist";
-                    }
-                    return this.sprites[spriteName];
-                };
-                HtmlSpriteManager.prototype.loadSprite = function (spriteName, fileName, widthImgs, heightImgs) {
-                    var sprite = this.createSprite(fileName, widthImgs, heightImgs);
-                    this.addSprite(spriteName, sprite);
-                };
-                HtmlSpriteManager.prototype.addAnimation = function (spriteName, animationName, spriteNumbers, delay) {
-                    if (delay === void 0) { delay = 1; }
-                    var sa = sprite_animation_1.SpriteAnimation.create(animationName, spriteName, spriteNumbers, delay);
-                    if (!(spriteName in this.sprites)) {
-                        throw "error adding animation "
-                            + animationName
-                            + ". spriteName "
-                            + spriteName
-                            + "doesn't exist. sprites must be added through addSprite method first";
-                    }
-                    this.animations[animationName] = sa;
-                };
-                HtmlSpriteManager.prototype.getAnimation = function (animationName) {
-                    return this.animations[animationName];
-                };
-                HtmlSpriteManager.create = function () {
-                    return createSpriteManager();
-                };
-                return HtmlSpriteManager;
-            }());
-            exports_8("HtmlSpriteManager", HtmlSpriteManager);
-        }
-    };
-});
-System.register("engine/renderers/html-renderer", ["engine/renderers/sprite-manager"], function (exports_9, context_9) {
-    "use strict";
-    var sprite_manager_1, HtmlRenderer;
-    var __moduleName = context_9 && context_9.id;
-    return {
-        setters: [
-            function (sprite_manager_1_1) {
-                sprite_manager_1 = sprite_manager_1_1;
+            function (sprite_manager_2_1) {
+                sprite_manager_2 = sprite_manager_2_1;
             }
         ],
         execute: function () {
@@ -503,19 +929,19 @@ System.register("engine/renderers/html-renderer", ["engine/renderers/sprite-mana
                     var canvas = document.getElementById("canvas");
                     canvas.width = 1000;
                     canvas.height = 760;
-                    var hsm = sprite_manager_1.HtmlSpriteManager.create();
+                    var hsm = sprite_manager_2.HtmlSpriteManager.create();
                     return new HtmlRenderer(canvas, hsm);
                 };
                 return HtmlRenderer;
             }());
-            exports_9("HtmlRenderer", HtmlRenderer);
+            exports_19("HtmlRenderer", HtmlRenderer);
         }
     };
 });
-System.register("engine/game", ["engine/entity/entity-factory", "engine/events/event-manager", "engine/renderers/html-renderer"], function (exports_10, context_10) {
+System.register("engine/game", ["engine/entity/entity-factory", "engine/events/event-manager", "engine/renderers/html-renderer"], function (exports_20, context_20) {
     "use strict";
     var entity_factory_1, event_manager_1, html_renderer_1, Game;
-    var __moduleName = context_10 && context_10.id;
+    var __moduleName = context_20 && context_20.id;
     return {
         setters: [
             function (entity_factory_1_1) {
@@ -627,427 +1053,14 @@ System.register("engine/game", ["engine/entity/entity-factory", "engine/events/e
                 };
                 return Game;
             }());
-            exports_10("Game", Game);
+            exports_20("Game", Game);
         }
     };
 });
-System.register("engine/system/system", [], function (exports_11, context_11) {
-    "use strict";
-    var EntitySystem;
-    var __moduleName = context_11 && context_11.id;
-    return {
-        setters: [],
-        execute: function () {
-            EntitySystem = (function () {
-                function EntitySystem(game) {
-                    this.game = game;
-                }
-                EntitySystem.prototype.apply = function (entity, eventManager) {
-                    throw "an entity system did not implement apply method.";
-                };
-                ;
-                EntitySystem.prototype.applyEvents = function (entity, eventManager) {
-                    throw "an entity did not implement apply Events";
-                };
-                return EntitySystem;
-            }());
-            exports_11("EntitySystem", EntitySystem);
-        }
-    };
-});
-System.register("components/position-component", ["engine/component/component"], function (exports_12, context_12) {
-    "use strict";
-    var component_2, PositionComponent;
-    var __moduleName = context_12 && context_12.id;
-    return {
-        setters: [
-            function (component_2_1) {
-                component_2 = component_2_1;
-            }
-        ],
-        execute: function () {
-            PositionComponent = (function (_super) {
-                __extends(PositionComponent, _super);
-                function PositionComponent() {
-                    var _this = _super.call(this, "position") || this;
-                    _this._vx = 0;
-                    _this._vy = 0;
-                    _this.x = 0;
-                    _this.y = 0;
-                    _this.width = 100;
-                    _this.height = 100;
-                    _this.faceRight = true;
-                    _this.faceX = 0;
-                    _this.faceY = 0;
-                    _this.moved = false;
-                    return _this;
-                }
-                Object.defineProperty(PositionComponent.prototype, "vx", {
-                    get: function () {
-                        return this._vx;
-                    },
-                    set: function (vx) {
-                        this._vx = vx;
-                        if (vx == 0) {
-                            if (this.faceY !== 0) {
-                                this.faceX = vx;
-                            }
-                        }
-                        else {
-                            this.faceX = vx;
-                            if (this.faceY !== 0 && this.vy == 0) {
-                                this.faceY = 0;
-                            }
-                        }
-                    },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(PositionComponent.prototype, "vy", {
-                    get: function () {
-                        return this._vy;
-                    },
-                    set: function (vy) {
-                        this._vy = vy;
-                        if (vy == 0) {
-                            if (this.faceX !== 0) {
-                                this.faceY = vy;
-                            }
-                        }
-                        else {
-                            this.faceY = vy;
-                            if (this.faceX !== 0 && this.vx == 0) {
-                                this.faceX = 0;
-                            }
-                        }
-                    },
-                    enumerable: true,
-                    configurable: true
-                });
-                PositionComponent.prototype.update = function () {
-                    this.x += this.vx;
-                    this.y += this.vy;
-                    this.moved = !(this.vx === 0 && this.vy === 0);
-                };
-                PositionComponent.create = function () {
-                    return new PositionComponent();
-                };
-                return PositionComponent;
-            }(component_2.Component));
-            exports_12("PositionComponent", PositionComponent);
-        }
-    };
-});
-System.register("components/animation-component", ["engine/component/component", "engine/renderers/sprite-manager"], function (exports_13, context_13) {
-    "use strict";
-    var component_3, sprite_manager_2, AnimationComponent;
-    var __moduleName = context_13 && context_13.id;
-    return {
-        setters: [
-            function (component_3_1) {
-                component_3 = component_3_1;
-            },
-            function (sprite_manager_2_1) {
-                sprite_manager_2 = sprite_manager_2_1;
-            }
-        ],
-        execute: function () {
-            AnimationComponent = (function (_super) {
-                __extends(AnimationComponent, _super);
-                function AnimationComponent(animationName, delay, spriteManager) {
-                    var _this = _super.call(this, "animation") || this;
-                    _this.frameNum = 0;
-                    _this.spriteNum = 0;
-                    _this.delay = delay;
-                    _this.currentDelay = delay;
-                    _this.spriteManager = spriteManager;
-                    _this.setSprite(animationName);
-                    _this.animationName = animationName;
-                    return _this;
-                }
-                AnimationComponent.prototype.getSpriteNumber = function () {
-                    var frameNum = this.frameNum;
-                    var spriteNum = this.spriteNumbers[frameNum];
-                    return spriteNum;
-                };
-                AnimationComponent.prototype.setSprite = function (animationName) {
-                    if (animationName == this.animationName) {
-                        return;
-                    }
-                    this.animationName = animationName;
-                    var animation = this.spriteManager.getAnimation(animationName);
-                    this.spriteNumbers = animation.spriteNumbers;
-                    this.spriteName = animation.spriteName;
-                    this.delay = animation.delay;
-                    this.frameNum = 0;
-                };
-                AnimationComponent.prototype.update = function () {
-                    if (this.currentDelay == 0) {
-                        this.frameNum++;
-                        this.frameNum %= this.spriteNumbers.length;
-                        this.spriteNum = this.getSpriteNumber();
-                        this.currentDelay = this.delay;
-                    }
-                    else {
-                        this.currentDelay--;
-                    }
-                };
-                AnimationComponent.create = function () {
-                    var spriteManager = sprite_manager_2.HtmlSpriteManager.create();
-                    var ac = new AnimationComponent("blond", 2, spriteManager);
-                    return ac;
-                };
-                return AnimationComponent;
-            }(component_3.Component));
-            exports_13("AnimationComponent", AnimationComponent);
-        }
-    };
-});
-System.register("components/wasd-component", ["engine/component/component"], function (exports_14, context_14) {
-    "use strict";
-    var component_4, WasdComponent;
-    var __moduleName = context_14 && context_14.id;
-    return {
-        setters: [
-            function (component_4_1) {
-                component_4 = component_4_1;
-            }
-        ],
-        execute: function () {
-            WasdComponent = (function (_super) {
-                __extends(WasdComponent, _super);
-                function WasdComponent() {
-                    var _this = _super.call(this, "wasd") || this;
-                    _this.speed = 5;
-                    _this.sprite = "grey";
-                    _this.walkSprite = "greyWalk";
-                    return _this;
-                }
-                WasdComponent.prototype.update = function () { };
-                WasdComponent.create = function () {
-                    return new WasdComponent();
-                };
-                return WasdComponent;
-            }(component_4.Component));
-            exports_14("WasdComponent", WasdComponent);
-        }
-    };
-});
-System.register("components/crop-component", ["engine/component/component"], function (exports_15, context_15) {
-    "use strict";
-    var component_5, CropComponent;
-    var __moduleName = context_15 && context_15.id;
-    return {
-        setters: [
-            function (component_5_1) {
-                component_5 = component_5_1;
-            }
-        ],
-        execute: function () {
-            CropComponent = (function (_super) {
-                __extends(CropComponent, _super);
-                function CropComponent() {
-                    var _this = _super.call(this, "crop") || this;
-                    _this.timeSinceGrowth = 0;
-                    _this.growthLengths = [5, 5, 5];
-                    _this.growthStage = 0;
-                    _this.cropName = "turnip";
-                    _this.setCrop(_this.cropName);
-                    return _this;
-                }
-                CropComponent.prototype.setSprites = function (sprites) {
-                    this.growthSprites = sprites;
-                    this.growthStage = 0;
-                };
-                CropComponent.prototype.isGrown = function () {
-                    return this.growthStage == this.growthSprites.length - 1;
-                };
-                CropComponent.prototype.setCrop = function (cropName) {
-                    var cropLength = 30;
-                    this.growthLengths = [cropLength, cropLength, cropLength];
-                    switch (cropName) {
-                        case "turnip":
-                            this.growthSprites = ["turnip0", "turnip1", "turnip2"];
-                            this.growthLengths = [cropLength, cropLength, cropLength];
-                            break;
-                        case "corn":
-                            this.growthSprites = ["corn0", "corn1", "corn2"];
-                            this.growthLengths = [cropLength, cropLength, cropLength];
-                            break;
-                        case "wheat":
-                            this.growthSprites = ["wheat0", "wheat1", "wheat2"];
-                            this.growthLengths = [cropLength, cropLength, cropLength];
-                            break;
-                        case "pumpkin":
-                            this.growthSprites = ["pumpkin0", "pumpkin1", "pumpkin2"];
-                            this.growthLengths = [cropLength, cropLength, cropLength];
-                            break;
-                        case "onion":
-                            this.growthSprites = ["onion0", "onion1", "onion2", "onion3", "onion4", "onion5"];
-                            this.growthLengths = [cropLength, cropLength, cropLength, cropLength, cropLength, cropLength];
-                            break;
-                        case "tomato":
-                            this.growthSprites = ["tomato0", "tomato1", "tomato2", "tomato3"];
-                            this.growthLengths = [cropLength, cropLength, cropLength, cropLength];
-                            break;
-                    }
-                    this.growthStage = 0;
-                    this.cropName = cropName;
-                };
-                CropComponent.prototype.update = function () {
-                    if (this.isGrown()) {
-                        return;
-                    }
-                    this.timeSinceGrowth++;
-                    var gs = this.growthStage;
-                    var gl = this.growthLengths[gs];
-                    if (this.timeSinceGrowth > gl) {
-                        this.growthStage = (this.growthStage + 1) % this.growthLengths.length;
-                        this.timeSinceGrowth = 0;
-                    }
-                };
-                ;
-                CropComponent.create = function () {
-                    return new CropComponent();
-                };
-                ;
-                return CropComponent;
-            }(component_5.Component));
-            exports_15("CropComponent", CropComponent);
-        }
-    };
-});
-System.register("components/projectile-component", ["engine/component/component"], function (exports_16, context_16) {
-    "use strict";
-    var component_6, ProjectileComponent;
-    var __moduleName = context_16 && context_16.id;
-    return {
-        setters: [
-            function (component_6_1) {
-                component_6 = component_6_1;
-            }
-        ],
-        execute: function () {
-            ProjectileComponent = (function (_super) {
-                __extends(ProjectileComponent, _super);
-                function ProjectileComponent() {
-                    var _this = _super.call(this, "projectile") || this;
-                    _this.lifeSpan = 90;
-                    return _this;
-                }
-                ProjectileComponent.prototype.update = function () {
-                };
-                ProjectileComponent.create = function () {
-                    return new ProjectileComponent();
-                };
-                return ProjectileComponent;
-            }(component_6.Component));
-            exports_16("ProjectileComponent", ProjectileComponent);
-        }
-    };
-});
-System.register("components/fight-component", ["engine/component/component"], function (exports_17, context_17) {
-    "use strict";
-    var component_7, FightComponent;
-    var __moduleName = context_17 && context_17.id;
-    return {
-        setters: [
-            function (component_7_1) {
-                component_7 = component_7_1;
-            }
-        ],
-        execute: function () {
-            FightComponent = (function (_super) {
-                __extends(FightComponent, _super);
-                function FightComponent() {
-                    var _this = _super.call(this, "fight") || this;
-                    _this.attack = false;
-                    _this.maxSpeed = 5;
-                    _this.range = 300;
-                    _this.reloadTime = 30;
-                    _this.reloadTimer = 30;
-                    return _this;
-                }
-                FightComponent.prototype.attackTarget = function () {
-                };
-                FightComponent.prototype.canFire = function () {
-                    return this.reloadTime === this.reloadTimer;
-                };
-                FightComponent.prototype.update = function () {
-                    if (this.reloadTimer <= this.reloadTime) {
-                        this.reloadTimer--;
-                    }
-                    if (this.reloadTimer <= 0) {
-                        this.reloadTimer = this.reloadTime;
-                    }
-                };
-                FightComponent.create = function () {
-                    return new FightComponent();
-                };
-                return FightComponent;
-            }(component_7.Component));
-            exports_17("FightComponent", FightComponent);
-        }
-    };
-});
-System.register("components/health-component", ["engine/component/component"], function (exports_18, context_18) {
-    "use strict";
-    var component_8, HealthComponent;
-    var __moduleName = context_18 && context_18.id;
-    return {
-        setters: [
-            function (component_8_1) {
-                component_8 = component_8_1;
-            }
-        ],
-        execute: function () {
-            HealthComponent = (function (_super) {
-                __extends(HealthComponent, _super);
-                function HealthComponent() {
-                    var _this = _super.call(this, "health") || this;
-                    _this.health = 100;
-                    return _this;
-                }
-                HealthComponent.prototype.update = function () { };
-                HealthComponent.create = function () {
-                    return new HealthComponent();
-                };
-                return HealthComponent;
-            }(component_8.Component));
-            exports_18("HealthComponent", HealthComponent);
-        }
-    };
-});
-System.register("components/neural-fight-component", ["engine/component/component"], function (exports_19, context_19) {
-    "use strict";
-    var component_9, NeuralFightComponent;
-    var __moduleName = context_19 && context_19.id;
-    return {
-        setters: [
-            function (component_9_1) {
-                component_9 = component_9_1;
-            }
-        ],
-        execute: function () {
-            NeuralFightComponent = (function (_super) {
-                __extends(NeuralFightComponent, _super);
-                function NeuralFightComponent() {
-                    return _super.call(this, "neural") || this;
-                }
-                NeuralFightComponent.prototype.update = function () { };
-                NeuralFightComponent.create = function () {
-                    return new NeuralFightComponent();
-                };
-                return NeuralFightComponent;
-            }(component_9.Component));
-            exports_19("NeuralFightComponent", NeuralFightComponent);
-        }
-    };
-});
-System.register("components/component-factory", ["components/position-component", "components/animation-component", "components/wasd-component", "components/crop-component", "components/projectile-component", "components/fight-component", "components/health-component", "components/neural-fight-component", "engine/component/component-factory"], function (exports_20, context_20) {
+System.register("components/component-factory", ["components/position-component", "components/animation-component", "components/wasd-component", "components/crop-component", "components/projectile-component", "components/fight-component", "components/health-component", "components/neural-fight-component", "engine/component/component-factory"], function (exports_21, context_21) {
     "use strict";
     var position_component_1, animation_component_1, wasd_component_1, crop_component_1, projectile_component_1, fight_component_1, health_component_1, neural_fight_component_1, component_factory_2;
-    var __moduleName = context_20 && context_20.id;
+    var __moduleName = context_21 && context_21.id;
     function createComponentFactory() {
         var cf = new component_factory_2.ComponentFactory();
         cf.registerComponent(animation_component_1.AnimationComponent);
@@ -1060,7 +1073,7 @@ System.register("components/component-factory", ["components/position-component"
         cf.registerComponent(neural_fight_component_1.NeuralFightComponent);
         return cf;
     }
-    exports_20("createComponentFactory", createComponentFactory);
+    exports_21("createComponentFactory", createComponentFactory);
     function populateComponentFactory(game) {
         game.registerComponent(animation_component_1.AnimationComponent);
         game.registerComponent(position_component_1.PositionComponent);
@@ -1071,7 +1084,7 @@ System.register("components/component-factory", ["components/position-component"
         game.registerComponent(health_component_1.HealthComponent);
         game.registerComponent(neural_fight_component_1.NeuralFightComponent);
     }
-    exports_20("populateComponentFactory", populateComponentFactory);
+    exports_21("populateComponentFactory", populateComponentFactory);
     return {
         setters: [
             function (position_component_1_1) {
@@ -1106,10 +1119,10 @@ System.register("components/component-factory", ["components/position-component"
         }
     };
 });
-System.register("entities/crop-entity", ["engine/entity/entity", "components/component-factory"], function (exports_21, context_21) {
+System.register("entities/crop-entity", ["engine/entity/entity", "components/component-factory"], function (exports_22, context_22) {
     "use strict";
     var entity_2, component_factory_3, CropEntity;
-    var __moduleName = context_21 && context_21.id;
+    var __moduleName = context_22 && context_22.id;
     return {
         setters: [
             function (entity_2_1) {
@@ -1139,14 +1152,14 @@ System.register("entities/crop-entity", ["engine/entity/entity", "components/com
                 };
                 return CropEntity;
             }(entity_2.Entity));
-            exports_21("CropEntity", CropEntity);
+            exports_22("CropEntity", CropEntity);
         }
     };
 });
-System.register("systems/render-system", ["engine/system/system", "engine/renderers/html-renderer"], function (exports_22, context_22) {
+System.register("systems/render-system", ["engine/system/system", "engine/renderers/html-renderer"], function (exports_23, context_23) {
     "use strict";
     var system_1, html_renderer_2, RenderSystem;
-    var __moduleName = context_22 && context_22.id;
+    var __moduleName = context_23 && context_23.id;
     return {
         setters: [
             function (system_1_1) {
@@ -1179,14 +1192,14 @@ System.register("systems/render-system", ["engine/system/system", "engine/render
                 RenderSystem.prototype.applyEvents = function () { };
                 return RenderSystem;
             }(system_1.EntitySystem));
-            exports_22("RenderSystem", RenderSystem);
+            exports_23("RenderSystem", RenderSystem);
         }
     };
 });
-System.register("systems/neural-fight-system", ["engine/system/system"], function (exports_23, context_23) {
+System.register("systems/neural-fight-system", ["engine/system/system"], function (exports_24, context_24) {
     "use strict";
     var system_2, NeuralFightSystem;
-    var __moduleName = context_23 && context_23.id;
+    var __moduleName = context_24 && context_24.id;
     return {
         setters: [
             function (system_2_1) {
@@ -1217,14 +1230,14 @@ System.register("systems/neural-fight-system", ["engine/system/system"], functio
                 };
                 return NeuralFightSystem;
             }(system_2.EntitySystem));
-            exports_23("NeuralFightSystem", NeuralFightSystem);
+            exports_24("NeuralFightSystem", NeuralFightSystem);
         }
     };
 });
-System.register("entities/villager-entity", ["engine/entity/entity", "components/component-factory"], function (exports_24, context_24) {
+System.register("entities/villager-entity", ["engine/entity/entity", "components/component-factory"], function (exports_25, context_25) {
     "use strict";
     var entity_3, component_factory_4, VillagerEntity;
-    var __moduleName = context_24 && context_24.id;
+    var __moduleName = context_25 && context_25.id;
     return {
         setters: [
             function (entity_3_1) {
@@ -1256,14 +1269,14 @@ System.register("entities/villager-entity", ["engine/entity/entity", "components
                 };
                 return VillagerEntity;
             }(entity_3.Entity));
-            exports_24("VillagerEntity", VillagerEntity);
+            exports_25("VillagerEntity", VillagerEntity);
         }
     };
 });
-System.register("entities/projectile-entity", ["engine/entity/entity", "components/component-factory"], function (exports_25, context_25) {
+System.register("entities/projectile-entity", ["engine/entity/entity", "components/component-factory"], function (exports_26, context_26) {
     "use strict";
     var entity_4, component_factory_5, ProjectileEntity;
-    var __moduleName = context_25 && context_25.id;
+    var __moduleName = context_26 && context_26.id;
     return {
         setters: [
             function (entity_4_1) {
@@ -1294,14 +1307,14 @@ System.register("entities/projectile-entity", ["engine/entity/entity", "componen
                 };
                 return ProjectileEntity;
             }(entity_4.Entity));
-            exports_25("ProjectileEntity", ProjectileEntity);
+            exports_26("ProjectileEntity", ProjectileEntity);
         }
     };
 });
-System.register("systems/wasd-system", ["engine/system/system", "engine/events/event-manager"], function (exports_26, context_26) {
+System.register("systems/wasd-system", ["engine/system/system", "engine/events/event-manager"], function (exports_27, context_27) {
     "use strict";
     var system_3, event_manager_2, WasdSystem;
-    var __moduleName = context_26 && context_26.id;
+    var __moduleName = context_27 && context_27.id;
     return {
         setters: [
             function (system_3_1) {
@@ -1384,14 +1397,14 @@ System.register("systems/wasd-system", ["engine/system/system", "engine/events/e
                 };
                 return WasdSystem;
             }(system_3.EntitySystem));
-            exports_26("WasdSystem", WasdSystem);
+            exports_27("WasdSystem", WasdSystem);
         }
     };
 });
-System.register("entities/player-entity", ["engine/entity/entity", "components/component-factory"], function (exports_27, context_27) {
+System.register("entities/player-entity", ["engine/entity/entity", "components/component-factory"], function (exports_28, context_28) {
     "use strict";
     var entity_5, component_factory_6, PlayerEntity;
-    var __moduleName = context_27 && context_27.id;
+    var __moduleName = context_28 && context_28.id;
     return {
         setters: [
             function (entity_5_1) {
@@ -1426,14 +1439,14 @@ System.register("entities/player-entity", ["engine/entity/entity", "components/c
                 };
                 return PlayerEntity;
             }(entity_5.Entity));
-            exports_27("PlayerEntity", PlayerEntity);
+            exports_28("PlayerEntity", PlayerEntity);
         }
     };
 });
-System.register("systems/crop-system", ["engine/system/system", "engine/events/event-manager", "entities/projectile-entity", "entities/player-entity"], function (exports_28, context_28) {
+System.register("systems/crop-system", ["engine/system/system", "engine/events/event-manager", "entities/projectile-entity", "entities/player-entity"], function (exports_29, context_29) {
     "use strict";
     var system_4, event_manager_3, projectile_entity_1, player_entity_1, CropSystem;
-    var __moduleName = context_28 && context_28.id;
+    var __moduleName = context_29 && context_29.id;
     return {
         setters: [
             function (system_4_1) {
@@ -1500,14 +1513,14 @@ System.register("systems/crop-system", ["engine/system/system", "engine/events/e
                 };
                 return CropSystem;
             }(system_4.EntitySystem));
-            exports_28("CropSystem", CropSystem);
+            exports_29("CropSystem", CropSystem);
         }
     };
 });
-System.register("entities/first-entity", ["engine/entity/entity", "components/component-factory"], function (exports_29, context_29) {
+System.register("entities/first-entity", ["engine/entity/entity", "components/component-factory"], function (exports_30, context_30) {
     "use strict";
     var entity_6, component_factory_7, FirstEntity;
-    var __moduleName = context_29 && context_29.id;
+    var __moduleName = context_30 && context_30.id;
     return {
         setters: [
             function (entity_6_1) {
@@ -1535,14 +1548,14 @@ System.register("entities/first-entity", ["engine/entity/entity", "components/co
                 };
                 return FirstEntity;
             }(entity_6.Entity));
-            exports_29("FirstEntity", FirstEntity);
+            exports_30("FirstEntity", FirstEntity);
         }
     };
 });
-System.register("systems/collision-system", ["engine/system/system", "engine/events/event-manager", "entities/first-entity"], function (exports_30, context_30) {
+System.register("systems/collision-system", ["engine/system/system", "engine/events/event-manager", "entities/first-entity"], function (exports_31, context_31) {
     "use strict";
     var system_5, event_manager_4, first_entity_1, CollisionSystem;
-    var __moduleName = context_30 && context_30.id;
+    var __moduleName = context_31 && context_31.id;
     return {
         setters: [
             function (system_5_1) {
@@ -1645,14 +1658,14 @@ System.register("systems/collision-system", ["engine/system/system", "engine/eve
                 };
                 return CollisionSystem;
             }(system_5.EntitySystem));
-            exports_30("CollisionSystem", CollisionSystem);
+            exports_31("CollisionSystem", CollisionSystem);
         }
     };
 });
-System.register("systems/projectile-system", ["engine/system/system", "entities/projectile-entity", "engine/events/event-manager"], function (exports_31, context_31) {
+System.register("systems/projectile-system", ["engine/system/system", "entities/projectile-entity", "engine/events/event-manager"], function (exports_32, context_32) {
     "use strict";
     var system_6, projectile_entity_2, event_manager_5, ProjectileSystem;
-    var __moduleName = context_31 && context_31.id;
+    var __moduleName = context_32 && context_32.id;
     return {
         setters: [
             function (system_6_1) {
@@ -1741,14 +1754,14 @@ System.register("systems/projectile-system", ["engine/system/system", "entities/
                 };
                 return ProjectileSystem;
             }(system_6.EntitySystem));
-            exports_31("ProjectileSystem", ProjectileSystem);
+            exports_32("ProjectileSystem", ProjectileSystem);
         }
     };
 });
-System.register("systems/fight-system", ["engine/system/system", "engine/events/event-manager"], function (exports_32, context_32) {
+System.register("systems/health-system", ["engine/system/system", "engine/events/event-manager"], function (exports_33, context_33) {
     "use strict";
-    var system_7, event_manager_6, FightSystem;
-    var __moduleName = context_32 && context_32.id;
+    var system_7, event_manager_6, HealthSystem;
+    var __moduleName = context_33 && context_33.id;
     return {
         setters: [
             function (system_7_1) {
@@ -1756,83 +1769,6 @@ System.register("systems/fight-system", ["engine/system/system", "engine/events/
             },
             function (event_manager_6_1) {
                 event_manager_6 = event_manager_6_1;
-            }
-        ],
-        execute: function () {
-            FightSystem = (function (_super) {
-                __extends(FightSystem, _super);
-                function FightSystem(game) {
-                    return _super.call(this, game) || this;
-                }
-                FightSystem.prototype.get_entity_direction = function (origin, destination) {
-                    var position1 = origin.getComponent("position");
-                    var position2 = destination.getComponent("position");
-                    var dx = position2.x - position1.x;
-                    var dy = position2.y - position1.y;
-                    var hypotenuse = Math.sqrt(dx * dx + dy * dy);
-                    dx /= hypotenuse;
-                    dy /= hypotenuse;
-                    return {
-                        dx: dx,
-                        dy: dy
-                    };
-                };
-                FightSystem.prototype.hypotenuse = function (e1, e2) {
-                    var position1 = e1.getComponent("position");
-                    var position2 = e2.getComponent("position");
-                    var dx = position2.x - position1.x;
-                    var dy = position2.y - position1.y;
-                    var hypotenuse = Math.sqrt(dx * dx + dy * dy);
-                    return hypotenuse;
-                };
-                FightSystem.prototype.apply = function (entity) {
-                    var fight = entity.getComponent("fight", true);
-                    if (fight == null)
-                        return;
-                    var position = entity.getComponent("position");
-                    if (!fight.attack)
-                        return;
-                    var hypotenuse = this.hypotenuse(entity, fight.target);
-                    var direction = this.get_entity_direction(entity, fight.target);
-                    if (hypotenuse > fight.range) {
-                        direction.dx *= fight.maxSpeed;
-                        direction.dy *= fight.maxSpeed;
-                        position.vx = direction.dx;
-                        position.vy = direction.dy;
-                    }
-                    else {
-                        position.vx = 0;
-                        position.vy = 0;
-                        if (fight.canFire()) {
-                            entity.emit(event_manager_6.GameEvent.create(event_manager_6.EventType.fireProjectile, { vx: direction.dx * 10, vy: direction.dy * 10 }));
-                            fight.reloadTimer--;
-                        }
-                    }
-                };
-                ;
-                FightSystem.prototype.applyEvents = function (entity) {
-                };
-                FightSystem.create = function (game) {
-                    return new FightSystem(game);
-                };
-                ;
-                return FightSystem;
-            }(system_7.EntitySystem));
-            exports_32("FightSystem", FightSystem);
-        }
-    };
-});
-System.register("systems/health-system", ["engine/system/system", "engine/events/event-manager"], function (exports_33, context_33) {
-    "use strict";
-    var system_8, event_manager_7, HealthSystem;
-    var __moduleName = context_33 && context_33.id;
-    return {
-        setters: [
-            function (system_8_1) {
-                system_8 = system_8_1;
-            },
-            function (event_manager_7_1) {
-                event_manager_7 = event_manager_7_1;
             }
         ],
         execute: function () {
@@ -1852,7 +1788,7 @@ System.register("systems/health-system", ["engine/system/system", "engine/events
                     for (var i = 0; i < events.length; i++) {
                         event = events[i];
                         switch (event.eventName) {
-                            case event_manager_7.EventType.inflictDamage:
+                            case event_manager_6.EventType.inflictDamage:
                                 this.handleDamage(entity, event);
                                 break;
                         }
@@ -1873,22 +1809,22 @@ System.register("systems/health-system", ["engine/system/system", "engine/events
                     return new HealthSystem(game);
                 };
                 return HealthSystem;
-            }(system_8.EntitySystem));
+            }(system_7.EntitySystem));
             exports_33("HealthSystem", HealthSystem);
         }
     };
 });
 System.register("systems/position-system", ["engine/system/system", "engine/events/event-manager"], function (exports_34, context_34) {
     "use strict";
-    var system_9, event_manager_8, PositionSystem;
+    var system_8, event_manager_7, PositionSystem;
     var __moduleName = context_34 && context_34.id;
     return {
         setters: [
-            function (system_9_1) {
-                system_9 = system_9_1;
+            function (system_8_1) {
+                system_8 = system_8_1;
             },
-            function (event_manager_8_1) {
-                event_manager_8 = event_manager_8_1;
+            function (event_manager_7_1) {
+                event_manager_7 = event_manager_7_1;
             }
         ],
         execute: function () {
@@ -1911,7 +1847,7 @@ System.register("systems/position-system", ["engine/system/system", "engine/even
                     for (var i = 0; i < events.length; i++) {
                         event = events[i];
                         switch (event.eventName) {
-                            case event_manager_8.EventType.changeVelocity:
+                            case event_manager_7.EventType.changeVelocity:
                                 if ("vx" in event.eventData) {
                                     position.vx = event.eventData.vx;
                                 }
@@ -1923,7 +1859,7 @@ System.register("systems/position-system", ["engine/system/system", "engine/even
                     }
                 };
                 return PositionSystem;
-            }(system_9.EntitySystem));
+            }(system_8.EntitySystem));
             exports_34("PositionSystem", PositionSystem);
         }
     };
@@ -2037,7 +1973,7 @@ System.register("game", ["systems/render-system", "systems/wasd-system", "system
             return crop;
         }
         var intervalId = game.start();
-        setTimeout(function () { game.stop(); }, 10000);
+        setTimeout(function () { game.stop(); }, 5000);
     }
     exports_36("startGame", startGame);
     return {
@@ -2081,7 +2017,7 @@ System.register("game", ["systems/render-system", "systems/wasd-system", "system
                 startGame();
             })();
             (function () {
-                setTimeout(startGame, 12000);
+                setTimeout(startGame, 6000);
             })();
         }
     };
@@ -2199,6 +2135,83 @@ System.register("components/inventory-component/inventory-registry", [], functio
                 };
                 return InventoryItemRegistry;
             }());
+        }
+    };
+});
+System.register("systems/fight-system", ["engine/system/system", "engine/events/event-manager"], function (exports_41, context_41) {
+    "use strict";
+    var system_9, event_manager_8, FightSystem;
+    var __moduleName = context_41 && context_41.id;
+    return {
+        setters: [
+            function (system_9_1) {
+                system_9 = system_9_1;
+            },
+            function (event_manager_8_1) {
+                event_manager_8 = event_manager_8_1;
+            }
+        ],
+        execute: function () {
+            FightSystem = (function (_super) {
+                __extends(FightSystem, _super);
+                function FightSystem(game) {
+                    return _super.call(this, game) || this;
+                }
+                FightSystem.prototype.get_entity_direction = function (origin, destination) {
+                    var position1 = origin.getComponent("position");
+                    var position2 = destination.getComponent("position");
+                    var dx = position2.x - position1.x;
+                    var dy = position2.y - position1.y;
+                    var hypotenuse = Math.sqrt(dx * dx + dy * dy);
+                    dx /= hypotenuse;
+                    dy /= hypotenuse;
+                    return {
+                        dx: dx,
+                        dy: dy
+                    };
+                };
+                FightSystem.prototype.hypotenuse = function (e1, e2) {
+                    var position1 = e1.getComponent("position");
+                    var position2 = e2.getComponent("position");
+                    var dx = position2.x - position1.x;
+                    var dy = position2.y - position1.y;
+                    var hypotenuse = Math.sqrt(dx * dx + dy * dy);
+                    return hypotenuse;
+                };
+                FightSystem.prototype.apply = function (entity) {
+                    var fight = entity.getComponent("fight", true);
+                    if (fight == null)
+                        return;
+                    var position = entity.getComponent("position");
+                    if (!fight.attack)
+                        return;
+                    var hypotenuse = this.hypotenuse(entity, fight.target);
+                    var direction = this.get_entity_direction(entity, fight.target);
+                    if (hypotenuse > fight.range) {
+                        direction.dx *= fight.maxSpeed;
+                        direction.dy *= fight.maxSpeed;
+                        position.vx = direction.dx;
+                        position.vy = direction.dy;
+                    }
+                    else {
+                        position.vx = 0;
+                        position.vy = 0;
+                        if (fight.canFire()) {
+                            entity.emit(event_manager_8.GameEvent.create(event_manager_8.EventType.fireProjectile, { vx: direction.dx * 10, vy: direction.dy * 10 }));
+                            fight.reloadTimer--;
+                        }
+                    }
+                };
+                ;
+                FightSystem.prototype.applyEvents = function (entity) {
+                };
+                FightSystem.create = function (game) {
+                    return new FightSystem(game);
+                };
+                ;
+                return FightSystem;
+            }(system_9.EntitySystem));
+            exports_41("FightSystem", FightSystem);
         }
     };
 });

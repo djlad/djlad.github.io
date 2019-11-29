@@ -1,8 +1,5 @@
-import { Entity } from './engine/entity/entity';
-import { EntitySystem } from './engine/system/system';
 import { PositionComponent } from './components/position-component';
 import { AnimationComponent } from './components/animation-component';
-import { EventManager } from './engine/events/event-manager';
 import { CropEntity } from './entities/crop-entity';
 import { CropComponent } from './components/crop-component';
 import { RenderSystem } from './systems/render-system';
@@ -10,21 +7,17 @@ import { WasdSystem } from './systems/wasd-system';
 import { CropSystem } from './systems/crop-system';
 import { CollisionSystem } from './systems/collision-system';
 import { ProjectileEntity } from './entities/projectile-entity';
-import { ProjectileComponent } from './components/projectile-component';
 import { ProjectileSystem } from './systems/projectile-system';
-import { FightSystem } from './systems/fight-system';
 import { FightComponent } from './components/fight-component';
 import { HealthSystem } from './systems/health-system';
 import { PositionSystem } from './systems/position-system';
 
-import * as Synaptic from "synaptic"; // Need this to refer to Synaptic from within the `declare global`
 import { NeuralFightSystem } from './systems/neural-fight-system';
 import { populateEntityFactory } from './entities/entity-factory';
-import { EntityFactory } from './engine/entity/entity-factory';
 import { Game } from './engine/game';
 import { populateComponentFactory } from './components/component-factory';
+
 declare var synaptic:any;
-//console.log(Synaptic.Neuron)
 
 function createGame():Game{
     let game:Game = Game.create()
@@ -39,7 +32,6 @@ function createGame():Game{
     game.addSystem(NeuralFightSystem.create(game));
     return game;
 }
-
 
 export function startGame(){
     let game = createGame();
@@ -110,12 +102,12 @@ export function startGame(){
         return crop
     }
     let intervalId:number = game.start();
-    setTimeout(()=>{game.stop()},10000);
+    setTimeout(()=>{game.stop()},5000);
 }
 (function(){
     startGame();
 })();
 
 (function(){
-    setTimeout(startGame, 12000);
+    setTimeout(startGame, 6000);
 })();
