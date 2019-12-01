@@ -53,7 +53,7 @@ export class PositionComponent extends Component {
     update():void{
         this.x += this.vx;
         this.y += this.vy;
-        this.moved = !(this.vx === 0 && this.vy === 0);
+        this.moved = !(this.vx == 0 && this.vy == 0);
     }
 
     static create():PositionComponent{

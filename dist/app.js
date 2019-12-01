@@ -104,7 +104,7 @@ System.register("components/position-component", ["engine/component/component"],
                 PositionComponent.prototype.update = function () {
                     this.x += this.vx;
                     this.y += this.vy;
-                    this.moved = !(this.vx === 0 && this.vy === 0);
+                    this.moved = !(this.vx == 0 && this.vy == 0);
                 };
                 PositionComponent.create = function () {
                     return new PositionComponent();
@@ -1406,7 +1406,7 @@ System.register("systems/wasd-system", ["engine/system/system", "engine/events/e
                                 animation.setSprite(sprite);
                                 position.vx = 0;
                                 break;
-                            case event_manager_2.EventType.spaceDown:
+                            case event_manager_2.EventType.spaceUp:
                                 var ge = event_manager_2.GameEvent.create(event_manager_2.EventType.fireProjectile);
                                 entity.emit(ge);
                                 break;
@@ -1609,7 +1609,6 @@ System.register("systems/collision-system", ["engine/system/system", "engine/eve
                 CollisionSystem.prototype.checkCol = function (e1, e2) {
                     var distance = this.distance(e1, e2);
                     var p1 = e1.getComponent("position");
-                    var p2 = e2.getComponent("position");
                     var mask = ((p1.width) + (p1.height)) / 4;
                     var collision = distance < mask;
                     return collision;
@@ -1642,6 +1641,17 @@ System.register("systems/collision-system", ["engine/system/system", "engine/eve
                 };
                 CollisionSystem.prototype.apply = function (entity) {
                     if (entity instanceof first_entity_1.FirstEntity) {
+                        var collidingEntities;
+                        for (var key in this.colliding) {
+                            collidingEntities = this.colliding[key];
+                            collision = this.checkCol(collidingEntities[0], collidingEntities[1]);
+                            if (collision && !collidingEntities[0].destroyed && !collidingEntities[1].destroyed) {
+                                this.emitCollision(collidingEntities[0], collidingEntities[1]);
+                            }
+                            else {
+                                this.removeCollision(collidingEntities[0], collidingEntities[1]);
+                            }
+                        }
                         for (var i_1 = 0; i_1 < this.movingEntities.length; i_1++) {
                             delete this.movingEntities[i_1];
                         }
@@ -1659,19 +1669,6 @@ System.register("systems/collision-system", ["engine/system/system", "engine/eve
                     }
                     if (position.moved) {
                         this.movingEntities.push(entity);
-                    }
-                    if (entity instanceof first_entity_1.FirstEntity) {
-                        var collidingEntities;
-                        for (var key in this.colliding) {
-                            collidingEntities = this.colliding[key];
-                            collision = this.checkCol(collidingEntities[0], collidingEntities[1]);
-                            if (collision && !collidingEntities[0].destroyed && !collidingEntities[1].destroyed) {
-                                this.emitCollision(collidingEntities[0], collidingEntities[1]);
-                            }
-                            else {
-                                this.removeCollision(collidingEntities[0], collidingEntities[1]);
-                            }
-                        }
                     }
                 };
                 ;
