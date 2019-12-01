@@ -122,4 +122,9 @@ export class Game {
     registerComponent(EntityClass:any):void{
         this.entityFactory.registerComponent(EntityClass);
     }
+
+    registerSprite():void{
+        // sm.loadSprite("tilesetcrops", "tilesets/submission_daneeklu/tilesets/plants.png", 9, 6);
+        // sm.addAnimation("tilesetcrops", "tomato0", [cn + 0]);
+    }
 }

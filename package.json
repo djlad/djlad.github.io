@@ -6,7 +6,7 @@
   "dependencies": {
     "@types/synaptic": "^1.0.3",
     "synaptic": "^1.1.4",
-    "systemjs": "^2.1.1",
+    "systemjs": "^2.1.2",
     "typescript": "^3.2.2"
   },
   "devDependencies": {},

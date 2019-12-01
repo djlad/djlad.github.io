@@ -1,5 +1,5 @@
 import { SpriteAnimation } from "./sprite-animation";
-import { HtmlSprite } from "./html-sprite";
+import { HtmlSprite } from "./implementations/html/html-sprite";
 
 export class SpriteManager {
     constructor(spriteDir:string="../sprites/"){}

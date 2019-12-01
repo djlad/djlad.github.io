@@ -1,7 +1,7 @@
 import { SpriteManager} from "../../sprite-manager";
-import { HtmlSprite } from "../../html-sprite";
+import { HtmlSprite } from "./html-sprite";
 import { Renderer } from "../../render";
-import { createSpriteManager } from "../../../../render/create-render";
+import { createSpriteManager } from "../../../../render/sprite-manager";
 
 export class HtmlRenderer implements Renderer {
     canvas:HTMLCanvasElement;
@@ -42,7 +42,7 @@ export class HtmlRenderer implements Renderer {
         var canvas:HTMLCanvasElement = <HTMLCanvasElement>document.getElementById("canvas");
         canvas.width = 1000;
         canvas.height = 760;
-        var hsm:SpriteManager = createSpriteManager();
-        return new HtmlRenderer(canvas, hsm);
+        var spriteManager:SpriteManager = createSpriteManager();
+        return new HtmlRenderer(canvas, spriteManager);
     }
 }

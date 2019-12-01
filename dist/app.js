@@ -140,7 +140,7 @@ System.register("engine/renderers/sprite-animation", [], function (exports_3, co
         }
     };
 });
-System.register("engine/renderers/html-sprite", [], function (exports_4, context_4) {
+System.register("engine/renderers/implementations/html/html-sprite", [], function (exports_4, context_4) {
     "use strict";
     var HtmlSprite;
     var __moduleName = context_4 && context_4.id;
@@ -176,7 +176,7 @@ System.register("engine/renderers/html-sprite", [], function (exports_4, context
         }
     };
 });
-System.register("engine/renderers/sprite-manager", ["engine/renderers/sprite-animation", "engine/renderers/html-sprite"], function (exports_5, context_5) {
+System.register("engine/renderers/sprite-manager", ["engine/renderers/sprite-animation", "engine/renderers/implementations/html/html-sprite"], function (exports_5, context_5) {
     "use strict";
     var sprite_animation_1, html_sprite_1, SpriteManager;
     var __moduleName = context_5 && context_5.id;
@@ -236,7 +236,7 @@ System.register("engine/renderers/sprite-manager", ["engine/renderers/sprite-ani
         }
     };
 });
-System.register("render/create-render", ["engine/renderers/sprite-manager"], function (exports_6, context_6) {
+System.register("render/sprite-manager", ["engine/renderers/sprite-manager"], function (exports_6, context_6) {
     "use strict";
     var sprite_manager_1;
     var __moduleName = context_6 && context_6.id;
@@ -304,17 +304,17 @@ System.register("render/create-render", ["engine/renderers/sprite-manager"], fun
         }
     };
 });
-System.register("components/animation-component", ["engine/component/component", "render/create-render"], function (exports_7, context_7) {
+System.register("components/animation-component", ["engine/component/component", "render/sprite-manager"], function (exports_7, context_7) {
     "use strict";
-    var component_2, create_render_1, AnimationComponent;
+    var component_2, sprite_manager_2, AnimationComponent;
     var __moduleName = context_7 && context_7.id;
     return {
         setters: [
             function (component_2_1) {
                 component_2 = component_2_1;
             },
-            function (create_render_1_1) {
-                create_render_1 = create_render_1_1;
+            function (sprite_manager_2_1) {
+                sprite_manager_2 = sprite_manager_2_1;
             }
         ],
         execute: function () {
@@ -359,7 +359,7 @@ System.register("components/animation-component", ["engine/component/component",
                     }
                 };
                 AnimationComponent.create = function () {
-                    var spriteManager = create_render_1.createSpriteManager();
+                    var spriteManager = sprite_manager_2.createSpriteManager();
                     var ac = new AnimationComponent("blond", 2, spriteManager);
                     return ac;
                 };
@@ -909,14 +909,14 @@ System.register("engine/renderers/render", [], function (exports_19, context_19)
         }
     };
 });
-System.register("engine/renderers/implementations/html/html-renderer", ["render/create-render"], function (exports_20, context_20) {
+System.register("engine/renderers/implementations/html/html-renderer", ["render/sprite-manager"], function (exports_20, context_20) {
     "use strict";
-    var create_render_2, HtmlRenderer;
+    var sprite_manager_3, HtmlRenderer;
     var __moduleName = context_20 && context_20.id;
     return {
         setters: [
-            function (create_render_2_1) {
-                create_render_2 = create_render_2_1;
+            function (sprite_manager_3_1) {
+                sprite_manager_3 = sprite_manager_3_1;
             }
         ],
         execute: function () {
@@ -948,8 +948,8 @@ System.register("engine/renderers/implementations/html/html-renderer", ["render/
                     var canvas = document.getElementById("canvas");
                     canvas.width = 1000;
                     canvas.height = 760;
-                    var hsm = create_render_2.createSpriteManager();
-                    return new HtmlRenderer(canvas, hsm);
+                    var spriteManager = sprite_manager_3.createSpriteManager();
+                    return new HtmlRenderer(canvas, spriteManager);
                 };
                 return HtmlRenderer;
             }());
@@ -1069,6 +1069,8 @@ System.register("engine/game", ["engine/entity/entity-factory", "engine/events/e
                 };
                 Game.prototype.registerComponent = function (EntityClass) {
                     this.entityFactory.registerComponent(EntityClass);
+                };
+                Game.prototype.registerSprite = function () {
                 };
                 return Game;
             }());
@@ -1917,15 +1919,16 @@ System.register("entities/entity-factory", ["entities/player-entity", "entities/
         }
     };
 });
-System.register("game", ["systems/render-system", "systems/wasd-system", "systems/crop-system", "systems/projectile-system", "systems/health-system", "systems/position-system", "systems/neural-fight-system", "entities/entity-factory", "engine/game", "components/component-factory"], function (exports_37, context_37) {
+System.register("game", ["systems/render-system", "systems/wasd-system", "systems/crop-system", "systems/collision-system", "systems/projectile-system", "systems/health-system", "systems/position-system", "systems/neural-fight-system", "entities/entity-factory", "engine/game", "components/component-factory"], function (exports_37, context_37) {
     "use strict";
-    var render_system_1, wasd_system_1, crop_system_1, projectile_system_1, health_system_1, position_system_1, neural_fight_system_1, entity_factory_2, game_1, component_factory_8;
+    var render_system_1, wasd_system_1, crop_system_1, collision_system_1, projectile_system_1, health_system_1, position_system_1, neural_fight_system_1, entity_factory_2, game_1, component_factory_8;
     var __moduleName = context_37 && context_37.id;
     function createGame() {
         var game = game_1.Game.create();
         game.addSystem(render_system_1.RenderSystem.create(game));
         game.addSystem(wasd_system_1.WasdSystem.create(game));
         game.addSystem(crop_system_1.CropSystem.create(game));
+        game.addSystem(collision_system_1.CollisionSystem.create(game));
         game.addSystem(projectile_system_1.ProjectileSystem.create(game));
         game.addSystem(health_system_1.HealthSystem.create(game));
         game.addSystem(position_system_1.PositionSystem.create(game));
@@ -2003,6 +2006,9 @@ System.register("game", ["systems/render-system", "systems/wasd-system", "system
             function (crop_system_1_1) {
                 crop_system_1 = crop_system_1_1;
             },
+            function (collision_system_1_1) {
+                collision_system_1 = collision_system_1_1;
+            },
             function (projectile_system_1_1) {
                 projectile_system_1 = projectile_system_1_1;
             },
@@ -2028,8 +2034,6 @@ System.register("game", ["systems/render-system", "systems/wasd-system", "system
         execute: function () {
             (function () {
                 startGame();
-            })();
-            (function () {
             })();
         }
     };

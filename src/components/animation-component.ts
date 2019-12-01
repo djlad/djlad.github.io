@@ -1,7 +1,7 @@
 import { Component } from '../engine/component/component';
 import { SpriteManager } from '../engine/renderers/sprite-manager';
 import { SpriteAnimation } from '../engine/renderers/sprite-animation';
-import { createSpriteManager } from '../render/create-render';
+import { createSpriteManager } from '../render/sprite-manager';
 
 export class AnimationComponent extends Component {
     constructor(animationName:string, delay:number, spriteManager:SpriteManager){

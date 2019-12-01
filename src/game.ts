@@ -24,7 +24,7 @@ function createGame():Game{
     game.addSystem(RenderSystem.create(game));
     game.addSystem(WasdSystem.create(game));
     game.addSystem(CropSystem.create(game));
-    //game.addSystem(CollisionSystem.create(game));
+    game.addSystem(CollisionSystem.create(game));
     game.addSystem(ProjectileSystem.create(game));
     //game.addSystem(FightSystem.create(game));
     game.addSystem(HealthSystem.create(game));
@@ -104,8 +104,4 @@ export function startGame(){
 }
 (function(){
     startGame();
-})();
-
-(function(){
-    //setTimeout(startGame, 6000);
 })();
