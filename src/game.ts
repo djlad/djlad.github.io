@@ -24,7 +24,7 @@ function createGame():Game{
     game.addSystem(RenderSystem.create(game));
     game.addSystem(WasdSystem.create(game));
     game.addSystem(CropSystem.create(game));
-    game.addSystem(CollisionSystem.create(game));
+    //game.addSystem(CollisionSystem.create(game));
     game.addSystem(ProjectileSystem.create(game));
     //game.addSystem(FightSystem.create(game));
     game.addSystem(HealthSystem.create(game));
@@ -37,8 +37,7 @@ export function startGame(){
     let game = createGame();
     populateEntityFactory(game);
     populateComponentFactory(game);
-    console.log(game.entityFactory.componentFactory.componentTypes);
-    console.log(game.entityFactory.componentFactory.createComponent("animation"));
+    game.entityFactory.componentFactory.createComponent("animation");
 
     var player = game.addEntity("player");
 
@@ -102,12 +101,11 @@ export function startGame(){
         return crop
     }
     let intervalId:number = game.start();
-    setTimeout(()=>{game.stop()},5000);
 }
 (function(){
     startGame();
 })();
 
 (function(){
-    setTimeout(startGame, 6000);
+    //setTimeout(startGame, 6000);
 })();

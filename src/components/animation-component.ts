@@ -1,9 +1,10 @@
 import { Component } from '../engine/component/component';
-import { HtmlSpriteManager } from '../engine/renderers/sprite-manager';
+import { SpriteManager } from '../engine/renderers/sprite-manager';
 import { SpriteAnimation } from '../engine/renderers/sprite-animation';
+import { createSpriteManager } from '../render/create-render';
 
 export class AnimationComponent extends Component {
-    constructor(animationName:string, delay:number, spriteManager:HtmlSpriteManager){
+    constructor(animationName:string, delay:number, spriteManager:SpriteManager){
         super("animation");
         this.delay = delay;
         this.currentDelay = delay;
@@ -17,7 +18,7 @@ export class AnimationComponent extends Component {
     delay:number;
     frameNum:number=0;
     spriteNum:number=0;
-    spriteManager:HtmlSpriteManager;
+    spriteManager:SpriteManager;
     currentDelay:number;
 
     getSpriteNumber(){
@@ -51,7 +52,7 @@ export class AnimationComponent extends Component {
     }
 
     static create():AnimationComponent{
-        var spriteManager:HtmlSpriteManager = HtmlSpriteManager.create();
+        var spriteManager:SpriteManager = createSpriteManager();
         var ac:AnimationComponent = new AnimationComponent("blond", 2, spriteManager);
         return ac;
     }

@@ -1,12 +1,13 @@
-import { Renderer } from "./render";
-import { HtmlSpriteManager} from "./sprite-manager";
-import { HtmlSprite } from "./html-sprite";
+import { SpriteManager} from "../../sprite-manager";
+import { HtmlSprite } from "../../html-sprite";
+import { Renderer } from "../../render";
+import { createSpriteManager } from "../../../../render/create-render";
 
 export class HtmlRenderer implements Renderer {
     canvas:HTMLCanvasElement;
     ctx:CanvasRenderingContext2D;
-    spriteManager:HtmlSpriteManager;
-    constructor(context:HTMLCanvasElement, spriteManager:HtmlSpriteManager){
+    spriteManager:SpriteManager;
+    constructor(context:HTMLCanvasElement, spriteManager:SpriteManager){
         this.canvas = context;
         this.ctx = <CanvasRenderingContext2D>this.canvas.getContext("2d");
         this.spriteManager = spriteManager;
@@ -41,7 +42,7 @@ export class HtmlRenderer implements Renderer {
         var canvas:HTMLCanvasElement = <HTMLCanvasElement>document.getElementById("canvas");
         canvas.width = 1000;
         canvas.height = 760;
-        var hsm:HtmlSpriteManager = HtmlSpriteManager.create();
+        var hsm:SpriteManager = createSpriteManager();
         return new HtmlRenderer(canvas, hsm);
     }
 }

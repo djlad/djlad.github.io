@@ -3,8 +3,8 @@ import { AnimationComponent } from '../components/animation-component';
 import { Entity } from '../engine/entity/entity';
 import { PositionComponent } from '../components/position-component';
 import { Game } from '../engine/game';
-import { HtmlRenderer } from '../engine/renderers/html-renderer';
 import { Renderer } from '../engine/renderers/render';
+import { HtmlRenderer } from '../engine/renderers/implementations/html/html-renderer';
 
 export class RenderSystem extends EntitySystem{
     /**
