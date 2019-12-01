@@ -1406,7 +1406,7 @@ System.register("systems/wasd-system", ["engine/system/system", "engine/events/e
                                 animation.setSprite(sprite);
                                 position.vx = 0;
                                 break;
-                            case event_manager_2.EventType.spaceUp:
+                            case event_manager_2.EventType.spaceDown:
                                 var ge = event_manager_2.GameEvent.create(event_manager_2.EventType.fireProjectile);
                                 entity.emit(ge);
                                 break;
@@ -1573,9 +1573,9 @@ System.register("entities/first-entity", ["engine/entity/entity", "components/co
         }
     };
 });
-System.register("systems/collision-system", ["engine/system/system", "engine/events/event-manager", "entities/first-entity"], function (exports_32, context_32) {
+System.register("systems/collision-system", ["engine/system/system", "engine/events/event-manager", "entities/first-entity", "entities/projectile-entity"], function (exports_32, context_32) {
     "use strict";
-    var system_5, event_manager_4, first_entity_1, CollisionSystem;
+    var system_5, event_manager_4, first_entity_1, projectile_entity_2, CollisionSystem;
     var __moduleName = context_32 && context_32.id;
     return {
         setters: [
@@ -1587,6 +1587,9 @@ System.register("systems/collision-system", ["engine/system/system", "engine/eve
             },
             function (first_entity_1_1) {
                 first_entity_1 = first_entity_1_1;
+            },
+            function (projectile_entity_2_1) {
+                projectile_entity_2 = projectile_entity_2_1;
             }
         ],
         execute: function () {
@@ -1594,7 +1597,7 @@ System.register("systems/collision-system", ["engine/system/system", "engine/eve
                 __extends(CollisionSystem, _super);
                 function CollisionSystem(game) {
                     var _this = _super.call(this, game) || this;
-                    _this.movingEntities = [];
+                    _this.movingEntities = {};
                     _this.colliding = {};
                     _this.numCollisions = 0;
                     return _this;
@@ -1639,6 +1642,9 @@ System.register("systems/collision-system", ["engine/system/system", "engine/eve
                     e1.emit(event_manager_4.GameEvent.create(event_manager_4.EventType.collision, e2));
                     e2.emit(event_manager_4.GameEvent.create(event_manager_4.EventType.collision, e1));
                 };
+                CollisionSystem.prototype.removeMovingEntity = function (id) {
+                    delete this.movingEntities[id];
+                };
                 CollisionSystem.prototype.apply = function (entity) {
                     if (entity instanceof first_entity_1.FirstEntity) {
                         var collidingEntities;
@@ -1652,23 +1658,30 @@ System.register("systems/collision-system", ["engine/system/system", "engine/eve
                                 this.removeCollision(collidingEntities[0], collidingEntities[1]);
                             }
                         }
-                        for (var i_1 = 0; i_1 < this.movingEntities.length; i_1++) {
-                            delete this.movingEntities[i_1];
+                        for (var id in this.movingEntities) {
+                            if (this.movingEntities[id].destroyed) {
+                                this.removeMovingEntity(parseInt(id));
+                            }
                         }
-                        this.movingEntities = [];
                     }
                     var position = entity.getComponent("position");
                     var collision;
                     var entityTarget;
-                    for (var i = 0; i < this.movingEntities.length; i++) {
-                        entityTarget = this.movingEntities[i];
+                    for (var id in this.movingEntities) {
+                        entityTarget = this.movingEntities[id];
                         collision = this.checkCol(entity, entityTarget);
                         if (collision) {
                             this.addCollision(entity, entityTarget);
                         }
                     }
                     if (position.moved) {
-                        this.movingEntities.push(entity);
+                        this.movingEntities[entity.id] = entity;
+                    }
+                    else {
+                        this.removeMovingEntity(entity.id);
+                    }
+                    if (entity instanceof projectile_entity_2.ProjectileEntity) {
+                        var position_1 = entity.getComponent("position");
                     }
                 };
                 ;
@@ -1685,15 +1698,15 @@ System.register("systems/collision-system", ["engine/system/system", "engine/eve
 });
 System.register("systems/projectile-system", ["engine/system/system", "entities/projectile-entity", "engine/events/event-manager"], function (exports_33, context_33) {
     "use strict";
-    var system_6, projectile_entity_2, event_manager_5, ProjectileSystem;
+    var system_6, projectile_entity_3, event_manager_5, ProjectileSystem;
     var __moduleName = context_33 && context_33.id;
     return {
         setters: [
             function (system_6_1) {
                 system_6 = system_6_1;
             },
-            function (projectile_entity_2_1) {
-                projectile_entity_2 = projectile_entity_2_1;
+            function (projectile_entity_3_1) {
+                projectile_entity_3 = projectile_entity_3_1;
             },
             function (event_manager_5_1) {
                 event_manager_5 = event_manager_5_1;
@@ -1752,13 +1765,13 @@ System.register("systems/projectile-system", ["engine/system/system", "entities/
                                 }
                                 break;
                             case event_manager_5.EventType.collision:
-                                var isProj = entity instanceof projectile_entity_2.ProjectileEntity;
+                                var isProj = entity instanceof projectile_entity_3.ProjectileEntity;
                                 if (!isProj)
                                     break;
                                 var projectile = entity.getComponent("projectile");
                                 var isShooter = projectile.shooterId === event.eventData.id;
                                 var isSelf = entity.id === event.eventData.id;
-                                var isProjectile = event.eventData instanceof projectile_entity_2.ProjectileEntity;
+                                var isProjectile = event.eventData instanceof projectile_entity_3.ProjectileEntity;
                                 var collidedId = event.eventData.id;
                                 var collided = this.game.getById(collidedId);
                                 if (!isShooter && !isSelf && !isProjectile) {
@@ -1887,14 +1900,14 @@ System.register("systems/position-system", ["engine/system/system", "engine/even
 });
 System.register("entities/entity-factory", ["entities/player-entity", "entities/villager-entity", "entities/crop-entity", "entities/first-entity", "entities/projectile-entity"], function (exports_36, context_36) {
     "use strict";
-    var player_entity_2, villager_entity_1, crop_entity_1, first_entity_2, projectile_entity_3;
+    var player_entity_2, villager_entity_1, crop_entity_1, first_entity_2, projectile_entity_4;
     var __moduleName = context_36 && context_36.id;
     function populateEntityFactory(game) {
         game.registerEntity("player", player_entity_2.PlayerEntity);
         game.registerEntity("villager", villager_entity_1.VillagerEntity);
         game.registerEntity("crop", crop_entity_1.CropEntity);
         game.registerEntity("first", first_entity_2.FirstEntity);
-        game.registerEntity("projectile", projectile_entity_3.ProjectileEntity);
+        game.registerEntity("projectile", projectile_entity_4.ProjectileEntity);
     }
     exports_36("populateEntityFactory", populateEntityFactory);
     return {
@@ -1911,8 +1924,8 @@ System.register("entities/entity-factory", ["entities/player-entity", "entities/
             function (first_entity_2_1) {
                 first_entity_2 = first_entity_2_1;
             },
-            function (projectile_entity_3_1) {
-                projectile_entity_3 = projectile_entity_3_1;
+            function (projectile_entity_4_1) {
+                projectile_entity_4 = projectile_entity_4_1;
             }
         ],
         execute: function () {

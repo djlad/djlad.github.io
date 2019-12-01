@@ -4,12 +4,13 @@ import { GameEvent, EventType } from '../engine/events/event-manager';
 import { PositionComponent } from '../components/position-component';
 import { FirstEntity } from '../entities/first-entity';
 import { Game } from '../engine/game';
+import { ProjectileEntity } from '../entities/projectile-entity';
 
 export class CollisionSystem extends EntitySystem{
     constructor(game:Game){
         super(game);
     }
-    movingEntities:Entity[]=[];
+    movingEntities:{[key:number]:Entity}={};
     colliding:{[key:string]:Entity[]}={};
     numCollisions:number=0;
 
@@ -53,8 +54,7 @@ export class CollisionSystem extends EntitySystem{
         }
     }
 
-    private emitCollision(e1:Entity, e2:Entity){
-        //console.log("collision")
+    private emitCollision(e1:Entity, e2:Entity):void{
         e1.emit(GameEvent.create(
             EventType.collision,
             e2
@@ -65,14 +65,12 @@ export class CollisionSystem extends EntitySystem{
         ));
     }
 
+    private removeMovingEntity(id:number):void{
+        delete this.movingEntities[id];
+    }
+
     apply(entity:Entity):void{
         if(entity instanceof FirstEntity){
-            /* emit existing collisions and 
-            remove collisions that stopped colliding*/
-            //console.log(this.colliding);
-            // if(this.movingEntities.length > 0){
-            //     console.log(this.movingEntities);
-            // }
             var collidingEntities:Entity[];
             for(var key in this.colliding){
                 collidingEntities = this.colliding[key];
@@ -84,19 +82,20 @@ export class CollisionSystem extends EntitySystem{
                 }
             }
 
-            //remove colliding entities
-            for(let i:number=0;i<this.movingEntities.length;i++){
-                delete this.movingEntities[i];
+            //remove destroyed moving entities
+            for(let id in this.movingEntities){
+                if(this.movingEntities[id].destroyed){
+                    this.removeMovingEntity(parseInt(id));
+                }
             }
-            this.movingEntities = [];
         }
         var position:PositionComponent = <PositionComponent>entity.getComponent("position");
         var collision:boolean;
         var entityTarget:Entity;
-
+        
         //for each moving entity check collision
-        for(var i:number=0;i<this.movingEntities.length;i++){
-            entityTarget = this.movingEntities[i];
+        for(let id in this.movingEntities){
+            entityTarget = this.movingEntities[id];
             collision = this.checkCol(entity, entityTarget);
             if(collision){
                 this.addCollision(entity, entityTarget);
@@ -106,7 +105,12 @@ export class CollisionSystem extends EntitySystem{
         //add entity to entities to be checked against all other objects
         //this only checks collisions for objects that are moving
         if(position.moved){
-            this.movingEntities.push(entity);
+            this.movingEntities[entity.id] = entity;
+        } else {
+            this.removeMovingEntity(entity.id);
+        }
+        if(entity instanceof ProjectileEntity){
+            let position = <PositionComponent>entity.getComponent("position");
         }
     };
 
