@@ -1642,6 +1642,9 @@ System.register("systems/collision-system", ["engine/system/system", "engine/eve
                 };
                 CollisionSystem.prototype.apply = function (entity) {
                     if (entity instanceof first_entity_1.FirstEntity) {
+                        for (var i_1 = 0; i_1 < this.movingEntities.length; i_1++) {
+                            delete this.movingEntities[i_1];
+                        }
                         this.movingEntities = [];
                     }
                     var position = entity.getComponent("position");
@@ -1940,6 +1943,7 @@ System.register("game", ["systems/render-system", "systems/wasd-system", "system
         entity_factory_2.populateEntityFactory(game);
         component_factory_8.populateComponentFactory(game);
         game.entityFactory.componentFactory.createComponent("animation");
+        game.addEntity("first");
         var player = game.addEntity("player");
         var pc = player.getComponent("position");
         var ac = player.getComponent("animation");

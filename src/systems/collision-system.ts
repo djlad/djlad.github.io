@@ -69,6 +69,9 @@ export class CollisionSystem extends EntitySystem{
 
     apply(entity:Entity):void{
         if(entity instanceof FirstEntity){
+            for(let i:number=0;i<this.movingEntities.length;i++){
+                delete this.movingEntities[i];
+            }
             this.movingEntities = [];
         }
         var position:PositionComponent = <PositionComponent>entity.getComponent("position");

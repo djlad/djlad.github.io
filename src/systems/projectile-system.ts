@@ -82,7 +82,6 @@ export class ProjectileSystem extends EntitySystem {
                 break;
             }
         }
-        //entity.targetedEvents = [];
     }
 
     static create(game:Game):ProjectileSystem{

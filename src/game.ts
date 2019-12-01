@@ -38,6 +38,7 @@ export function startGame(){
     populateEntityFactory(game);
     populateComponentFactory(game);
     game.entityFactory.componentFactory.createComponent("animation");
+    game.addEntity("first");
 
     var player = game.addEntity("player");
 
