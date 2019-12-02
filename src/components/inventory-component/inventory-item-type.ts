@@ -1,18 +1,22 @@
+import { InventoryItem } from "../inventory-component";
+
 export class InventoryItemType {
-    constructor(itemNumber:number, itemName:string, itemDescription:string){
-        this.itemNumber = itemNumber;
+    constructor(itemName:string, itemDescription:string, itemSpriteName:string){
+        InventoryItemType.largestItemId += 1;
+        this.itemId = InventoryItemType.largestItemId;
         this.itemName = itemName;
         this.itemDescription = itemDescription;
     }
-    itemNumber:number = 0;
+    static largestItemId:number = -1;
+    itemId:number = -1;
     itemName:string = "no name";
     itemDescription:string = "no description";
     itemSpriteName:string;
 
-    static create(itemNumber:number, itemName:string, itemDescription:string)
+    static create(itemName:string, itemSpriteName:string, itemDescription:string)
     :InventoryItemType{
         let newItemType:InventoryItemType;
-        newItemType = new InventoryItemType(itemNumber, itemName, itemDescription);
+        newItemType = new InventoryItemType(itemName, itemDescription, itemSpriteName);
         return newItemType;
     }
 }

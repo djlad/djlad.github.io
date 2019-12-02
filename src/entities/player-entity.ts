@@ -5,6 +5,7 @@ import { WasdComponent } from '../components/wasd-component';
 import { AnimationComponent } from '../components/animation-component';
 import { ComponentFactory } from '../engine/component/component-factory';
 import { createComponentFactory } from '../components/component-factory';
+import { InventoryComponent } from '../components/inventory-component';
 
 export class PlayerEntity extends Entity{
     constructor(componentFactory:ComponentFactory){
@@ -12,6 +13,7 @@ export class PlayerEntity extends Entity{
         var animation:AnimationComponent = <AnimationComponent>this.addComponent("animation");
         var position:PositionComponent = <PositionComponent>this.addComponent("position");
         var wasd:WasdComponent = <WasdComponent>this.addComponent("wasd");
+        var inventory:InventoryComponent = <InventoryComponent>this.addComponent("inventory");
         
         var sprite:string = "grey";
         var walkSprite:string = "greyWalk";

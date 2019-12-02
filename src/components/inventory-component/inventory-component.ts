@@ -1,20 +1,25 @@
 import { Component } from "../../engine/component/component";
-
-export class InventoryItem {
-    constructor(){}
-    itemNumber:number = 0;
-    itemName:string = "no name";
-    itemDescription:string = "no description";
-}
-
+import { InventoryItem } from "./inventory-item";
+import { InventoryItemRegistry } from "./item-registry";
 
 export class InventoryComponent extends Component {
-    constructor(){
+    constructor(itemRegistry:InventoryItemRegistry){
         super("inventory");
+        this.itemRegistry = itemRegistry;
     }
     inventory:InventoryItem[] = [];
+    itemRegistry:InventoryItemRegistry;
+
+    registerItemType(itemName:string, itemSpriteName:string, description:string){
+        this.itemRegistry.registerItemType(itemName, itemSpriteName, description);
+    }
+    addItem(itemName:string){
+
+    }
     update(){}
     static create():InventoryComponent{
-        return new InventoryComponent();
+        let inventory:InventoryComponent;
+        inventory = new InventoryComponent(InventoryItemRegistry.singletonCreate());
+        return inventory;
     }
 }
