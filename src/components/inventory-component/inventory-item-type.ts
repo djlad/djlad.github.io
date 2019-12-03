@@ -1,5 +1,3 @@
-import { InventoryItem } from "../inventory-component";
-
 export class InventoryItemType {
     constructor(itemName:string, itemDescription:string, itemSpriteName:string){
         InventoryItemType.largestItemId += 1;

@@ -8,7 +8,7 @@ import { HealthComponent } from './health-component';
 import { NeuralFightComponent } from './neural-fight-component';
 import { ComponentFactory } from "../engine/component/component-factory";
 import { Game } from '../engine/game';
-import { InventoryComponent } from './inventory-component';
+import { InventoryComponent } from './inventory-component/inventory-component';
 
 export function createComponentFactory():ComponentFactory{
     var cf:ComponentFactory = new ComponentFactory();

@@ -47,7 +47,7 @@ export abstract class Entity {
 
     update(){
         for(var i:number=0;i<this.components.length;i++){
-            this.components[i].update();
+            this.components[i].update(this);
         }
     }
 

@@ -37,7 +37,9 @@ export enum EventType {
 
     inflictDamage,
 
-    changeVelocity
+    changeVelocity,
+
+    giveItem,
 }
 
 export class EventManager {
