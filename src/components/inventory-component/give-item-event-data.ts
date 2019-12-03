@@ -1,4 +1,4 @@
-export class GiveItemData{
+export class GiveItemEventData{
     constructor(itemName:string, quantity:number){
         this.itemName=itemName;
         this.quantity = quantity;

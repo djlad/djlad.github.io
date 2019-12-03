@@ -1162,21 +1162,21 @@ System.register("components/inventory-component/item-registry", ["components/inv
         }
     };
 });
-System.register("components/inventory-component/give-item-data", [], function (exports_25, context_25) {
+System.register("components/inventory-component/give-item-event-data", [], function (exports_25, context_25) {
     "use strict";
-    var GiveItemData;
+    var GiveItemEventData;
     var __moduleName = context_25 && context_25.id;
     return {
         setters: [],
         execute: function () {
-            GiveItemData = (function () {
-                function GiveItemData(itemName, quantity) {
+            GiveItemEventData = (function () {
+                function GiveItemEventData(itemName, quantity) {
                     this.itemName = itemName;
                     this.quantity = quantity;
                 }
-                return GiveItemData;
+                return GiveItemEventData;
             }());
-            exports_25("GiveItemData", GiveItemData);
+            exports_25("GiveItemEventData", GiveItemEventData);
         }
     };
 });
@@ -1222,8 +1222,8 @@ System.register("components/inventory-component/inventory-component", ["engine/c
                     switch (event.eventName) {
                         case event_manager_2.EventType.giveItem:
                             var eventData = event.eventData;
-                            var itemName = event.eventData["itemName"];
-                            var quantity = event.eventData["quantity"];
+                            var itemName = eventData.itemName;
+                            var quantity = eventData.quantity;
                             this.addItem(itemName, quantity);
                             break;
                     }

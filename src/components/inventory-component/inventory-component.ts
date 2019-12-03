@@ -3,7 +3,7 @@ import { InventoryItem } from "./inventory-item";
 import { InventoryItemRegistry } from "./item-registry";
 import { Entity } from "../../engine/entity/entity";
 import { GameEvent, EventType } from "../../engine/events/event-manager";
-import { GiveItemData } from "./give-item-data";
+import { GiveItemEventData } from "./give-item-event-data";
 
 export class InventoryComponent extends Component {
     constructor(itemRegistry:InventoryItemRegistry){
@@ -30,9 +30,9 @@ export class InventoryComponent extends Component {
     private handleEvents(event:GameEvent):void{
         switch(event.eventName){
             case EventType.giveItem:
-                let eventData = <GiveItemData>event.eventData;
-                let itemName:string = event.eventData["itemName"];
-                let quantity:number = event.eventData["quantity"];
+                let eventData:GiveItemEventData = <GiveItemEventData>event.eventData;
+                let itemName:string = eventData.itemName;
+                let quantity:number = eventData.quantity;
                 this.addItem(itemName, quantity);
             break;
         }
