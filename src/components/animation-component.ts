@@ -52,6 +52,7 @@ export class AnimationComponent extends Component {
     }
 
     static create():AnimationComponent{
+        //var spriteManager:SpriteManager = SpriteManager.create();
         var spriteManager:SpriteManager = createSpriteManager();
         var ac:AnimationComponent = new AnimationComponent("blond", 2, spriteManager);
         return ac;

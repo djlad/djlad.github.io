@@ -4,7 +4,7 @@ import { PositionComponent } from '../components/position-component';
 import { WasdComponent } from '../components/wasd-component';
 import { AnimationComponent } from '../components/animation-component';
 import { ComponentFactory } from '../engine/component/component-factory';
-import { createComponentFactory } from '../components/component-factory';
+import { createComponentFactory } from '../builders/build-components';
 import { InventoryComponent } from '../components/inventory-component/inventory-component';
 
 export class PlayerEntity extends Entity{

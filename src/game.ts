@@ -13,9 +13,10 @@ import { HealthSystem } from './systems/health-system';
 import { PositionSystem } from './systems/position-system';
 
 import { NeuralFightSystem } from './systems/neural-fight-system';
-import { populateEntityFactory } from './entities/entity-factory';
 import { Game } from './engine/game';
-import { populateComponentFactory } from './components/component-factory';
+import { buildSprites } from './builders/sprite-builder';
+import { buildEntities } from './builders/entity-builder';
+import { buildComponents } from './builders/build-components';
 
 declare var synaptic:any;
 
@@ -30,13 +31,15 @@ function createGame():Game{
     game.addSystem(HealthSystem.create(game));
     game.addSystem(PositionSystem.create(game));
     game.addSystem(NeuralFightSystem.create(game));
+
+    buildSprites(game)
+    buildEntities(game);
+    buildComponents(game);
     return game;
 }
 
 export function startGame(){
-    let game = createGame();
-    populateEntityFactory(game);
-    populateComponentFactory(game);
+    let game:Game = createGame();
     game.entityFactory.componentFactory.createComponent("animation");
     game.addEntity("first");
 

@@ -6,7 +6,7 @@ import { createSpriteManager } from "../../../../render/sprite-manager";
 export class HtmlRenderer implements Renderer {
     canvas:HTMLCanvasElement;
     ctx:CanvasRenderingContext2D;
-    spriteManager:SpriteManager;
+    public spriteManager:SpriteManager;
     constructor(context:HTMLCanvasElement, spriteManager:SpriteManager){
         this.canvas = context;
         this.ctx = <CanvasRenderingContext2D>this.canvas.getContext("2d");
@@ -42,7 +42,8 @@ export class HtmlRenderer implements Renderer {
         var canvas:HTMLCanvasElement = <HTMLCanvasElement>document.getElementById("canvas");
         canvas.width = 1000;
         canvas.height = 760;
-        var spriteManager:SpriteManager = createSpriteManager();
+        var spriteManager:SpriteManager = SpriteManager.create();
+        //var spriteManager:SpriteManager = createSpriteManager();
         return new HtmlRenderer(canvas, spriteManager);
     }
 }

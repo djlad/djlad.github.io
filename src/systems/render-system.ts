@@ -5,19 +5,20 @@ import { PositionComponent } from '../components/position-component';
 import { Game } from '../engine/game';
 import { Renderer } from '../engine/renderers/render';
 import { HtmlRenderer } from '../engine/renderers/implementations/html/html-renderer';
+import { populateSpriteManager } from '../builders/sprite-builder';
 
 export class RenderSystem extends EntitySystem{
     /**
      * used for drawing animation components
      */
-    constructor(renderer:HtmlRenderer, game:Game){
+    constructor(renderer:Renderer, game:Game){
         super(game);
         this.renderer = renderer;
     }
     renderer:Renderer;
 
     static create(game:Game):RenderSystem{
-        var hr:HtmlRenderer = HtmlRenderer.create();
+        let hr:Renderer = game.renderer;
         return new RenderSystem(hr, game);
     }
 

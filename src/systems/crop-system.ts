@@ -7,6 +7,7 @@ import { ProjectileEntity } from '../entities/projectile-entity';
 import { PlayerEntity } from '../entities/player-entity';
 import { PositionComponent } from '../components/position-component';
 import { Game } from '../engine/game';
+import { InventoryComponent } from '../components/inventory-component/inventory-component';
 
 export class CropSystem extends EntitySystem {
     constructor(game:Game){
@@ -40,17 +41,15 @@ export class CropSystem extends EntitySystem {
 
     handleEvent(event:GameEvent, entity:Entity):void{
         //console.log(event)
-        var crop:CropComponent = <CropComponent>entity.getComponent("crop");
+        let crop:CropComponent = <CropComponent>entity.getComponent("crop");
         switch (event.eventName){
             case EventType.collision:
-                //console.log(event.eventData);
-
-                if (event.eventData instanceof ProjectileEntity){
-                    crop.setCrop("wheat");
-                } else if(event.eventData instanceof PlayerEntity){
-                    crop.setCrop("turnip");
-                } else {
-                    crop.setCrop("corn");
+                if(event.eventData instanceof PlayerEntity){
+                    let player:PlayerEntity = <PlayerEntity>event.eventData;
+                    let playerInventory:InventoryComponent = <InventoryComponent>player.getComponent("inventory");
+                    playerInventory.addItem(crop.cropName, 1);
+                    console.log(playerInventory);
+                    entity.destroyed = true;
                 }
                 break;
         }

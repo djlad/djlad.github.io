@@ -2,7 +2,7 @@ import { Entity } from '../engine/entity/entity';
 import { GameEvent } from '../engine/events/event-manager';
 import { PositionComponent } from '../components/position-component';
 import { ComponentFactory } from '../engine/component/component-factory';
-import { createComponentFactory } from '../components/component-factory';
+import { createComponentFactory } from '../builders/build-components';
 
 export class FirstEntity extends Entity{
     /**

@@ -4,12 +4,14 @@ import { EntitySystem } from './system/system';
 import { EventManager } from './events/event-manager';
 import { Renderer } from './renderers/render';
 import { HtmlRenderer } from './renderers/implementations/html/html-renderer';
+import { SpriteManager } from './renderers/sprite-manager';
 
 export class Game {
     constructor(entityFactory:EntityFactory, renderer:Renderer, eventManager:EventManager){
         this.entityFactory = entityFactory;
         this.renderer = renderer;
         this.eventManager = eventManager;
+        this.spriteManager = this.renderer.spriteManager;
     }
 
     static create():Game{
@@ -31,6 +33,7 @@ export class Game {
     renderer:Renderer;
     eventManager:EventManager;
     intervalId:number;
+    spriteManager:SpriteManager;
     update(){
         this.renderer.cbox();
         this.eventManager.update();
@@ -121,10 +124,5 @@ export class Game {
 
     registerComponent(EntityClass:any):void{
         this.entityFactory.registerComponent(EntityClass);
-    }
-
-    registerSprite():void{
-        // sm.loadSprite("tilesetcrops", "tilesets/submission_daneeklu/tilesets/plants.png", 9, 6);
-        // sm.addAnimation("tilesetcrops", "tomato0", [cn + 0]);
     }
 }

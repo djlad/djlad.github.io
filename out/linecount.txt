@@ -1,0 +1,106 @@
+===============================================================================
+EXTENSION NAME : linecount
+EXTENSION VERSION : 0.1.7
+-------------------------------------------------------------------------------
+count time : 2019-12-02 23:34:24
+count workspace : /Users/firefly/git/djlad.github.io
+total files : 94
+total code lines : 4209
+total comment lines : 101
+total blank lines : 244
+
+.gitignore, code is 2, comment is 0, blank is 0.
+dist/app.js, code is 2298, comment is 1, blank is 0.
+dist/app.js.map, code is 1, comment is 0, blank is 0.
+dist/cdnindex.html, code is 12, comment is 0, blank is 0.
+dist/index.html, code is 19, comment is 0, blank is 3.
+index.html, code is 1, comment is 0, blank is 0.
+package-lock.json, code is 28, comment is 0, blank is 0.
+package.json, code is 26, comment is 0, blank is 0.
+run.bat, code is 3, comment is 0, blank is 0.
+sprites/blond.piskel, code is 1, comment is 0, blank is 0.
+sprites/blond.png, it is a binary file.
+sprites/blondWalk.piskel, code is 1, comment is 0, blank is 0.
+sprites/blondWalk.png, it is a binary file.
+sprites/crops.png, it is a binary file.
+sprites/fantasysprites.png, it is a binary file.
+sprites/fireball.png, it is a binary file.
+sprites/plants.tsx, code is 4, comment is 0, blank is 0.
+sprites/scrops.png, it is a binary file.
+sprites/tilesets/firstmap.tmx, code is 107, comment is 0, blank is 0.
+sprites/tilesets/plants.tsx, code is 4, comment is 0, blank is 0.
+sprites/tilesets/scrops.tsx, code is 4, comment is 0, blank is 0.
+sprites/tilesets/submission_daneeklu/character/grab_sheet.png, it is a binary file.
+sprites/tilesets/submission_daneeklu/character/sword_sheet_128.png, it is a binary file.
+sprites/tilesets/submission_daneeklu/magic/magic_firelion_big.png, it is a binary file.
+sprites/tilesets/submission_daneeklu/magic/magic_firelion_sheet.png, it is a binary file.
+sprites/tilesets/submission_daneeklu/magic/magic_iceshield_sheet.png, it is a binary file.
+sprites/tilesets/submission_daneeklu/magic/magic_snakebite_sheet.png, it is a binary file.
+sprites/tilesets/submission_daneeklu/magic/magic_torrentacle.png, it is a binary file.
+sprites/tilesets/submission_daneeklu/magic/turtleshell_front.png, it is a binary file.
+sprites/tilesets/submission_daneeklu/magic/turtleshell_side.png, it is a binary file.
+sprites/tilesets/submission_daneeklu/magics_preview.gif, it is a binary file.
+sprites/tilesets/submission_daneeklu/readme.txt, code is 18, comment is 3, blank is 10.
+sprites/tilesets/submission_daneeklu/tileset_preview.png, it is a binary file.
+sprites/tilesets/submission_daneeklu/tilesets/farming_fishing.png, it is a binary file.
+sprites/tilesets/submission_daneeklu/tilesets/fence.png, it is a binary file.
+sprites/tilesets/submission_daneeklu/tilesets/fence_alt.png, it is a binary file.
+sprites/tilesets/submission_daneeklu/tilesets/plants.png, it is a binary file.
+sprites/tilesets/submission_daneeklu/tilesets/plowed_soil.png, it is a binary file.
+sprites/tilesets/submission_daneeklu/tilesets/reed.png, it is a binary file.
+sprites/tilesets/submission_daneeklu/tilesets/sand.png, it is a binary file.
+sprites/tilesets/submission_daneeklu/tilesets/sandwater.png, it is a binary file.
+sprites/tilesets/submission_daneeklu/tilesets/tallgrass.png, it is a binary file.
+sprites/tilesets/submission_daneeklu/tilesets/wheat.png, it is a binary file.
+sprites/tilesets/submission_daneeklu/tilesets/youngwheat.png, it is a binary file.
+sprites/tilesets/submission_daneeklu/ui/scrollsandblocks.png, it is a binary file.
+sprites/tilesets/submission_daneeklu/ui_preview.png, it is a binary file.
+sprites/victoriansprites.png, it is a binary file.
+src/components/animation-component.ts, code is 53, comment is 0, blank is 6.
+src/components/component-factory.ts, code is 35, comment is 0, blank is 2.
+src/components/crop-component.ts, code is 69, comment is 3, blank is 5.
+src/components/fight-component.ts, code is 29, comment is 0, blank is 5.
+src/components/health-component.ts, code is 11, comment is 0, blank is 4.
+src/components/inventory-component/give-item-event-data.ts, code is 8, comment is 0, blank is 0.
+src/components/inventory-component/inventory-component.ts, code is 41, comment is 0, blank is 5.
+src/components/inventory-component/inventory-item-type.ts, code is 19, comment is 0, blank is 1.
+src/components/inventory-component/inventory-item.ts, code is 6, comment is 0, blank is 0.
+src/components/inventory-component/item-registry.ts, code is 20, comment is 0, blank is 3.
+src/components/neural-fight-component.ts, code is 10, comment is 0, blank is 3.
+src/components/position-component.ts, code is 56, comment is 0, blank is 6.
+src/components/projectile-component.ts, code is 13, comment is 0, blank is 3.
+src/components/wasd-component.ts, code is 13, comment is 0, blank is 1.
+src/engine/component/component-factory.ts, code is 24, comment is 8, blank is 3.
+src/engine/component/component.ts, code is 11, comment is 0, blank is 1.
+src/engine/entity/entity-factory.ts, code is 28, comment is 0, blank is 5.
+src/engine/entity/entity.ts, code is 51, comment is 15, blank is 12.
+src/engine/events/event-manager.ts, code is 105, comment is 11, blank is 21.
+src/engine/game.ts, code is 103, comment is 11, blank is 16.
+src/engine/renderers/implementations/html/html-renderer.ts, code is 39, comment is 2, blank is 7.
+src/engine/renderers/implementations/html/html-sprite.ts, code is 29, comment is 0, blank is 2.
+src/engine/renderers/render.ts, code is 4, comment is 0, blank is 0.
+src/engine/renderers/sprite-animation.ts, code is 21, comment is 0, blank is 1.
+src/engine/renderers/sprite-manager.ts, code is 40, comment is 0, blank is 8.
+src/engine/renderers/sprite.ts, code is 5, comment is 0, blank is 0.
+src/engine/system/system.ts, code is 17, comment is 8, blank is 4.
+src/entities/crop-entity.ts, code is 22, comment is 0, blank is 3.
+src/entities/entity-factory.ts, code is 14, comment is 0, blank is 2.
+src/entities/first-entity.ts, code is 19, comment is 5, blank is 3.
+src/entities/player-entity.ts, code is 30, comment is 0, blank is 5.
+src/entities/projectile-entity.ts, code is 22, comment is 0, blank is 2.
+src/entities/villager-entity.ts, code is 28, comment is 0, blank is 4.
+src/game.ts, code is 91, comment is 2, blank is 15.
+src/render/sprite-manager.ts, code is 54, comment is 0, blank is 16.
+src/systems/collision-system.ts, code is 105, comment is 4, blank is 14.
+src/systems/crop-system.ts, code is 51, comment is 2, blank is 6.
+src/systems/fight-system.ts, code is 59, comment is 1, blank is 7.
+src/systems/health-system.ts, code is 40, comment is 4, blank is 2.
+src/systems/neural-fight-system.ts, code is 27, comment is 1, blank is 5.
+src/systems/position-system.ts, code is 34, comment is 5, blank is 2.
+src/systems/projectile-system.ts, code is 73, comment is 8, blank is 9.
+src/systems/render-system.ts, code is 26, comment is 3, blank is 3.
+src/systems/wasd-system.ts, code is 78, comment is 4, blank is 4.
+tsconfig.json, code is 16, comment is 0, blank is 2.
+views/cdnindex.html, code is 12, comment is 0, blank is 0.
+views/index.html, code is 19, comment is 0, blank is 3.
+===============================================================================

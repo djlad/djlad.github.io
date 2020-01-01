@@ -1,0 +1,612 @@
+{
+    "extension": "linecount",
+    "version": "0.1.7",
+    "workspace": "/Users/firefly/git/djlad.github.io",
+    "linecount": [
+        {
+            "version": "0.1.7",
+            "counttime": "2019-12-02 23:34:24",
+            "filesum": 94,
+            "codesum": 4209,
+            "commentsum": 101,
+            "blanksum": 244,
+            "filelist": [
+                {
+                    "blank": 0,
+                    "code": 2,
+                    "comment": 0,
+                    "filename": ".gitignore"
+                },
+                {
+                    "blank": 0,
+                    "code": 2298,
+                    "comment": 1,
+                    "filename": "dist/app.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": "dist/app.js.map"
+                },
+                {
+                    "blank": 0,
+                    "code": 12,
+                    "comment": 0,
+                    "filename": "dist/cdnindex.html"
+                },
+                {
+                    "blank": 3,
+                    "code": 19,
+                    "comment": 0,
+                    "filename": "dist/index.html"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": "index.html"
+                },
+                {
+                    "blank": 0,
+                    "code": 28,
+                    "comment": 0,
+                    "filename": "package-lock.json"
+                },
+                {
+                    "blank": 0,
+                    "code": 26,
+                    "comment": 0,
+                    "filename": "package.json"
+                },
+                {
+                    "blank": 0,
+                    "code": 3,
+                    "comment": 0,
+                    "filename": "run.bat"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": "sprites/blond.piskel"
+                },
+                {
+                    "filename": "sprites/blond.png",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": "sprites/blondWalk.piskel"
+                },
+                {
+                    "filename": "sprites/blondWalk.png",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "sprites/crops.png",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "sprites/fantasysprites.png",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "sprites/fireball.png",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "blank": 0,
+                    "code": 4,
+                    "comment": 0,
+                    "filename": "sprites/plants.tsx"
+                },
+                {
+                    "filename": "sprites/scrops.png",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "blank": 0,
+                    "code": 107,
+                    "comment": 0,
+                    "filename": "sprites/tilesets/firstmap.tmx"
+                },
+                {
+                    "blank": 0,
+                    "code": 4,
+                    "comment": 0,
+                    "filename": "sprites/tilesets/plants.tsx"
+                },
+                {
+                    "blank": 0,
+                    "code": 4,
+                    "comment": 0,
+                    "filename": "sprites/tilesets/scrops.tsx"
+                },
+                {
+                    "filename": "sprites/tilesets/submission_daneeklu/character/grab_sheet.png",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "sprites/tilesets/submission_daneeklu/character/sword_sheet_128.png",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "sprites/tilesets/submission_daneeklu/magic/magic_firelion_big.png",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "sprites/tilesets/submission_daneeklu/magic/magic_firelion_sheet.png",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "sprites/tilesets/submission_daneeklu/magic/magic_iceshield_sheet.png",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "sprites/tilesets/submission_daneeklu/magic/magic_snakebite_sheet.png",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "sprites/tilesets/submission_daneeklu/magic/magic_torrentacle.png",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "sprites/tilesets/submission_daneeklu/magic/turtleshell_front.png",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "sprites/tilesets/submission_daneeklu/magic/turtleshell_side.png",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "sprites/tilesets/submission_daneeklu/magics_preview.gif",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "blank": 10,
+                    "code": 18,
+                    "comment": 3,
+                    "filename": "sprites/tilesets/submission_daneeklu/readme.txt"
+                },
+                {
+                    "filename": "sprites/tilesets/submission_daneeklu/tileset_preview.png",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "sprites/tilesets/submission_daneeklu/tilesets/farming_fishing.png",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "sprites/tilesets/submission_daneeklu/tilesets/fence.png",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "sprites/tilesets/submission_daneeklu/tilesets/fence_alt.png",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "sprites/tilesets/submission_daneeklu/tilesets/plants.png",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "sprites/tilesets/submission_daneeklu/tilesets/plowed_soil.png",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "sprites/tilesets/submission_daneeklu/tilesets/reed.png",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "sprites/tilesets/submission_daneeklu/tilesets/sand.png",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "sprites/tilesets/submission_daneeklu/tilesets/sandwater.png",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "sprites/tilesets/submission_daneeklu/tilesets/tallgrass.png",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "sprites/tilesets/submission_daneeklu/tilesets/wheat.png",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "sprites/tilesets/submission_daneeklu/tilesets/youngwheat.png",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "sprites/tilesets/submission_daneeklu/ui/scrollsandblocks.png",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "sprites/tilesets/submission_daneeklu/ui_preview.png",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "sprites/victoriansprites.png",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "blank": 6,
+                    "code": 53,
+                    "comment": 0,
+                    "filename": "src/components/animation-component.ts"
+                },
+                {
+                    "blank": 2,
+                    "code": 35,
+                    "comment": 0,
+                    "filename": "src/components/component-factory.ts"
+                },
+                {
+                    "blank": 5,
+                    "code": 69,
+                    "comment": 3,
+                    "filename": "src/components/crop-component.ts"
+                },
+                {
+                    "blank": 5,
+                    "code": 29,
+                    "comment": 0,
+                    "filename": "src/components/fight-component.ts"
+                },
+                {
+                    "blank": 4,
+                    "code": 11,
+                    "comment": 0,
+                    "filename": "src/components/health-component.ts"
+                },
+                {
+                    "blank": 0,
+                    "code": 8,
+                    "comment": 0,
+                    "filename": "src/components/inventory-component/give-item-event-data.ts"
+                },
+                {
+                    "blank": 5,
+                    "code": 41,
+                    "comment": 0,
+                    "filename": "src/components/inventory-component/inventory-component.ts"
+                },
+                {
+                    "blank": 1,
+                    "code": 19,
+                    "comment": 0,
+                    "filename": "src/components/inventory-component/inventory-item-type.ts"
+                },
+                {
+                    "blank": 0,
+                    "code": 6,
+                    "comment": 0,
+                    "filename": "src/components/inventory-component/inventory-item.ts"
+                },
+                {
+                    "blank": 3,
+                    "code": 20,
+                    "comment": 0,
+                    "filename": "src/components/inventory-component/item-registry.ts"
+                },
+                {
+                    "blank": 3,
+                    "code": 10,
+                    "comment": 0,
+                    "filename": "src/components/neural-fight-component.ts"
+                },
+                {
+                    "blank": 6,
+                    "code": 56,
+                    "comment": 0,
+                    "filename": "src/components/position-component.ts"
+                },
+                {
+                    "blank": 3,
+                    "code": 13,
+                    "comment": 0,
+                    "filename": "src/components/projectile-component.ts"
+                },
+                {
+                    "blank": 1,
+                    "code": 13,
+                    "comment": 0,
+                    "filename": "src/components/wasd-component.ts"
+                },
+                {
+                    "blank": 3,
+                    "code": 24,
+                    "comment": 8,
+                    "filename": "src/engine/component/component-factory.ts"
+                },
+                {
+                    "blank": 1,
+                    "code": 11,
+                    "comment": 0,
+                    "filename": "src/engine/component/component.ts"
+                },
+                {
+                    "blank": 5,
+                    "code": 28,
+                    "comment": 0,
+                    "filename": "src/engine/entity/entity-factory.ts"
+                },
+                {
+                    "blank": 12,
+                    "code": 51,
+                    "comment": 15,
+                    "filename": "src/engine/entity/entity.ts"
+                },
+                {
+                    "blank": 21,
+                    "code": 105,
+                    "comment": 11,
+                    "filename": "src/engine/events/event-manager.ts"
+                },
+                {
+                    "blank": 16,
+                    "code": 103,
+                    "comment": 11,
+                    "filename": "src/engine/game.ts"
+                },
+                {
+                    "blank": 7,
+                    "code": 39,
+                    "comment": 2,
+                    "filename": "src/engine/renderers/implementations/html/html-renderer.ts"
+                },
+                {
+                    "blank": 2,
+                    "code": 29,
+                    "comment": 0,
+                    "filename": "src/engine/renderers/implementations/html/html-sprite.ts"
+                },
+                {
+                    "blank": 0,
+                    "code": 4,
+                    "comment": 0,
+                    "filename": "src/engine/renderers/render.ts"
+                },
+                {
+                    "blank": 1,
+                    "code": 21,
+                    "comment": 0,
+                    "filename": "src/engine/renderers/sprite-animation.ts"
+                },
+                {
+                    "blank": 8,
+                    "code": 40,
+                    "comment": 0,
+                    "filename": "src/engine/renderers/sprite-manager.ts"
+                },
+                {
+                    "blank": 0,
+                    "code": 5,
+                    "comment": 0,
+                    "filename": "src/engine/renderers/sprite.ts"
+                },
+                {
+                    "blank": 4,
+                    "code": 17,
+                    "comment": 8,
+                    "filename": "src/engine/system/system.ts"
+                },
+                {
+                    "blank": 3,
+                    "code": 22,
+                    "comment": 0,
+                    "filename": "src/entities/crop-entity.ts"
+                },
+                {
+                    "blank": 2,
+                    "code": 14,
+                    "comment": 0,
+                    "filename": "src/entities/entity-factory.ts"
+                },
+                {
+                    "blank": 3,
+                    "code": 19,
+                    "comment": 5,
+                    "filename": "src/entities/first-entity.ts"
+                },
+                {
+                    "blank": 5,
+                    "code": 30,
+                    "comment": 0,
+                    "filename": "src/entities/player-entity.ts"
+                },
+                {
+                    "blank": 2,
+                    "code": 22,
+                    "comment": 0,
+                    "filename": "src/entities/projectile-entity.ts"
+                },
+                {
+                    "blank": 4,
+                    "code": 28,
+                    "comment": 0,
+                    "filename": "src/entities/villager-entity.ts"
+                },
+                {
+                    "blank": 15,
+                    "code": 91,
+                    "comment": 2,
+                    "filename": "src/game.ts"
+                },
+                {
+                    "blank": 16,
+                    "code": 54,
+                    "comment": 0,
+                    "filename": "src/render/sprite-manager.ts"
+                },
+                {
+                    "blank": 14,
+                    "code": 105,
+                    "comment": 4,
+                    "filename": "src/systems/collision-system.ts"
+                },
+                {
+                    "blank": 6,
+                    "code": 51,
+                    "comment": 2,
+                    "filename": "src/systems/crop-system.ts"
+                },
+                {
+                    "blank": 7,
+                    "code": 59,
+                    "comment": 1,
+                    "filename": "src/systems/fight-system.ts"
+                },
+                {
+                    "blank": 2,
+                    "code": 40,
+                    "comment": 4,
+                    "filename": "src/systems/health-system.ts"
+                },
+                {
+                    "blank": 5,
+                    "code": 27,
+                    "comment": 1,
+                    "filename": "src/systems/neural-fight-system.ts"
+                },
+                {
+                    "blank": 2,
+                    "code": 34,
+                    "comment": 5,
+                    "filename": "src/systems/position-system.ts"
+                },
+                {
+                    "blank": 9,
+                    "code": 73,
+                    "comment": 8,
+                    "filename": "src/systems/projectile-system.ts"
+                },
+                {
+                    "blank": 3,
+                    "code": 26,
+                    "comment": 3,
+                    "filename": "src/systems/render-system.ts"
+                },
+                {
+                    "blank": 4,
+                    "code": 78,
+                    "comment": 4,
+                    "filename": "src/systems/wasd-system.ts"
+                },
+                {
+                    "blank": 2,
+                    "code": 16,
+                    "comment": 0,
+                    "filename": "tsconfig.json"
+                },
+                {
+                    "blank": 0,
+                    "code": 12,
+                    "comment": 0,
+                    "filename": "views/cdnindex.html"
+                },
+                {
+                    "blank": 3,
+                    "code": 19,
+                    "comment": 0,
+                    "filename": "views/index.html"
+                }
+            ]
+        }
+    ]
+}

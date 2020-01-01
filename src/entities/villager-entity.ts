@@ -7,7 +7,7 @@ import { HealthComponent } from '../components/health-component';
 import { NeuralFightSystem } from '../systems/neural-fight-system';
 import { NeuralFightComponent } from '../components/neural-fight-component';
 import { ComponentFactory } from '../engine/component/component-factory';
-import { createComponentFactory } from '../components/component-factory';
+import { createComponentFactory } from '../builders/build-components';
 
 export class VillagerEntity extends Entity{
     constructor(cf:ComponentFactory){

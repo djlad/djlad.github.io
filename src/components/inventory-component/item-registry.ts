@@ -7,10 +7,10 @@ export class InventoryItemRegistry {
     registerItemType(itemName:string, itemSpriteName:string, description:string){
         let newItemType:InventoryItemType;
         newItemType = new InventoryItemType(itemName, itemSpriteName, description);
-        if (itemSpriteName in this.itemTypes){
+        if (itemName in this.itemTypes){
             throw "error: item type: " + itemSpriteName+ " already exists";
         }
-        this.itemTypes[itemSpriteName] = newItemType;
+        this.itemTypes[itemName] = newItemType;
     }
 
     private static singletonRegistry:InventoryItemRegistry;

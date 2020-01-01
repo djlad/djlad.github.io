@@ -1,14 +1,14 @@
-import { PositionComponent } from './position-component';
-import { AnimationComponent } from './animation-component';
-import { WasdComponent } from './wasd-component';
-import { CropComponent } from './crop-component';
-import { ProjectileComponent } from './projectile-component';
-import { FightComponent } from './fight-component';
-import { HealthComponent } from './health-component';
-import { NeuralFightComponent } from './neural-fight-component';
-import { ComponentFactory } from "../engine/component/component-factory";
+import { PositionComponent } from '../components/position-component';
+import { AnimationComponent } from '../components/animation-component';
+import { WasdComponent } from '../components/wasd-component';
+import { CropComponent } from '../components/crop-component';
+import { ProjectileComponent } from '../components/projectile-component';
+import { FightComponent } from '../components/fight-component';
+import { HealthComponent } from '../components/health-component';
+import { NeuralFightComponent } from '../components/neural-fight-component';
 import { Game } from '../engine/game';
-import { InventoryComponent } from './inventory-component/inventory-component';
+import { InventoryComponent } from '../components/inventory-component/inventory-component';
+import { ComponentFactory } from '../engine/component/component-factory';
 
 export function createComponentFactory():ComponentFactory{
     var cf:ComponentFactory = new ComponentFactory();
@@ -24,7 +24,7 @@ export function createComponentFactory():ComponentFactory{
     return cf;
 }
 
-export function populateComponentFactory(game:Game):void{
+export function buildComponents(game:Game):void{
     game.registerComponent(AnimationComponent);
     game.registerComponent(PositionComponent);
     game.registerComponent(WasdComponent);
