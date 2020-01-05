@@ -4,6 +4,7 @@ import { InventoryItemRegistry } from "./item-registry";
 import { Entity } from "../../engine/entity/entity";
 import { GameEvent, EventType } from "../../engine/events/event-manager";
 import { GiveItemEventData } from "./give-item-event-data";
+import { InventoryItemType } from "./inventory-item-type";
 
 export class InventoryComponent extends Component {
     constructor(itemRegistry:InventoryItemRegistry){
@@ -16,8 +17,14 @@ export class InventoryComponent extends Component {
     registerItemType(itemName:string, itemSpriteName:string, description:string){
         this.itemRegistry.registerItemType(itemName, itemSpriteName, description);
     }
-    addItem(itemName:string, quantity:number=1){
-
+    addItem(itemName:string, quantity:number=1):boolean{
+        console.log(this.itemRegistry.itemTypes);
+        if(! (itemName in this.itemRegistry.itemTypes)){
+            console.log("Warning: itemName is not in the itemRegistry");
+            return false;
+        }
+        let itemType:InventoryItemType = this.itemRegistry.itemTypes[itemName];
+         itemType.itemDescription;
     }
     update(entity:Entity):void{
         let events:GameEvent[] = entity.targetedEvents;

@@ -17,6 +17,7 @@ import { Game } from './engine/game';
 import { buildSprites } from './builders/sprite-builder';
 import { buildEntities } from './builders/entity-builder';
 import { buildComponents } from './builders/build-components';
+import { FightSystem } from './systems/fight-system';
 
 declare var synaptic:any;
 
@@ -27,7 +28,7 @@ function createGame():Game{
     game.addSystem(CropSystem.create(game));
     game.addSystem(CollisionSystem.create(game));
     game.addSystem(ProjectileSystem.create(game));
-    //game.addSystem(FightSystem.create(game));
+    // game.addSystem(FightSystem.create(game));
     game.addSystem(HealthSystem.create(game));
     game.addSystem(PositionSystem.create(game));
     game.addSystem(NeuralFightSystem.create(game));
@@ -54,7 +55,7 @@ export function startGame(){
     var villager = game.addEntity("villager");
     var component = <PositionComponent>villager.getComponent("position");
     var fight = <FightComponent>villager.getComponent("fight");
-    ac = <AnimationComponent> villager.getComponent("animation");
+    ac = <AnimationComponent>villager.getComponent("animation");
     component.x = 150;
     component.y = 300;
     component.vx = 0;

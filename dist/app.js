@@ -1091,6 +1091,8 @@ System.register("components/inventory-component/inventory-item", [], function (e
                     this.itemName = "no name";
                     this.itemDescription = "no description";
                 }
+                InventoryItem.create = function () {
+                };
                 return InventoryItem;
             }());
             exports_22("InventoryItem", InventoryItem);
@@ -1139,6 +1141,7 @@ System.register("components/inventory-component/item-registry", ["components/inv
         execute: function () {
             InventoryItemRegistry = (function () {
                 function InventoryItemRegistry() {
+                    this.itemTypes = {};
                 }
                 InventoryItemRegistry.prototype.registerItemType = function (itemName, itemSpriteName, description) {
                     var newItemType;
@@ -1153,7 +1156,14 @@ System.register("components/inventory-component/item-registry", ["components/inv
                         return this.singletonRegistry;
                     var itemRegistry = new InventoryItemRegistry();
                     this.singletonRegistry = itemRegistry;
+                    this.singletonRegistry.populateItems();
                     return this.singletonRegistry;
+                };
+                InventoryItemRegistry.prototype.populateItems = function () {
+                    this.registerItemType("wheat", "wheat2", "its a wheat");
+                    this.registerItemType("onion", "onion5", "its an onion");
+                    this.registerItemType("corn", "corn2", "its corn");
+                    this.registerItemType("pumpkin", "pumpkin2", "its a pumpkin");
                 };
                 return InventoryItemRegistry;
             }());
@@ -1209,6 +1219,13 @@ System.register("components/inventory-component/inventory-component", ["engine/c
                 };
                 InventoryComponent.prototype.addItem = function (itemName, quantity) {
                     if (quantity === void 0) { quantity = 1; }
+                    console.log(this.itemRegistry.itemTypes);
+                    if (!(itemName in this.itemRegistry.itemTypes)) {
+                        console.log("Warning: itemName is not in the itemRegistry");
+                        return false;
+                    }
+                    var itemType = this.itemRegistry.itemTypes[itemName];
+                    itemType.itemDescription;
                 };
                 InventoryComponent.prototype.update = function (entity) {
                     var events = entity.targetedEvents;
@@ -2153,10 +2170,87 @@ System.register("builders/entity-builder", ["entities/player-entity", "entities/
         }
     };
 });
-System.register("game", ["systems/render-system", "systems/wasd-system", "systems/crop-system", "systems/collision-system", "systems/projectile-system", "systems/health-system", "systems/position-system", "systems/neural-fight-system", "engine/game", "builders/sprite-builder", "builders/entity-builder", "builders/build-components"], function (exports_43, context_43) {
+System.register("systems/fight-system", ["engine/system/system", "engine/events/event-manager"], function (exports_43, context_43) {
+    "use strict";
+    var system_9, event_manager_9, FightSystem;
+    var __moduleName = context_43 && context_43.id;
+    return {
+        setters: [
+            function (system_9_1) {
+                system_9 = system_9_1;
+            },
+            function (event_manager_9_1) {
+                event_manager_9 = event_manager_9_1;
+            }
+        ],
+        execute: function () {
+            FightSystem = (function (_super) {
+                __extends(FightSystem, _super);
+                function FightSystem(game) {
+                    return _super.call(this, game) || this;
+                }
+                FightSystem.prototype.get_entity_direction = function (origin, destination) {
+                    var position1 = origin.getComponent("position");
+                    var position2 = destination.getComponent("position");
+                    var dx = position2.x - position1.x;
+                    var dy = position2.y - position1.y;
+                    var hypotenuse = Math.sqrt(dx * dx + dy * dy);
+                    dx /= hypotenuse;
+                    dy /= hypotenuse;
+                    return {
+                        dx: dx,
+                        dy: dy
+                    };
+                };
+                FightSystem.prototype.hypotenuse = function (e1, e2) {
+                    var position1 = e1.getComponent("position");
+                    var position2 = e2.getComponent("position");
+                    var dx = position2.x - position1.x;
+                    var dy = position2.y - position1.y;
+                    var hypotenuse = Math.sqrt(dx * dx + dy * dy);
+                    return hypotenuse;
+                };
+                FightSystem.prototype.apply = function (entity) {
+                    var fight = entity.getComponent("fight", true);
+                    if (fight == null)
+                        return;
+                    var position = entity.getComponent("position");
+                    if (!fight.attack)
+                        return;
+                    var hypotenuse = this.hypotenuse(entity, fight.target);
+                    var direction = this.get_entity_direction(entity, fight.target);
+                    if (hypotenuse > fight.range) {
+                        direction.dx *= fight.maxSpeed;
+                        direction.dy *= fight.maxSpeed;
+                        position.vx = direction.dx;
+                        position.vy = direction.dy;
+                    }
+                    else {
+                        position.vx = 0;
+                        position.vy = 0;
+                        if (fight.canFire()) {
+                            entity.emit(event_manager_9.GameEvent.create(event_manager_9.EventType.fireProjectile, { vx: direction.dx * 10, vy: direction.dy * 10 }));
+                            fight.reloadTimer--;
+                        }
+                    }
+                };
+                ;
+                FightSystem.prototype.applyEvents = function (entity) {
+                };
+                FightSystem.create = function (game) {
+                    return new FightSystem(game);
+                };
+                ;
+                return FightSystem;
+            }(system_9.EntitySystem));
+            exports_43("FightSystem", FightSystem);
+        }
+    };
+});
+System.register("game", ["systems/render-system", "systems/wasd-system", "systems/crop-system", "systems/collision-system", "systems/projectile-system", "systems/health-system", "systems/position-system", "systems/neural-fight-system", "engine/game", "builders/sprite-builder", "builders/entity-builder", "builders/build-components"], function (exports_44, context_44) {
     "use strict";
     var render_system_1, wasd_system_1, crop_system_1, collision_system_1, projectile_system_1, health_system_1, position_system_1, neural_fight_system_1, game_1, sprite_builder_1, entity_builder_1, build_components_6;
-    var __moduleName = context_43 && context_43.id;
+    var __moduleName = context_44 && context_44.id;
     function createGame() {
         var game = game_1.Game.create();
         game.addSystem(render_system_1.RenderSystem.create(game));
@@ -2230,7 +2324,7 @@ System.register("game", ["systems/render-system", "systems/wasd-system", "system
         }
         var intervalId = game.start();
     }
-    exports_43("startGame", startGame);
+    exports_44("startGame", startGame);
     return {
         setters: [
             function (render_system_1_1) {
@@ -2274,83 +2368,6 @@ System.register("game", ["systems/render-system", "systems/wasd-system", "system
             (function () {
                 startGame();
             })();
-        }
-    };
-});
-System.register("systems/fight-system", ["engine/system/system", "engine/events/event-manager"], function (exports_44, context_44) {
-    "use strict";
-    var system_9, event_manager_9, FightSystem;
-    var __moduleName = context_44 && context_44.id;
-    return {
-        setters: [
-            function (system_9_1) {
-                system_9 = system_9_1;
-            },
-            function (event_manager_9_1) {
-                event_manager_9 = event_manager_9_1;
-            }
-        ],
-        execute: function () {
-            FightSystem = (function (_super) {
-                __extends(FightSystem, _super);
-                function FightSystem(game) {
-                    return _super.call(this, game) || this;
-                }
-                FightSystem.prototype.get_entity_direction = function (origin, destination) {
-                    var position1 = origin.getComponent("position");
-                    var position2 = destination.getComponent("position");
-                    var dx = position2.x - position1.x;
-                    var dy = position2.y - position1.y;
-                    var hypotenuse = Math.sqrt(dx * dx + dy * dy);
-                    dx /= hypotenuse;
-                    dy /= hypotenuse;
-                    return {
-                        dx: dx,
-                        dy: dy
-                    };
-                };
-                FightSystem.prototype.hypotenuse = function (e1, e2) {
-                    var position1 = e1.getComponent("position");
-                    var position2 = e2.getComponent("position");
-                    var dx = position2.x - position1.x;
-                    var dy = position2.y - position1.y;
-                    var hypotenuse = Math.sqrt(dx * dx + dy * dy);
-                    return hypotenuse;
-                };
-                FightSystem.prototype.apply = function (entity) {
-                    var fight = entity.getComponent("fight", true);
-                    if (fight == null)
-                        return;
-                    var position = entity.getComponent("position");
-                    if (!fight.attack)
-                        return;
-                    var hypotenuse = this.hypotenuse(entity, fight.target);
-                    var direction = this.get_entity_direction(entity, fight.target);
-                    if (hypotenuse > fight.range) {
-                        direction.dx *= fight.maxSpeed;
-                        direction.dy *= fight.maxSpeed;
-                        position.vx = direction.dx;
-                        position.vy = direction.dy;
-                    }
-                    else {
-                        position.vx = 0;
-                        position.vy = 0;
-                        if (fight.canFire()) {
-                            entity.emit(event_manager_9.GameEvent.create(event_manager_9.EventType.fireProjectile, { vx: direction.dx * 10, vy: direction.dy * 10 }));
-                            fight.reloadTimer--;
-                        }
-                    }
-                };
-                ;
-                FightSystem.prototype.applyEvents = function (entity) {
-                };
-                FightSystem.create = function (game) {
-                    return new FightSystem(game);
-                };
-                ;
-                return FightSystem;
-            }(system_9.EntitySystem));
-            exports_44("FightSystem", FightSystem);
         }
     };
 });
