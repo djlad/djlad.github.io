@@ -1078,31 +1078,10 @@ System.register("engine/game", ["engine/entity/entity-factory", "engine/events/e
         }
     };
 });
-System.register("components/inventory-component/inventory-item", [], function (exports_22, context_22) {
-    "use strict";
-    var InventoryItem;
-    var __moduleName = context_22 && context_22.id;
-    return {
-        setters: [],
-        execute: function () {
-            InventoryItem = (function () {
-                function InventoryItem() {
-                    this.itemNumber = 0;
-                    this.itemName = "no name";
-                    this.itemDescription = "no description";
-                }
-                InventoryItem.create = function () {
-                };
-                return InventoryItem;
-            }());
-            exports_22("InventoryItem", InventoryItem);
-        }
-    };
-});
-System.register("components/inventory-component/inventory-item-type", [], function (exports_23, context_23) {
+System.register("components/inventory-component/inventory-item-type", [], function (exports_22, context_22) {
     "use strict";
     var InventoryItemType;
-    var __moduleName = context_23 && context_23.id;
+    var __moduleName = context_22 && context_22.id;
     return {
         setters: [],
         execute: function () {
@@ -1124,7 +1103,32 @@ System.register("components/inventory-component/inventory-item-type", [], functi
                 InventoryItemType.largestItemId = -1;
                 return InventoryItemType;
             }());
-            exports_23("InventoryItemType", InventoryItemType);
+            exports_22("InventoryItemType", InventoryItemType);
+        }
+    };
+});
+System.register("components/inventory-component/inventory-item", [], function (exports_23, context_23) {
+    "use strict";
+    var InventoryItem;
+    var __moduleName = context_23 && context_23.id;
+    return {
+        setters: [],
+        execute: function () {
+            InventoryItem = (function () {
+                function InventoryItem() {
+                    this.itemQuantity = 0;
+                    this.itemName = "no name";
+                    this.itemDescription = "no description";
+                }
+                InventoryItem.create = function (itemType) {
+                    var item = new InventoryItem();
+                    item.itemName = itemType.itemName;
+                    item.itemDescription = itemType.itemDescription;
+                    return item;
+                };
+                return InventoryItem;
+            }());
+            exports_23("InventoryItem", InventoryItem);
         }
     };
 });
@@ -1189,14 +1193,17 @@ System.register("components/inventory-component/give-item-event-data", [], funct
         }
     };
 });
-System.register("components/inventory-component/inventory-component", ["engine/component/component", "components/inventory-component/item-registry", "engine/events/event-manager"], function (exports_26, context_26) {
+System.register("components/inventory-component/inventory-component", ["engine/component/component", "components/inventory-component/inventory-item", "components/inventory-component/item-registry", "engine/events/event-manager"], function (exports_26, context_26) {
     "use strict";
-    var component_10, item_registry_1, event_manager_2, InventoryComponent;
+    var component_10, inventory_item_1, item_registry_1, event_manager_2, InventoryComponent;
     var __moduleName = context_26 && context_26.id;
     return {
         setters: [
             function (component_10_1) {
                 component_10 = component_10_1;
+            },
+            function (inventory_item_1_1) {
+                inventory_item_1 = inventory_item_1_1;
             },
             function (item_registry_1_1) {
                 item_registry_1 = item_registry_1_1;
@@ -1210,7 +1217,7 @@ System.register("components/inventory-component/inventory-component", ["engine/c
                 __extends(InventoryComponent, _super);
                 function InventoryComponent(itemRegistry) {
                     var _this = _super.call(this, "inventory") || this;
-                    _this.inventory = [];
+                    _this.inventory = {};
                     _this.itemRegistry = itemRegistry;
                     return _this;
                 }
@@ -1225,7 +1232,10 @@ System.register("components/inventory-component/inventory-component", ["engine/c
                         return false;
                     }
                     var itemType = this.itemRegistry.itemTypes[itemName];
-                    itemType.itemDescription;
+                    if (!(itemName in this.inventory)) {
+                        this.inventory[itemName] = inventory_item_1.InventoryItem.create(itemType);
+                    }
+                    this.inventory[itemName].itemQuantity += quantity;
                 };
                 InventoryComponent.prototype.update = function (entity) {
                     var events = entity.targetedEvents;
@@ -1756,17 +1766,22 @@ System.register("systems/crop-system", ["engine/system/system", "engine/events/e
                     return new CropSystem(game);
                 };
                 ;
-                CropSystem.prototype.handleEvent = function (event, entity) {
+                CropSystem.prototype.handleCollision = function (event, entity) {
+                    if (!(event.eventData instanceof player_entity_1.PlayerEntity)) {
+                        return;
+                    }
                     var crop = entity.getComponent("crop");
+                    var player = event.eventData;
+                    var playerInventory;
+                    playerInventory = player.getComponent("inventory");
+                    playerInventory.addItem(crop.cropName, 1);
+                    console.log(playerInventory);
+                    entity.destroyed = true;
+                };
+                CropSystem.prototype.handleEvent = function (event, entity) {
                     switch (event.eventName) {
                         case event_manager_4.EventType.collision:
-                            if (event.eventData instanceof player_entity_1.PlayerEntity) {
-                                var player = event.eventData;
-                                var playerInventory = player.getComponent("inventory");
-                                playerInventory.addItem(crop.cropName, 1);
-                                console.log(playerInventory);
-                                entity.destroyed = true;
-                            }
+                            this.handleCollision(event, entity);
                             break;
                     }
                 };

@@ -39,18 +39,25 @@ export class CropSystem extends EntitySystem {
         return new CropSystem(game);
     };
 
-    handleEvent(event:GameEvent, entity:Entity):void{
-        //console.log(event)
+    private handleCollision(event:GameEvent, entity:Entity){
+        if(!(event.eventData instanceof PlayerEntity)){
+            return;
+        }
         let crop:CropComponent = <CropComponent>entity.getComponent("crop");
+        let player:PlayerEntity = <PlayerEntity>event.eventData;
+        let playerInventory:InventoryComponent;
+        playerInventory = <InventoryComponent>player.getComponent("inventory");
+        playerInventory.addItem(crop.cropName, 1);
+        console.log(playerInventory);
+        entity.destroyed = true;
+
+    }
+
+    private handleEvent(event:GameEvent, entity:Entity):void{
+        //console.log(event)
         switch (event.eventName){
             case EventType.collision:
-                if(event.eventData instanceof PlayerEntity){
-                    let player:PlayerEntity = <PlayerEntity>event.eventData;
-                    let playerInventory:InventoryComponent = <InventoryComponent>player.getComponent("inventory");
-                    playerInventory.addItem(crop.cropName, 1);
-                    console.log(playerInventory);
-                    entity.destroyed = true;
-                }
+                this.handleCollision(event, entity);
                 break;
         }
         
