@@ -84,13 +84,15 @@ System.register("engine/events/event-manager", [], function (exports_2, context_
                 EventType[EventType["dUp"] = 7] = "dUp";
                 EventType[EventType["spaceDown"] = 8] = "spaceDown";
                 EventType[EventType["spaceUp"] = 9] = "spaceUp";
-                EventType[EventType["pDown"] = 10] = "pDown";
-                EventType[EventType["pUp"] = 11] = "pUp";
-                EventType[EventType["collision"] = 12] = "collision";
-                EventType[EventType["fireProjectile"] = 13] = "fireProjectile";
-                EventType[EventType["inflictDamage"] = 14] = "inflictDamage";
-                EventType[EventType["changeVelocity"] = 15] = "changeVelocity";
-                EventType[EventType["giveItem"] = 16] = "giveItem";
+                EventType[EventType["iUp"] = 10] = "iUp";
+                EventType[EventType["iDown"] = 11] = "iDown";
+                EventType[EventType["pDown"] = 12] = "pDown";
+                EventType[EventType["pUp"] = 13] = "pUp";
+                EventType[EventType["collision"] = 14] = "collision";
+                EventType[EventType["fireProjectile"] = 15] = "fireProjectile";
+                EventType[EventType["inflictDamage"] = 16] = "inflictDamage";
+                EventType[EventType["changeVelocity"] = 17] = "changeVelocity";
+                EventType[EventType["giveItem"] = 18] = "giveItem";
             })(EventType || (EventType = {}));
             exports_2("EventType", EventType);
             EventManager = (function () {
@@ -114,10 +116,10 @@ System.register("engine/events/event-manager", [], function (exports_2, context_
                 EventManager.prototype.update = function () {
                     this.events = [];
                     var controls = [EventType.wDown, EventType.aDown, EventType.sDown,
-                        EventType.dDown, EventType.spaceDown, EventType.pDown];
+                        EventType.dDown, EventType.spaceDown, EventType.pDown, EventType.iDown];
                     var controlRelease = [EventType.wUp, EventType.aUp, EventType.sUp,
-                        EventType.dUp, EventType.spaceUp, EventType.pUp];
-                    var controlKeys = [87, 65, 83, 68, 32, 80];
+                        EventType.dUp, EventType.spaceUp, EventType.pUp, EventType.iUp];
+                    var controlKeys = [87, 65, 83, 68, 32, 80, 73];
                     for (var i = 0; i < controls.length; i++) {
                         if (this.keys[controlKeys[i]]) {
                             this.emit(controls[i]);
@@ -1168,6 +1170,7 @@ System.register("components/inventory-component/item-registry", ["components/inv
                     this.registerItemType("onion", "onion5", "its an onion");
                     this.registerItemType("corn", "corn2", "its corn");
                     this.registerItemType("pumpkin", "pumpkin2", "its a pumpkin");
+                    this.registerItemType("turnip", "turnip2", "its a turnip");
                 };
                 return InventoryItemRegistry;
             }());
@@ -1221,14 +1224,24 @@ System.register("components/inventory-component/inventory-component", ["engine/c
                     _this.itemRegistry = itemRegistry;
                     return _this;
                 }
+                InventoryComponent.prototype.inventoryToString = function () {
+                    var inventoryString = "Inventory:";
+                    var itemNames = Object.keys(this.inventory);
+                    for (var i = 0; i < itemNames.length; i++) {
+                        var item = void 0;
+                        item = this.inventory[itemNames[i]];
+                        inventoryString += "\n" + item.itemName + ": " + item.itemQuantity;
+                    }
+                    inventoryString += "\n<---------->";
+                    console.log(inventoryString);
+                };
                 InventoryComponent.prototype.registerItemType = function (itemName, itemSpriteName, description) {
                     this.itemRegistry.registerItemType(itemName, itemSpriteName, description);
                 };
                 InventoryComponent.prototype.addItem = function (itemName, quantity) {
                     if (quantity === void 0) { quantity = 1; }
-                    console.log(this.itemRegistry.itemTypes);
                     if (!(itemName in this.itemRegistry.itemTypes)) {
-                        console.log("Warning: itemName is not in the itemRegistry");
+                        console.log("Warning: itemName " + itemName + " is not in the itemRegistry");
                         return false;
                     }
                     var itemType = this.itemRegistry.itemTypes[itemName];
@@ -1665,6 +1678,11 @@ System.register("systems/wasd-system", ["engine/system/system", "engine/events/e
                             case event_manager_3.EventType.pUp:
                                 console.log(this.game);
                                 break;
+                            case event_manager_3.EventType.iUp:
+                                var inventory = void 0;
+                                inventory = entity.getComponent("inventory", true);
+                                inventory.inventoryToString();
+                                break;
                         }
                     }
                 };
@@ -1775,7 +1793,6 @@ System.register("systems/crop-system", ["engine/system/system", "engine/events/e
                     var playerInventory;
                     playerInventory = player.getComponent("inventory");
                     playerInventory.addItem(crop.cropName, 1);
-                    console.log(playerInventory);
                     entity.destroyed = true;
                 };
                 CropSystem.prototype.handleEvent = function (event, entity) {

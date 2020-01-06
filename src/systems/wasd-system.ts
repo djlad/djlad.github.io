@@ -7,6 +7,7 @@ import { AnimationComponent } from '../components/animation-component';
 import { Game } from '../engine/game';
 import { VillagerEntity } from '../entities/villager-entity';
 import { ProjectileEntity } from '../entities/projectile-entity';
+import { InventoryComponent } from '../components/inventory-component/inventory-component';
 
 export class WasdSystem extends EntitySystem {
     constructor(game:Game){
@@ -79,6 +80,11 @@ export class WasdSystem extends EntitySystem {
                 case EventType.pUp:
                     //console.log("p up")
                     console.log(this.game)
+                break;
+                case EventType.iUp:
+                    let inventory:InventoryComponent;
+                    inventory = <InventoryComponent>entity.getComponent("inventory", true);
+                    inventory.inventoryToString();
                 break;
             }
         }

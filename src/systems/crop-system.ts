@@ -48,7 +48,6 @@ export class CropSystem extends EntitySystem {
         let playerInventory:InventoryComponent;
         playerInventory = <InventoryComponent>player.getComponent("inventory");
         playerInventory.addItem(crop.cropName, 1);
-        console.log(playerInventory);
         entity.destroyed = true;
 
     }
@@ -60,6 +59,5 @@ export class CropSystem extends EntitySystem {
                 this.handleCollision(event, entity);
                 break;
         }
-        
     }
 }

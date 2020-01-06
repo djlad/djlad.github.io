@@ -29,7 +29,10 @@ export enum EventType {
     spaceDown,
     spaceUp,
 
-    pDown,
+    iUp,// show inventory
+    iDown,
+
+    pDown,// console.log game object
     pUp,
 
     collision,
@@ -71,10 +74,10 @@ export class EventManager {
 
         //wasd controls
         var controls:EventType[] = [EventType.wDown, EventType.aDown, EventType.sDown,
-            EventType.dDown, EventType.spaceDown, EventType.pDown];
+            EventType.dDown, EventType.spaceDown, EventType.pDown, EventType.iDown];
         var controlRelease:EventType[] = [EventType.wUp, EventType.aUp, EventType.sUp,
-            EventType.dUp, EventType.spaceUp, EventType.pUp]
-        var controlKeys:number[] = [87, 65, 83, 68, 32, 80];
+            EventType.dUp, EventType.spaceUp, EventType.pUp, EventType.iUp]
+        var controlKeys:number[] = [87, 65, 83, 68, 32, 80, 73];
 
         for(var i:number=0;i<controls.length;i++){
             if(this.keys[controlKeys[i]]){

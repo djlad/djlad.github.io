@@ -14,13 +14,24 @@ export class InventoryComponent extends Component {
     private inventory:{[key:string]:InventoryItem} = {};
     itemRegistry:InventoryItemRegistry;
 
+    inventoryToString(){
+        let inventoryString = "Inventory:";
+        let itemNames:string[] = Object.keys(this.inventory);
+        for(let i:number=0;i<itemNames.length;i++){
+            let item:InventoryItem;
+            item = this.inventory[itemNames[i]];
+            inventoryString += `\n${item.itemName}: ${item.itemQuantity}`;
+        }
+        inventoryString += "\n<---------->";
+        console.log(inventoryString);
+    }
+
     registerItemType(itemName:string, itemSpriteName:string, description:string){
         this.itemRegistry.registerItemType(itemName, itemSpriteName, description);
     }
     addItem(itemName:string, quantity:number=1):boolean{
-        console.log(this.itemRegistry.itemTypes);
         if(! (itemName in this.itemRegistry.itemTypes)){
-            console.log("Warning: itemName is not in the itemRegistry");
+            console.log(`Warning: itemName ${itemName} is not in the itemRegistry`);
             return false;
         }
         let itemType:InventoryItemType = this.itemRegistry.itemTypes[itemName];
@@ -28,7 +39,6 @@ export class InventoryComponent extends Component {
             this.inventory[itemName] = InventoryItem.create(itemType);
         }
         this.inventory[itemName].itemQuantity += quantity;
-        
     }
     update(entity:Entity):void{
         let events:GameEvent[] = entity.targetedEvents;

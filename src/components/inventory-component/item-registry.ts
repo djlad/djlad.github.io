@@ -28,5 +28,6 @@ export class InventoryItemRegistry {
         this.registerItemType("onion", "onion5", "its an onion");
         this.registerItemType("corn", "corn2", "its corn");
         this.registerItemType("pumpkin", "pumpkin2", "its a pumpkin");
+        this.registerItemType("turnip", "turnip2", "its a turnip");
     }
 }
