@@ -9,6 +9,7 @@ import { NeuralFightComponent } from '../components/neural-fight-component';
 import { Game } from '../engine/game';
 import { InventoryComponent } from '../components/inventory-component/inventory-component';
 import { ComponentFactory } from '../engine/component/component-factory';
+import { PlaceItemComponent } from '../components/place-item-component';
 
 export function createComponentFactory():ComponentFactory{
     var cf:ComponentFactory = new ComponentFactory();
@@ -21,6 +22,7 @@ export function createComponentFactory():ComponentFactory{
     cf.registerComponent(HealthComponent);
     cf.registerComponent(NeuralFightComponent);
     cf.registerComponent(InventoryComponent);
+    cf.registerComponent(PlaceItemComponent);
     return cf;
 }
 

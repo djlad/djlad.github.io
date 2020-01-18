@@ -5,6 +5,7 @@ import { EventManager } from './events/event-manager';
 import { Renderer } from './renderers/render';
 import { HtmlRenderer } from './renderers/implementations/html/html-renderer';
 import { SpriteManager } from './renderers/sprite-manager';
+import { PositionComponent } from '../components/position-component';
 
 export class Game {
     constructor(entityFactory:EntityFactory, renderer:Renderer, eventManager:EventManager){
@@ -53,13 +54,13 @@ export class Game {
             this.entities[i].delayedEvents = [];
         }
         
-        //this.eventManager.fireCallbacks();
+        this.eventManager.fireCallbacks();
         
-        /* this.entities.sort(function(a:Entity,b:Entity){
+        this.entities.sort(function(a:Entity,b:Entity){
             var pa:PositionComponent = <PositionComponent>a.getComponent("position");
             var pb:PositionComponent = <PositionComponent>b.getComponent("position");
             return pa.y - pb.y;
-        }); */
+        });
         this.cleanDestroyedEntities();
     }
     render(){

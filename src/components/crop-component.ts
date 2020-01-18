@@ -26,7 +26,7 @@ export class CropComponent extends Component {
     }
 
     setCrop(cropName:string){
-        var cropLength:number = 30;
+        var cropLength:number = 300;
         this.growthLengths = [cropLength, cropLength, cropLength];
         switch(cropName){
             case "turnip":

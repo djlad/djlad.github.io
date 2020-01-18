@@ -47,7 +47,9 @@ export class CropSystem extends EntitySystem {
         let player:PlayerEntity = <PlayerEntity>event.eventData;
         let playerInventory:InventoryComponent;
         playerInventory = <InventoryComponent>player.getComponent("inventory");
-        playerInventory.addItem(crop.cropName, 1);
+        if(crop.isGrown()){
+            playerInventory.addItem(crop.cropName, 1);
+        }
         entity.destroyed = true;
 
     }
