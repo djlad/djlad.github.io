@@ -2,7 +2,6 @@ import { EntitySystem } from '../engine/system/system';
 import { Game } from '../engine/game';
 import { Entity } from '../engine/entity/entity';
 import { PositionComponent } from '../components/position-component';
-import { GameEvent, EventType } from '../engine/events/event-manager';
 //import * as Synaptic from "synaptic";
 
 export class PositionSystem extends EntitySystem{
