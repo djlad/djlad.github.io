@@ -18,6 +18,7 @@ import { buildSprites } from './builders/sprite-builder';
 import { buildEntities } from './builders/entity-builder';
 import { buildComponents } from './builders/build-components';
 import { FightSystem } from './systems/fight-system';
+import { PlaceItemSystem } from './systems/place-item-system';
 
 declare var synaptic:any;
 
@@ -32,6 +33,7 @@ function createGame():Game{
     game.addSystem(HealthSystem.create(game));
     game.addSystem(PositionSystem.create(game));
     game.addSystem(NeuralFightSystem.create(game));
+    game.addSystem(PlaceItemSystem.create(game));
 
     buildSprites(game)
     buildEntities(game);

@@ -84,8 +84,7 @@ export class WasdSystem extends EntitySystem {
                     console.log(this.game);
                     position = <PositionComponent>entity.getComponent("position");
                     let placeItem:PlaceItemComponent = <PlaceItemComponent>entity.getComponent("placeItem");
-                    console.log(placeItem);
-
+                    placeItem.placeItem("crop", [0, 0]);
                 break;
                 case EventType.iUp:
                     let inventory:InventoryComponent;

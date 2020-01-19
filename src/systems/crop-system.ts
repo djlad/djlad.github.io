@@ -56,7 +56,6 @@ export class CropSystem extends EntitySystem {
     }
 
     private handleEvent(event:GameEvent, entity:Entity):void{
-        //console.log(event)
         switch (event.eventName){
             case EventType.collision:
                 this.handleCollision(event, entity);

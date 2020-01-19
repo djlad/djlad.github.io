@@ -31,7 +31,6 @@ export abstract class Entity {
         }
         
         if(!allowUndefined){
-            console.log(this)
             throw "entity has no component " + componentName;
         }
         return component;

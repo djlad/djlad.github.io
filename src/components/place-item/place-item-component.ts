@@ -11,12 +11,11 @@ import { PlaceItemRequest } from "./place-item-request";
 export class PlaceItemComponent extends Component {
     constructor(){
         super("placeItem");
-        this.tileSize = 20;
+        this.tileSize = 100;
     }
     private tileSize:number;
-    private placeItemRequests:PlaceItemRequest[];
     private static instance:PlaceItemComponent = null;
-
+    public placeItemRequests:PlaceItemRequest[]=[];
     private realCoordinatesToTileCoordinates(coordinates:number[]):number[] {
         let tileCoords:number[] = coordinates.map((coordinate) => {
            return (coordinate % this.tileSize) * this.tileSize;
@@ -24,8 +23,9 @@ export class PlaceItemComponent extends Component {
         return tileCoords;
     }
     placeItem(entityName:string, coordinates:number[]=[0, 0], relative:boolean=true):void {
-        let tileCoords = this.realCoordinatesToTileCoordinates(coordinates);
-        let placeItemRequest = new PlaceItemRequest(entityName, coordinates);
+        let tileCoords:number[] = this.realCoordinatesToTileCoordinates(coordinates);
+        let placeItemRequest:PlaceItemRequest;
+        placeItemRequest = new PlaceItemRequest(entityName, coordinates, 1, relative=true);
         this.placeItemRequests.push(placeItemRequest);
     }
     

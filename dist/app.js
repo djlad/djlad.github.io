@@ -144,7 +144,6 @@ System.register("engine/entity/entity", [], function (exports_4, context_4) {
                         }
                     }
                     if (!allowUndefined) {
-                        console.log(this);
                         throw "entity has no component " + componentName;
                     }
                     return component;
@@ -1323,12 +1322,13 @@ System.register("components/place-item/place-item-request", [], function (export
         setters: [],
         execute: function () {
             PlaceItemRequest = (function () {
-                function PlaceItemRequest(entityName, coordinates, quantity) {
+                function PlaceItemRequest(entityName, coordinates, quantity, relative) {
                     if (quantity === void 0) { quantity = 1; }
-                    this.quantity = 1;
+                    if (relative === void 0) { relative = true; }
                     this.entityName = entityName;
                     this.coordinates = coordinates;
                     this.quantity = quantity;
+                    this.relative = relative;
                 }
                 return PlaceItemRequest;
             }());
@@ -1354,7 +1354,8 @@ System.register("components/place-item/place-item-component", ["engine/component
                 __extends(PlaceItemComponent, _super);
                 function PlaceItemComponent() {
                     var _this = _super.call(this, "placeItem") || this;
-                    _this.tileSize = 20;
+                    _this.placeItemRequests = [];
+                    _this.tileSize = 100;
                     return _this;
                 }
                 PlaceItemComponent.prototype.realCoordinatesToTileCoordinates = function (coordinates) {
@@ -1368,7 +1369,8 @@ System.register("components/place-item/place-item-component", ["engine/component
                     if (coordinates === void 0) { coordinates = [0, 0]; }
                     if (relative === void 0) { relative = true; }
                     var tileCoords = this.realCoordinatesToTileCoordinates(coordinates);
-                    var placeItemRequest = new place_item_request_1.PlaceItemRequest(entityName, coordinates);
+                    var placeItemRequest;
+                    placeItemRequest = new place_item_request_1.PlaceItemRequest(entityName, coordinates, 1, relative = true);
                     this.placeItemRequests.push(placeItemRequest);
                 };
                 PlaceItemComponent.prototype.update = function (entity) {
@@ -1676,7 +1678,7 @@ System.register("systems/wasd-system", ["engine/system/system", "engine/events/g
                                 console.log(this.game);
                                 position = entity.getComponent("position");
                                 var placeItem = entity.getComponent("placeItem");
-                                console.log(placeItem);
+                                placeItem.placeItem("crop", [0, 0]);
                                 break;
                             case EventType_4.EventType.iUp:
                                 var inventory = void 0;
@@ -2406,10 +2408,76 @@ System.register("systems/fight-system", ["engine/system/system", "engine/events/
         }
     };
 });
-System.register("game", ["systems/render-system", "systems/wasd-system", "systems/crop-system", "systems/collision-system", "systems/projectile-system", "systems/health-system", "systems/position-system", "systems/neural-fight-system", "engine/game", "builders/sprite-builder", "builders/entity-builder", "builders/build-components"], function (exports_48, context_48) {
+System.register("systems/place-item-system", ["engine/system/system"], function (exports_48, context_48) {
     "use strict";
-    var render_system_1, wasd_system_1, crop_system_1, collision_system_1, projectile_system_1, health_system_1, position_system_1, neural_fight_system_1, game_1, sprite_builder_1, entity_builder_1, build_components_6;
+    var system_10, PlaceItemSystem;
     var __moduleName = context_48 && context_48.id;
+    return {
+        setters: [
+            function (system_10_1) {
+                system_10 = system_10_1;
+            }
+        ],
+        execute: function () {
+            PlaceItemSystem = (function (_super) {
+                __extends(PlaceItemSystem, _super);
+                function PlaceItemSystem(game) {
+                    return _super.call(this, game) || this;
+                }
+                PlaceItemSystem.prototype.apply = function (entity) {
+                    var placeItem;
+                    try {
+                        placeItem = entity.getComponent("placeItem");
+                    }
+                    catch (_a) {
+                        return;
+                    }
+                    var requests = placeItem.placeItemRequests;
+                    for (var i = 0; i < requests.length; i++) {
+                        var placeItemRequest = requests[i];
+                        if (placeItemRequest.relative) {
+                            var position = void 0;
+                            try {
+                                position = entity.getComponent("position");
+                                placeItemRequest.coordinates[0] += position.x;
+                                placeItemRequest.coordinates[1] += position.y;
+                            }
+                            catch (_b) { }
+                        }
+                        this.placeItem(placeItemRequest);
+                    }
+                    placeItem.placeItemRequests = [];
+                };
+                PlaceItemSystem.prototype.applyEvents = function () {
+                };
+                PlaceItemSystem.prototype.placeItem = function (placeItemRequest) {
+                    var x;
+                    var y;
+                    x = placeItemRequest.coordinates[0];
+                    y = placeItemRequest.coordinates[1];
+                    var newEntity;
+                    newEntity = this.game.addEntity(placeItemRequest.entityName);
+                    var position = newEntity.getComponent("position", true);
+                    if (position == null) {
+                        return;
+                    }
+                    position.x = x;
+                    position.y = y;
+                    return newEntity;
+                };
+                PlaceItemSystem.create = function (game) {
+                    return new PlaceItemSystem(game);
+                };
+                return PlaceItemSystem;
+            }(system_10.EntitySystem));
+            exports_48("PlaceItemSystem", PlaceItemSystem);
+        }
+    };
+});
+System.register("game", ["systems/render-system", "systems/wasd-system", "systems/crop-system", "systems/collision-system", "systems/projectile-system", "systems/health-system", "systems/position-system", "systems/neural-fight-system", "engine/game", "builders/sprite-builder", "builders/entity-builder", "builders/build-components", "systems/place-item-system"], function (exports_49, context_49) {
+    "use strict";
+    var render_system_1, wasd_system_1, crop_system_1, collision_system_1, projectile_system_1, health_system_1, position_system_1, neural_fight_system_1, game_1, sprite_builder_1, entity_builder_1, build_components_6, place_item_system_1;
+    var __moduleName = context_49 && context_49.id;
     function createGame() {
         var game = game_1.Game.create();
         game.addSystem(render_system_1.RenderSystem.create(game));
@@ -2420,6 +2488,7 @@ System.register("game", ["systems/render-system", "systems/wasd-system", "system
         game.addSystem(health_system_1.HealthSystem.create(game));
         game.addSystem(position_system_1.PositionSystem.create(game));
         game.addSystem(neural_fight_system_1.NeuralFightSystem.create(game));
+        game.addSystem(place_item_system_1.PlaceItemSystem.create(game));
         sprite_builder_1.buildSprites(game);
         entity_builder_1.buildEntities(game);
         build_components_6.buildComponents(game);
@@ -2483,7 +2552,7 @@ System.register("game", ["systems/render-system", "systems/wasd-system", "system
         }
         var intervalId = game.start();
     }
-    exports_48("startGame", startGame);
+    exports_49("startGame", startGame);
     return {
         setters: [
             function (render_system_1_1) {
@@ -2521,40 +2590,15 @@ System.register("game", ["systems/render-system", "systems/wasd-system", "system
             },
             function (build_components_6_1) {
                 build_components_6 = build_components_6_1;
+            },
+            function (place_item_system_1_1) {
+                place_item_system_1 = place_item_system_1_1;
             }
         ],
         execute: function () {
             (function () {
                 startGame();
             })();
-        }
-    };
-});
-System.register("systems/place-item-system", ["engine/system/system"], function (exports_49, context_49) {
-    "use strict";
-    var system_10, PlaceItemSystem;
-    var __moduleName = context_49 && context_49.id;
-    return {
-        setters: [
-            function (system_10_1) {
-                system_10 = system_10_1;
-            }
-        ],
-        execute: function () {
-            PlaceItemSystem = (function (_super) {
-                __extends(PlaceItemSystem, _super);
-                function PlaceItemSystem(game) {
-                    return _super.call(this, game) || this;
-                }
-                PlaceItemSystem.prototype.apply = function (entity) {
-                };
-                PlaceItemSystem.prototype.applyEvents = function () {
-                };
-                PlaceItemSystem.create = function (game) {
-                    return new PlaceItemSystem(game);
-                };
-                return PlaceItemSystem;
-            }(system_10.EntitySystem));
         }
     };
 });
