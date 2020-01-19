@@ -2,9 +2,10 @@ import { Component } from "../../engine/component/component";
 import { InventoryItem } from "./inventory-item";
 import { InventoryItemRegistry } from "./item-registry";
 import { Entity } from "../../engine/entity/entity";
-import { GameEvent, EventType } from "../../engine/events/event-manager";
 import { GiveItemEventData } from "./give-item-event-data";
 import { InventoryItemType } from "./inventory-item-type";
+import { GameEvent } from "../../engine/events/game-event";
+import { EventType } from "../../engine/events/EventType";
 
 export class InventoryComponent extends Component {
     constructor(itemRegistry:InventoryItemRegistry){

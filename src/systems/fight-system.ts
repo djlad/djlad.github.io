@@ -1,9 +1,10 @@
 import { EntitySystem } from '../engine/system/system';
 import { Entity } from '../engine/entity/entity';
 import { Game } from '../engine/game';
-import { EventManager, GameEvent, EventType } from '../engine/events/event-manager';
 import { FightComponent } from '../components/fight-component';
 import { PositionComponent } from '../components/position-component';
+import { GameEvent } from '../engine/events/game-event';
+import { EventType } from '../engine/events/EventType';
 
 export class FightSystem extends EntitySystem {
     constructor(game:Game){

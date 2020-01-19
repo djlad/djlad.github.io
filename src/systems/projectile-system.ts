@@ -4,7 +4,8 @@ import { Entity } from '../engine/entity/entity';
 import { PositionComponent } from '../components/position-component';
 import { ProjectileComponent } from '../components/projectile-component';
 import { ProjectileEntity } from '../entities/projectile-entity';
-import { GameEvent, EventType } from '../engine/events/event-manager';
+import { GameEvent } from '../engine/events/game-event';
+import { EventType } from '../engine/events/EventType';
 
 export class ProjectileSystem extends EntitySystem {
 

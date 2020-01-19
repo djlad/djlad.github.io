@@ -1,6 +1,6 @@
 import { ComponentFactory } from '../component/component-factory';
 import { Component } from '../component/component';
-import { GameEvent } from '../events/event-manager';
+import { GameEvent } from '../events/game-event';
 
 export abstract class Entity {
     constructor(componentFactory:ComponentFactory){

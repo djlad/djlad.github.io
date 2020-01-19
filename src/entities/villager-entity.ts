@@ -1,5 +1,4 @@
 import { Entity } from '../engine/entity/entity';
-import { GameEvent } from '../engine/events/event-manager';
 import { PositionComponent } from '../components/position-component';
 import { AnimationComponent } from '../components/animation-component';
 import { FightComponent } from '../components/fight-component';
@@ -8,6 +7,7 @@ import { NeuralFightSystem } from '../systems/neural-fight-system';
 import { NeuralFightComponent } from '../components/neural-fight-component';
 import { ComponentFactory } from '../engine/component/component-factory';
 import { createComponentFactory } from '../builders/build-components';
+import { GameEvent } from '../engine/events/game-event';
 
 export class VillagerEntity extends Entity{
     constructor(cf:ComponentFactory){

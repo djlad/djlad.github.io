@@ -2,12 +2,13 @@ import { EntitySystem } from '../engine/system/system';
 import { Entity } from '../engine/entity/entity';
 import { AnimationComponent } from '../components/animation-component';
 import { CropComponent } from '../components/crop-component';
-import { GameEvent, EventManager, EventType } from '../engine/events/event-manager';
 import { ProjectileEntity } from '../entities/projectile-entity';
 import { PlayerEntity } from '../entities/player-entity';
 import { PositionComponent } from '../components/position-component';
 import { Game } from '../engine/game';
 import { InventoryComponent } from '../components/inventory-component/inventory-component';
+import { GameEvent } from '../engine/events/game-event';
+import { EventType } from '../engine/events/EventType';
 
 export class CropSystem extends EntitySystem {
     constructor(game:Game){

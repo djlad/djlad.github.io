@@ -1,3 +1,5 @@
+import { EventType } from "./EventType";
+
 export class GameEvent {
     constructor(eventName:EventType, eventData:{}, componentTarget:string=null){
         this.eventName = eventName;

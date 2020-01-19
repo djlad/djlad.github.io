@@ -1,10 +1,11 @@
 import { EntitySystem } from '../engine/system/system';
 import { Entity } from '../engine/entity/entity';
-import { GameEvent, EventType } from '../engine/events/event-manager';
 import { PositionComponent } from '../components/position-component';
 import { FirstEntity } from '../entities/first-entity';
 import { Game } from '../engine/game';
 import { ProjectileEntity } from '../entities/projectile-entity';
+import { GameEvent } from '../engine/events/game-event';
+import { EventType } from '../engine/events/EventType';
 
 export class CollisionSystem extends EntitySystem{
     constructor(game:Game){

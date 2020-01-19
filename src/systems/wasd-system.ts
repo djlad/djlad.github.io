@@ -1,13 +1,15 @@
 import { EntitySystem } from '../engine/system/system';
 import { Entity } from '../engine/entity/entity';
-import { GameEvent, EventManager, EventType } from '../engine/events/event-manager';
 import { WasdComponent } from '../components/wasd-component';
 import { PositionComponent } from '../components/position-component';
 import { AnimationComponent } from '../components/animation-component';
 import { Game } from '../engine/game';
-import { VillagerEntity } from '../entities/villager-entity';
-import { ProjectileEntity } from '../entities/projectile-entity';
 import { InventoryComponent } from '../components/inventory-component/inventory-component';
+import { EventManager } from '../engine/events/event-manager';
+import { GameEvent } from '../engine/events/game-event';
+import { EventType } from '../engine/events/EventType';
+import { PlaceItemRequest } from '../components/place-item/place-item-request';
+import { PlaceItemComponent } from '../components/place-item/place-item-component';
 
 export class WasdSystem extends EntitySystem {
     constructor(game:Game){
@@ -79,7 +81,11 @@ export class WasdSystem extends EntitySystem {
                 break;
                 case EventType.pUp:
                     //console.log("p up")
-                    console.log(this.game)
+                    console.log(this.game);
+                    position = <PositionComponent>entity.getComponent("position");
+                    let placeItem:PlaceItemComponent = <PlaceItemComponent>entity.getComponent("placeItem");
+                    console.log(placeItem);
+
                 break;
                 case EventType.iUp:
                     let inventory:InventoryComponent;
