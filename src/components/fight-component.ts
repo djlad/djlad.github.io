@@ -28,7 +28,7 @@ export class FightComponent extends Component{
         }
     }
 
-    static create(){
+    static create():FightComponent{
         return new FightComponent();
     }
 }

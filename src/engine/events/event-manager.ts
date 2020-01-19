@@ -30,10 +30,10 @@ export class EventManager {
 
         //wasd controls
         var controls:EventType[] = [EventType.wDown, EventType.aDown, EventType.sDown,
-            EventType.dDown, EventType.spaceDown, EventType.pDown, EventType.iDown];
+            EventType.dDown, EventType.spaceDown, EventType.pDown, EventType.iDown, EventType.fDown];
         var controlRelease:EventType[] = [EventType.wUp, EventType.aUp, EventType.sUp,
-            EventType.dUp, EventType.spaceUp, EventType.pUp, EventType.iUp]
-        var controlKeys:number[] = [87, 65, 83, 68, 32, 80, 73];
+            EventType.dUp, EventType.spaceUp, EventType.pUp, EventType.iUp, EventType.fUp];
+        var controlKeys:number[] = [87, 65, 83, 68, 32, 80, 73, 70];
 
         for(var i:number=0;i<controls.length;i++){
             if(this.keys[controlKeys[i]]){

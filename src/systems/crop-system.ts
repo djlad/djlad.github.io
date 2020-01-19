@@ -9,6 +9,7 @@ import { Game } from '../engine/game';
 import { InventoryComponent } from '../components/inventory-component/inventory-component';
 import { GameEvent } from '../engine/events/game-event';
 import { EventType } from '../engine/events/EventType';
+import { CropHarvesterComponent } from '../components/crop-harvester-component';
 
 export class CropSystem extends EntitySystem {
     constructor(game:Game){
@@ -41,17 +42,28 @@ export class CropSystem extends EntitySystem {
     };
 
     private handleCollision(event:GameEvent, entity:Entity){
-        if(!(event.eventData instanceof PlayerEntity)){
+        if(!(event.eventData instanceof Entity)){
             return;
         }
+        let collidedEntity:Entity = <Entity>event.eventData;
+        let cropHarvester:CropHarvesterComponent;
+        try {
+            cropHarvester = <CropHarvesterComponent>collidedEntity.getComponent("cropHarvester");
+        } catch {
+            return;
+        }
+        console.log(cropHarvester.harvesting)
+        if(!cropHarvester.harvesting) {
+            return;
+        }
+
         let crop:CropComponent = <CropComponent>entity.getComponent("crop");
-        let player:PlayerEntity = <PlayerEntity>event.eventData;
         let playerInventory:InventoryComponent;
-        playerInventory = <InventoryComponent>player.getComponent("inventory");
+        playerInventory = <InventoryComponent>collidedEntity.getComponent("inventory");
         if(crop.isGrown()){
             playerInventory.addItem(crop.cropName, 1);
         }
-        entity.destroyed = true;
+        this.game.destroy(entity);
 
     }
 

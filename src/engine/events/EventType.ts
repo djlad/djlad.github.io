@@ -19,6 +19,9 @@ export enum EventType {
     pDown,// console.log game object
     pUp,
 
+    fDown,
+    fUp,
+
     collision,
     fireProjectile,
 

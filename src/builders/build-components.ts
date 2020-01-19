@@ -10,6 +10,7 @@ import { Game } from '../engine/game';
 import { InventoryComponent } from '../components/inventory-component/inventory-component';
 import { ComponentFactory } from '../engine/component/component-factory';
 import { PlaceItemComponent } from '../components/place-item/place-item-component';
+import { CropHarvesterComponent } from '../components/crop-harvester-component';
 
 export function createComponentFactory():ComponentFactory{
     var cf:ComponentFactory = new ComponentFactory();
@@ -23,6 +24,7 @@ export function createComponentFactory():ComponentFactory{
     cf.registerComponent(NeuralFightComponent);
     cf.registerComponent(InventoryComponent);
     cf.registerComponent(PlaceItemComponent);
+    cf.registerComponent(CropHarvesterComponent);
     return cf;
 }
 

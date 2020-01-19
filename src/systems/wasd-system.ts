@@ -10,6 +10,7 @@ import { GameEvent } from '../engine/events/game-event';
 import { EventType } from '../engine/events/EventType';
 import { PlaceItemRequest } from '../components/place-item/place-item-request';
 import { PlaceItemComponent } from '../components/place-item/place-item-component';
+import { CropHarvesterComponent } from '../components/crop-harvester-component';
 
 export class WasdSystem extends EntitySystem {
     constructor(game:Game){
@@ -79,12 +80,22 @@ export class WasdSystem extends EntitySystem {
                     var ge:GameEvent = GameEvent.create(EventType.fireProjectile);
                     entity.emit(ge);
                 break;
+                case EventType.spaceUp:
+                    position = <PositionComponent>entity.getComponent("position");
+                    let placeItem:PlaceItemComponent;
+                    placeItem = <PlaceItemComponent>entity.getComponent("placeItem");
+                    placeItem.placeItem("crop", [0, 0]);
+                break;
+                case EventType.fUp:
+                    let cropHarvester:CropHarvesterComponent;
+                    try{
+                        cropHarvester = <CropHarvesterComponent>entity.getComponent("cropHarvester");
+                    } catch {return}
+                    cropHarvester.startHarvest();
+                break;
                 case EventType.pUp:
                     //console.log("p up")
                     console.log(this.game);
-                    position = <PositionComponent>entity.getComponent("position");
-                    let placeItem:PlaceItemComponent = <PlaceItemComponent>entity.getComponent("placeItem");
-                    placeItem.placeItem("crop", [0, 0]);
                 break;
                 case EventType.iUp:
                     let inventory:InventoryComponent;
