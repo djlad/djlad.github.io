@@ -52,7 +52,6 @@ export class CropSystem extends EntitySystem {
         } catch {
             return;
         }
-        console.log(cropHarvester.harvesting)
         if(!cropHarvester.harvesting) {
             return;
         }

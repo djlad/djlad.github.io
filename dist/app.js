@@ -1729,14 +1729,12 @@ System.register("systems/wasd-system", ["engine/system/system", "engine/events/g
                                 break;
                             case EventType_4.EventType.fUp:
                                 var cropHarvester = void 0;
-                                console.log("harvest");
                                 try {
                                     cropHarvester = entity.getComponent("cropHarvester");
                                 }
                                 catch (_a) {
                                     return;
                                 }
-                                console.log("harvest");
                                 cropHarvester.startHarvest();
                                 break;
                             case EventType_4.EventType.pUp:
@@ -1901,7 +1899,6 @@ System.register("systems/crop-system", ["engine/system/system", "engine/entity/e
                     catch (_a) {
                         return;
                     }
-                    console.log(cropHarvester.harvesting);
                     if (!cropHarvester.harvesting) {
                         return;
                     }
