@@ -4,7 +4,7 @@ export class WasdComponent extends Component {
     constructor(){
         super("wasd");
     }
-    speed:number=5;
+    speed:number=4;
     sprite:string="grey";
     walkSprite:string="greyWalk";
     update(){}

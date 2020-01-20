@@ -547,7 +547,7 @@ System.register("components/wasd-component", ["engine/component/component"], fun
                 __extends(WasdComponent, _super);
                 function WasdComponent() {
                     var _this = _super.call(this, "wasd") || this;
-                    _this.speed = 5;
+                    _this.speed = 4;
                     _this.sprite = "grey";
                     _this.walkSprite = "greyWalk";
                     return _this;
@@ -1067,7 +1067,7 @@ System.register("engine/game", ["engine/entity/entity-factory", "engine/events/e
                     console.log("starting game");
                     this.intervalId = setInterval((function (game) {
                         return function () { game.step(); };
-                    })(this), 1000 / 30);
+                    })(this), 1000 / 40);
                     return this.intervalId;
                 };
                 Game.prototype.stop = function () {

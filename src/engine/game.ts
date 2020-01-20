@@ -74,7 +74,7 @@ export class Game {
         console.log("starting game")
         this.intervalId = setInterval((function(game){
             return function(){game.step()}
-        })(this), 1000/30);
+        })(this), 1000/40);
         return this.intervalId;
     }
 
