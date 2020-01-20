@@ -34,11 +34,18 @@ export class PlaceItemSystem extends EntitySystem {
     applyEvents() {
 
     }
+    private tileSize:number=50;
+    private realCoordinatesToTileCoordinates(coordinates:number[]):number[] {
+        let tileCoords:number[] = coordinates.map((coordinate) => {
+           return (Math.floor(coordinate / this.tileSize)) * this.tileSize;
+        });
+        return tileCoords;
+    }
     private placeItem(placeItemRequest:PlaceItemRequest):Entity{
-        let x:number;
-        let y:number;
-        x = placeItemRequest.coordinates[0];
-        y = placeItemRequest.coordinates[1];
+        let realCoordinates = placeItemRequest.coordinates;
+        let tileCoordinates = this.realCoordinatesToTileCoordinates(realCoordinates);
+        let x:number = tileCoordinates[0];
+        let y:number = tileCoordinates[1];
         let newEntity:Entity;
         newEntity = this.game.addEntity(placeItemRequest.entityName);
         let position:PositionComponent = <PositionComponent>newEntity.getComponent("position", true);
@@ -47,6 +54,7 @@ export class PlaceItemSystem extends EntitySystem {
         }
         position.x = x;
         position.y = y;
+        placeItemRequest.successCallback(newEntity);
         return newEntity;
     }
     static create(game:Game):PlaceItemSystem {

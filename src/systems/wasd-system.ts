@@ -11,6 +11,7 @@ import { EventType } from '../engine/events/EventType';
 import { PlaceItemRequest } from '../components/place-item/place-item-request';
 import { PlaceItemComponent } from '../components/place-item/place-item-component';
 import { CropHarvesterComponent } from '../components/crop-harvester-component';
+import { CropComponent } from '../components/crop-component';
 
 export class WasdSystem extends EntitySystem {
     constructor(game:Game){
@@ -84,7 +85,10 @@ export class WasdSystem extends EntitySystem {
                     position = <PositionComponent>entity.getComponent("position");
                     let placeItem:PlaceItemComponent;
                     placeItem = <PlaceItemComponent>entity.getComponent("placeItem");
-                    placeItem.placeItem("crop", [0, 0]);
+                    placeItem.placeItem("crop", [0, 0], (entity:Entity)=>{
+                        let crop:CropComponent = <CropComponent>entity.getComponent("crop");
+                        crop.setCrop("wheat")
+                    });
                 break;
                 case EventType.fUp:
                     let cropHarvester:CropHarvesterComponent;

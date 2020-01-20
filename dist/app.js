@@ -1324,12 +1324,13 @@ System.register("components/place-item/place-item-request", [], function (export
         setters: [],
         execute: function () {
             PlaceItemRequest = (function () {
-                function PlaceItemRequest(entityName, coordinates, quantity, relative) {
+                function PlaceItemRequest(entityName, coordinates, quantity, successCallback, relative) {
                     if (quantity === void 0) { quantity = 1; }
                     if (relative === void 0) { relative = true; }
                     this.entityName = entityName;
                     this.coordinates = coordinates;
                     this.quantity = quantity;
+                    this.successCallback = successCallback;
                     this.relative = relative;
                 }
                 return PlaceItemRequest;
@@ -1357,22 +1358,13 @@ System.register("components/place-item/place-item-component", ["engine/component
                 function PlaceItemComponent() {
                     var _this = _super.call(this, "placeItem") || this;
                     _this.placeItemRequests = [];
-                    _this.tileSize = 100;
                     return _this;
                 }
-                PlaceItemComponent.prototype.realCoordinatesToTileCoordinates = function (coordinates) {
-                    var _this = this;
-                    var tileCoords = coordinates.map(function (coordinate) {
-                        return (coordinate % _this.tileSize) * _this.tileSize;
-                    });
-                    return tileCoords;
-                };
-                PlaceItemComponent.prototype.placeItem = function (entityName, coordinates, relative) {
+                PlaceItemComponent.prototype.placeItem = function (entityName, coordinates, successCallback, relative) {
                     if (coordinates === void 0) { coordinates = [0, 0]; }
                     if (relative === void 0) { relative = true; }
-                    var tileCoords = this.realCoordinatesToTileCoordinates(coordinates);
                     var placeItemRequest;
-                    placeItemRequest = new place_item_request_1.PlaceItemRequest(entityName, coordinates, 1, relative = true);
+                    placeItemRequest = new place_item_request_1.PlaceItemRequest(entityName, coordinates, 1, successCallback, relative = true);
                     this.placeItemRequests.push(placeItemRequest);
                 };
                 PlaceItemComponent.prototype.update = function (entity) {
@@ -1380,7 +1372,6 @@ System.register("components/place-item/place-item-component", ["engine/component
                 PlaceItemComponent.create = function () {
                     return new PlaceItemComponent();
                 };
-                PlaceItemComponent.instance = null;
                 return PlaceItemComponent;
             }(component_11.Component));
             exports_30("PlaceItemComponent", PlaceItemComponent);
@@ -1726,7 +1717,10 @@ System.register("systems/wasd-system", ["engine/system/system", "engine/events/g
                                 position = entity.getComponent("position");
                                 var placeItem = void 0;
                                 placeItem = entity.getComponent("placeItem");
-                                placeItem.placeItem("crop", [0, 0]);
+                                placeItem.placeItem("crop", [0, 0], function (entity) {
+                                    var crop = entity.getComponent("crop");
+                                    crop.setCrop("wheat");
+                                });
                                 break;
                             case EventType_4.EventType.fUp:
                                 var cropHarvester = void 0;
@@ -2495,7 +2489,9 @@ System.register("systems/place-item-system", ["engine/system/system"], function 
             PlaceItemSystem = (function (_super) {
                 __extends(PlaceItemSystem, _super);
                 function PlaceItemSystem(game) {
-                    return _super.call(this, game) || this;
+                    var _this = _super.call(this, game) || this;
+                    _this.tileSize = 50;
+                    return _this;
                 }
                 PlaceItemSystem.prototype.apply = function (entity) {
                     var placeItem;
@@ -2523,11 +2519,18 @@ System.register("systems/place-item-system", ["engine/system/system"], function 
                 };
                 PlaceItemSystem.prototype.applyEvents = function () {
                 };
+                PlaceItemSystem.prototype.realCoordinatesToTileCoordinates = function (coordinates) {
+                    var _this = this;
+                    var tileCoords = coordinates.map(function (coordinate) {
+                        return (Math.floor(coordinate / _this.tileSize)) * _this.tileSize;
+                    });
+                    return tileCoords;
+                };
                 PlaceItemSystem.prototype.placeItem = function (placeItemRequest) {
-                    var x;
-                    var y;
-                    x = placeItemRequest.coordinates[0];
-                    y = placeItemRequest.coordinates[1];
+                    var realCoordinates = placeItemRequest.coordinates;
+                    var tileCoordinates = this.realCoordinatesToTileCoordinates(realCoordinates);
+                    var x = tileCoordinates[0];
+                    var y = tileCoordinates[1];
                     var newEntity;
                     newEntity = this.game.addEntity(placeItemRequest.entityName);
                     var position = newEntity.getComponent("position", true);
@@ -2536,6 +2539,7 @@ System.register("systems/place-item-system", ["engine/system/system"], function 
                     }
                     position.x = x;
                     position.y = y;
+                    placeItemRequest.successCallback(newEntity);
                     return newEntity;
                 };
                 PlaceItemSystem.create = function (game) {
@@ -2672,34 +2676,6 @@ System.register("game", ["systems/render-system", "systems/wasd-system", "system
             (function () {
                 startGame();
             })();
-        }
-    };
-});
-System.register("components/tile-component", ["engine/component/component"], function (exports_51, context_51) {
-    "use strict";
-    var component_13, TileComponent;
-    var __moduleName = context_51 && context_51.id;
-    return {
-        setters: [
-            function (component_13_1) {
-                component_13 = component_13_1;
-            }
-        ],
-        execute: function () {
-            TileComponent = (function (_super) {
-                __extends(TileComponent, _super);
-                function TileComponent() {
-                    var _this = _super !== null && _super.apply(this, arguments) || this;
-                    _this.tileSize = 30;
-                    return _this;
-                }
-                TileComponent.prototype.update = function (entity) { };
-                TileComponent.create = function () {
-                    return new TileComponent("tile");
-                };
-                return TileComponent;
-            }(component_13.Component));
-            exports_51("TileComponent", TileComponent);
         }
     };
 });
