@@ -1521,11 +1521,12 @@ System.register("entities/crop-entity", ["engine/entity/entity", "builders/build
                 __extends(CropEntity, _super);
                 function CropEntity(cf) {
                     var _this = _super.call(this, cf) || this;
-                    _this.addComponent("animation");
-                    _this.addComponent("position");
-                    _this.addComponent("crop");
-                    var animation = _this.getComponent("animation");
-                    var position = _this.getComponent("position");
+                    var position = _this.addComponent("position");
+                    var animation = _this.addComponent("animation");
+                    var crop = _this.addComponent("crop");
+                    if (crop.growthSprites.length > 0) {
+                        animation.setSprite(crop.growthSprites[0]);
+                    }
                     return _this;
                 }
                 CropEntity.prototype.handleEvents = function (events) {
@@ -2671,6 +2672,34 @@ System.register("game", ["systems/render-system", "systems/wasd-system", "system
             (function () {
                 startGame();
             })();
+        }
+    };
+});
+System.register("components/tile-component", ["engine/component/component"], function (exports_51, context_51) {
+    "use strict";
+    var component_13, TileComponent;
+    var __moduleName = context_51 && context_51.id;
+    return {
+        setters: [
+            function (component_13_1) {
+                component_13 = component_13_1;
+            }
+        ],
+        execute: function () {
+            TileComponent = (function (_super) {
+                __extends(TileComponent, _super);
+                function TileComponent() {
+                    var _this = _super !== null && _super.apply(this, arguments) || this;
+                    _this.tileSize = 30;
+                    return _this;
+                }
+                TileComponent.prototype.update = function (entity) { };
+                TileComponent.create = function () {
+                    return new TileComponent("tile");
+                };
+                return TileComponent;
+            }(component_13.Component));
+            exports_51("TileComponent", TileComponent);
         }
     };
 });
