@@ -5,6 +5,7 @@ export class InventoryItem {
     itemQuantity:number = 0;
     itemName:string = "no name";
     itemDescription:string = "no description";
+    itemSlot:number = -1;
 
     static create(itemType:InventoryItemType):InventoryItem{
         let item = new InventoryItem();

@@ -11,25 +11,35 @@ export class InventoryComponent extends Component {
     constructor(itemRegistry:InventoryItemRegistry){
         super("inventory");
         this.itemRegistry = itemRegistry;
+        this.itemSlots = new Array<InventoryItem>(10);
+
     }
     private inventory:{[key:string]:InventoryItem} = {};
-    itemRegistry:InventoryItemRegistry;
+    private itemSlots:InventoryItem[];
+    private selectedItemSlot:number=0;
+    private itemRegistry:InventoryItemRegistry;
 
     inventoryToString(){
         let inventoryString = "Inventory:";
-        let itemNames:string[] = Object.keys(this.inventory);
-        for(let i:number=0;i<itemNames.length;i++){
+        for(let i:number=0;i<this.itemSlots.length;i++){
             let item:InventoryItem;
-            item = this.inventory[itemNames[i]];
+            item = this.itemSlots[i];
             inventoryString += `\n${item.itemName}: ${item.itemQuantity}`;
+
         }
         inventoryString += "\n<---------->";
         console.log(inventoryString);
     }
 
-    registerItemType(itemName:string, itemSpriteName:string, description:string){
-        this.itemRegistry.registerItemType(itemName, itemSpriteName, description);
+ 
+    selectItemSlot(itemSlotNumber:number) {
+        this.selectedItemSlot = itemSlotNumber % this.itemSlots.length;
     }
+
+    getSelectedItem():InventoryItem{
+        return this.itemSlots[this.selectedItemSlot];
+    }
+
     addItem(itemName:string, quantity:number=1):boolean{
         if(! (itemName in this.itemRegistry.itemTypes)){
             console.log(`Warning: itemName ${itemName} is not in the itemRegistry`);
@@ -50,14 +60,6 @@ export class InventoryComponent extends Component {
     }
 
     private handleEvents(event:GameEvent):void{
-        switch(event.eventName){
-            case EventType.giveItem:
-                let eventData:GiveItemEventData = <GiveItemEventData>event.eventData;
-                let itemName:string = eventData.itemName;
-                let quantity:number = eventData.quantity;
-                this.addItem(itemName, quantity);
-            break;
-        }
     }
 
     static create():InventoryComponent{

@@ -1159,6 +1159,7 @@ System.register("components/inventory-component/inventory-item", [], function (e
                     this.itemQuantity = 0;
                     this.itemName = "no name";
                     this.itemDescription = "no description";
+                    this.itemSlot = -1;
                 }
                 InventoryItem.create = function (itemType) {
                     var item = new InventoryItem();
@@ -1234,9 +1235,9 @@ System.register("components/inventory-component/give-item-event-data", [], funct
         }
     };
 });
-System.register("components/inventory-component/inventory-component", ["engine/component/component", "components/inventory-component/inventory-item", "components/inventory-component/item-registry", "engine/events/EventType"], function (exports_28, context_28) {
+System.register("components/inventory-component/inventory-component", ["engine/component/component", "components/inventory-component/inventory-item", "components/inventory-component/item-registry"], function (exports_28, context_28) {
     "use strict";
-    var component_10, inventory_item_1, item_registry_1, EventType_3, InventoryComponent;
+    var component_10, inventory_item_1, item_registry_1, InventoryComponent;
     var __moduleName = context_28 && context_28.id;
     return {
         setters: [
@@ -1248,9 +1249,6 @@ System.register("components/inventory-component/inventory-component", ["engine/c
             },
             function (item_registry_1_1) {
                 item_registry_1 = item_registry_1_1;
-            },
-            function (EventType_3_1) {
-                EventType_3 = EventType_3_1;
             }
         ],
         execute: function () {
@@ -1259,22 +1257,26 @@ System.register("components/inventory-component/inventory-component", ["engine/c
                 function InventoryComponent(itemRegistry) {
                     var _this = _super.call(this, "inventory") || this;
                     _this.inventory = {};
+                    _this.selectedItemSlot = 0;
                     _this.itemRegistry = itemRegistry;
+                    _this.itemSlots = new Array(10);
                     return _this;
                 }
                 InventoryComponent.prototype.inventoryToString = function () {
                     var inventoryString = "Inventory:";
-                    var itemNames = Object.keys(this.inventory);
-                    for (var i = 0; i < itemNames.length; i++) {
+                    for (var i = 0; i < this.itemSlots.length; i++) {
                         var item = void 0;
-                        item = this.inventory[itemNames[i]];
+                        item = this.itemSlots[i];
                         inventoryString += "\n" + item.itemName + ": " + item.itemQuantity;
                     }
                     inventoryString += "\n<---------->";
                     console.log(inventoryString);
                 };
-                InventoryComponent.prototype.registerItemType = function (itemName, itemSpriteName, description) {
-                    this.itemRegistry.registerItemType(itemName, itemSpriteName, description);
+                InventoryComponent.prototype.selectItemSlot = function (itemSlotNumber) {
+                    this.selectedItemSlot = itemSlotNumber % this.itemSlots.length;
+                };
+                InventoryComponent.prototype.getSelectedItem = function () {
+                    return this.itemSlots[this.selectedItemSlot];
                 };
                 InventoryComponent.prototype.addItem = function (itemName, quantity) {
                     if (quantity === void 0) { quantity = 1; }
@@ -1296,14 +1298,6 @@ System.register("components/inventory-component/inventory-component", ["engine/c
                     }
                 };
                 InventoryComponent.prototype.handleEvents = function (event) {
-                    switch (event.eventName) {
-                        case EventType_3.EventType.giveItem:
-                            var eventData = event.eventData;
-                            var itemName = eventData.itemName;
-                            var quantity = eventData.quantity;
-                            this.addItem(itemName, quantity);
-                            break;
-                    }
                 };
                 InventoryComponent.create = function () {
                     var inventory;
@@ -1634,7 +1628,7 @@ System.register("systems/render-system", ["engine/system/system"], function (exp
 });
 System.register("systems/wasd-system", ["engine/system/system", "engine/events/game-event", "engine/events/EventType"], function (exports_36, context_36) {
     "use strict";
-    var system_2, game_event_2, EventType_4, WasdSystem;
+    var system_2, game_event_2, EventType_3, WasdSystem;
     var __moduleName = context_36 && context_36.id;
     return {
         setters: [
@@ -1644,8 +1638,8 @@ System.register("systems/wasd-system", ["engine/system/system", "engine/events/g
             function (game_event_2_1) {
                 game_event_2 = game_event_2_1;
             },
-            function (EventType_4_1) {
-                EventType_4 = EventType_4_1;
+            function (EventType_3_1) {
+                EventType_3 = EventType_3_1;
             }
         ],
         execute: function () {
@@ -1675,54 +1669,54 @@ System.register("systems/wasd-system", ["engine/system/system", "engine/events/g
                     for (var i = 0; i < events.length; i++) {
                         event = events[i];
                         switch (event.eventName) {
-                            case EventType_4.EventType.wDown:
+                            case EventType_3.EventType.wDown:
                                 animation.setSprite(walkSprite);
                                 position.vy = -speed;
                                 break;
-                            case EventType_4.EventType.wUp:
+                            case EventType_3.EventType.wUp:
                                 animation.setSprite(sprite);
                                 position.vy = 0;
                                 break;
-                            case EventType_4.EventType.aDown:
+                            case EventType_3.EventType.aDown:
                                 position.faceRight = false;
                                 animation.setSprite(walkSprite);
                                 position.vx = -speed;
                                 break;
-                            case EventType_4.EventType.aUp:
+                            case EventType_3.EventType.aUp:
                                 animation.setSprite(sprite);
                                 position.vx = 0;
                                 break;
-                            case EventType_4.EventType.sDown:
+                            case EventType_3.EventType.sDown:
                                 animation.setSprite(walkSprite);
                                 position.vy = speed;
                                 break;
-                            case EventType_4.EventType.sUp:
+                            case EventType_3.EventType.sUp:
                                 animation.setSprite(sprite);
                                 position.vy = 0;
                                 break;
-                            case EventType_4.EventType.dDown:
+                            case EventType_3.EventType.dDown:
                                 position.faceRight = true;
                                 animation.setSprite(walkSprite);
                                 position.vx = speed;
                                 break;
-                            case EventType_4.EventType.dUp:
+                            case EventType_3.EventType.dUp:
                                 animation.setSprite(sprite);
                                 position.vx = 0;
                                 break;
-                            case EventType_4.EventType.spaceDown:
-                                var ge = game_event_2.GameEvent.create(EventType_4.EventType.fireProjectile);
+                            case EventType_3.EventType.spaceDown:
+                                var ge = game_event_2.GameEvent.create(EventType_3.EventType.fireProjectile);
                                 entity.emit(ge);
                                 break;
-                            case EventType_4.EventType.spaceUp:
+                            case EventType_3.EventType.spaceUp:
                                 position = entity.getComponent("position");
                                 var placeItem = void 0;
                                 placeItem = entity.getComponent("placeItem");
                                 placeItem.placeItem("crop", [0, 0], function (entity) {
                                     var crop = entity.getComponent("crop");
-                                    crop.setCrop("wheat");
+                                    crop.setCrop("onion");
                                 });
                                 break;
-                            case EventType_4.EventType.fUp:
+                            case EventType_3.EventType.fUp:
                                 var cropHarvester = void 0;
                                 try {
                                     cropHarvester = entity.getComponent("cropHarvester");
@@ -1732,10 +1726,10 @@ System.register("systems/wasd-system", ["engine/system/system", "engine/events/g
                                 }
                                 cropHarvester.startHarvest();
                                 break;
-                            case EventType_4.EventType.pUp:
+                            case EventType_3.EventType.pUp:
                                 console.log(this.game);
                                 break;
-                            case EventType_4.EventType.iUp:
+                            case EventType_3.EventType.iUp:
                                 var inventory = void 0;
                                 inventory = entity.getComponent("inventory", true);
                                 inventory.inventoryToString();
@@ -1835,7 +1829,7 @@ System.register("entities/player-entity", ["engine/entity/entity", "builders/bui
 });
 System.register("systems/crop-system", ["engine/system/system", "engine/entity/entity", "engine/events/EventType"], function (exports_39, context_39) {
     "use strict";
-    var system_3, entity_5, EventType_5, CropSystem;
+    var system_3, entity_5, EventType_4, CropSystem;
     var __moduleName = context_39 && context_39.id;
     return {
         setters: [
@@ -1845,8 +1839,8 @@ System.register("systems/crop-system", ["engine/system/system", "engine/entity/e
             function (entity_5_1) {
                 entity_5 = entity_5_1;
             },
-            function (EventType_5_1) {
-                EventType_5 = EventType_5_1;
+            function (EventType_4_1) {
+                EventType_4 = EventType_4_1;
             }
         ],
         execute: function () {
@@ -1907,7 +1901,7 @@ System.register("systems/crop-system", ["engine/system/system", "engine/entity/e
                 };
                 CropSystem.prototype.handleEvent = function (event, entity) {
                     switch (event.eventName) {
-                        case EventType_5.EventType.collision:
+                        case EventType_4.EventType.collision:
                             this.handleCollision(event, entity);
                             break;
                     }
@@ -1955,7 +1949,7 @@ System.register("entities/first-entity", ["engine/entity/entity", "builders/buil
 });
 System.register("systems/collision-system", ["engine/system/system", "entities/first-entity", "entities/projectile-entity", "engine/events/game-event", "engine/events/EventType"], function (exports_41, context_41) {
     "use strict";
-    var system_4, first_entity_1, projectile_entity_1, game_event_3, EventType_6, CollisionSystem;
+    var system_4, first_entity_1, projectile_entity_1, game_event_3, EventType_5, CollisionSystem;
     var __moduleName = context_41 && context_41.id;
     return {
         setters: [
@@ -1971,8 +1965,8 @@ System.register("systems/collision-system", ["engine/system/system", "entities/f
             function (game_event_3_1) {
                 game_event_3 = game_event_3_1;
             },
-            function (EventType_6_1) {
-                EventType_6 = EventType_6_1;
+            function (EventType_5_1) {
+                EventType_5 = EventType_5_1;
             }
         ],
         execute: function () {
@@ -2022,8 +2016,8 @@ System.register("systems/collision-system", ["engine/system/system", "entities/f
                     }
                 };
                 CollisionSystem.prototype.emitCollision = function (e1, e2) {
-                    e1.emit(game_event_3.GameEvent.create(EventType_6.EventType.collision, e2));
-                    e2.emit(game_event_3.GameEvent.create(EventType_6.EventType.collision, e1));
+                    e1.emit(game_event_3.GameEvent.create(EventType_5.EventType.collision, e2));
+                    e2.emit(game_event_3.GameEvent.create(EventType_5.EventType.collision, e1));
                 };
                 CollisionSystem.prototype.removeMovingEntity = function (id) {
                     delete this.movingEntities[id];
@@ -2081,7 +2075,7 @@ System.register("systems/collision-system", ["engine/system/system", "entities/f
 });
 System.register("systems/projectile-system", ["engine/system/system", "entities/projectile-entity", "engine/events/game-event", "engine/events/EventType"], function (exports_42, context_42) {
     "use strict";
-    var system_5, projectile_entity_2, game_event_4, EventType_7, ProjectileSystem;
+    var system_5, projectile_entity_2, game_event_4, EventType_6, ProjectileSystem;
     var __moduleName = context_42 && context_42.id;
     return {
         setters: [
@@ -2094,8 +2088,8 @@ System.register("systems/projectile-system", ["engine/system/system", "entities/
             function (game_event_4_1) {
                 game_event_4 = game_event_4_1;
             },
-            function (EventType_7_1) {
-                EventType_7 = EventType_7_1;
+            function (EventType_6_1) {
+                EventType_6 = EventType_6_1;
             }
         ],
         execute: function () {
@@ -2142,7 +2136,7 @@ System.register("systems/projectile-system", ["engine/system/system", "entities/
                     for (var i = 0; i < events.length; i++) {
                         event = events[i];
                         switch (event.eventName) {
-                            case EventType_7.EventType.fireProjectile:
+                            case EventType_6.EventType.fireProjectile:
                                 if (event.eventData !== null) {
                                     this.fireProjectile(entity, event.eventData.vx, event.eventData.vy);
                                 }
@@ -2150,7 +2144,7 @@ System.register("systems/projectile-system", ["engine/system/system", "entities/
                                     this.fireProjectile(entity);
                                 }
                                 break;
-                            case EventType_7.EventType.collision:
+                            case EventType_6.EventType.collision:
                                 var isProj = entity instanceof projectile_entity_2.ProjectileEntity;
                                 if (!isProj)
                                     break;
@@ -2161,7 +2155,7 @@ System.register("systems/projectile-system", ["engine/system/system", "entities/
                                 var collidedId = event.eventData.id;
                                 var collided = this.game.getById(collidedId);
                                 if (!isShooter && !isSelf && !isProjectile) {
-                                    var ge = game_event_4.GameEvent.create(EventType_7.EventType.inflictDamage);
+                                    var ge = game_event_4.GameEvent.create(EventType_6.EventType.inflictDamage);
                                     collided.emit(ge, true);
                                     this.game.destroy(entity);
                                 }
@@ -2180,15 +2174,15 @@ System.register("systems/projectile-system", ["engine/system/system", "entities/
 });
 System.register("systems/health-system", ["engine/system/system", "engine/events/EventType"], function (exports_43, context_43) {
     "use strict";
-    var system_6, EventType_8, HealthSystem;
+    var system_6, EventType_7, HealthSystem;
     var __moduleName = context_43 && context_43.id;
     return {
         setters: [
             function (system_6_1) {
                 system_6 = system_6_1;
             },
-            function (EventType_8_1) {
-                EventType_8 = EventType_8_1;
+            function (EventType_7_1) {
+                EventType_7 = EventType_7_1;
             }
         ],
         execute: function () {
@@ -2208,7 +2202,7 @@ System.register("systems/health-system", ["engine/system/system", "engine/events
                     for (var i = 0; i < events.length; i++) {
                         event = events[i];
                         switch (event.eventName) {
-                            case EventType_8.EventType.inflictDamage:
+                            case EventType_7.EventType.inflictDamage:
                                 this.handleDamage(entity, event);
                                 break;
                         }
@@ -2236,15 +2230,15 @@ System.register("systems/health-system", ["engine/system/system", "engine/events
 });
 System.register("systems/position-system", ["engine/system/system", "engine/events/EventType"], function (exports_44, context_44) {
     "use strict";
-    var system_7, EventType_9, PositionSystem;
+    var system_7, EventType_8, PositionSystem;
     var __moduleName = context_44 && context_44.id;
     return {
         setters: [
             function (system_7_1) {
                 system_7 = system_7_1;
             },
-            function (EventType_9_1) {
-                EventType_9 = EventType_9_1;
+            function (EventType_8_1) {
+                EventType_8 = EventType_8_1;
             }
         ],
         execute: function () {
@@ -2267,7 +2261,7 @@ System.register("systems/position-system", ["engine/system/system", "engine/even
                     for (var i = 0; i < events.length; i++) {
                         event = events[i];
                         switch (event.eventName) {
-                            case EventType_9.EventType.changeVelocity:
+                            case EventType_8.EventType.changeVelocity:
                                 if ("vx" in event.eventData) {
                                     position.vx = event.eventData.vx;
                                 }
@@ -2397,7 +2391,7 @@ System.register("builders/entity-builder", ["entities/player-entity", "entities/
 });
 System.register("systems/fight-system", ["engine/system/system", "engine/events/game-event", "engine/events/EventType"], function (exports_48, context_48) {
     "use strict";
-    var system_9, game_event_5, EventType_10, FightSystem;
+    var system_9, game_event_5, EventType_9, FightSystem;
     var __moduleName = context_48 && context_48.id;
     return {
         setters: [
@@ -2407,8 +2401,8 @@ System.register("systems/fight-system", ["engine/system/system", "engine/events/
             function (game_event_5_1) {
                 game_event_5 = game_event_5_1;
             },
-            function (EventType_10_1) {
-                EventType_10 = EventType_10_1;
+            function (EventType_9_1) {
+                EventType_9 = EventType_9_1;
             }
         ],
         execute: function () {
@@ -2457,7 +2451,7 @@ System.register("systems/fight-system", ["engine/system/system", "engine/events/
                         position.vx = 0;
                         position.vy = 0;
                         if (fight.canFire()) {
-                            entity.emit(game_event_5.GameEvent.create(EventType_10.EventType.fireProjectile, { vx: direction.dx * 10, vy: direction.dy * 10 }));
+                            entity.emit(game_event_5.GameEvent.create(EventType_9.EventType.fireProjectile, { vx: direction.dx * 10, vy: direction.dy * 10 }));
                             fight.reloadTimer--;
                         }
                     }
