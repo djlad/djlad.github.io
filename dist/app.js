@@ -1703,7 +1703,7 @@ System.register("systems/wasd-system", ["engine/system/system", "engine/events/g
                                 animation.setSprite(sprite);
                                 position.vx = 0;
                                 break;
-                            case EventType_3.EventType.spaceDown:
+                            case EventType_3.EventType.spaceUp:
                                 var ge = game_event_2.GameEvent.create(EventType_3.EventType.fireProjectile);
                                 entity.emit(ge);
                                 break;
