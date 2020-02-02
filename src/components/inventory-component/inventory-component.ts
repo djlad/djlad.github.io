@@ -12,15 +12,30 @@ export class InventoryComponent extends Component {
         super("inventory");
         this.itemRegistry = itemRegistry;
         this.itemSlots = new Array<InventoryItem>(10);
+        for(let i:number=0;i<this.itemSlots.length;i++){
+            let itemType:InventoryItemType = this.itemRegistry.itemTypes["nothing"];
+            this.itemSlots[i] = InventoryItem.create(itemType);
+        }
 
     }
     private inventory:{[key:string]:InventoryItem} = {};
-    private itemSlots:InventoryItem[];
+    private itemSlots:InventoryItem[] = [];
     private selectedItemSlot:number=0;
     private itemRegistry:InventoryItemRegistry;
 
-    inventoryToString(){
-        let inventoryString = "Inventory:";
+    hashInventoryToString():void{
+        let inventoryString:string = "Inventory:";
+        for(let i:number=0;i<this.itemSlots.length;i++){
+            let item:InventoryItem;
+            item = this.itemSlots[i];
+            inventoryString += `\n${item.itemName}: ${item.itemQuantity}`;
+        }
+        inventoryString += "\n<---------->";
+        console.log(inventoryString);
+    }
+
+    inventoryToString():void{
+        let inventoryString:string = "Inventory:";
         for(let i:number=0;i<this.itemSlots.length;i++){
             let item:InventoryItem;
             item = this.itemSlots[i];
@@ -40,7 +55,7 @@ export class InventoryComponent extends Component {
         return this.itemSlots[this.selectedItemSlot];
     }
 
-    addItem(itemName:string, quantity:number=1):boolean{
+    addItemToHashTable(itemName:string, quantity:number=1):boolean{
         if(! (itemName in this.itemRegistry.itemTypes)){
             console.log(`Warning: itemName ${itemName} is not in the itemRegistry`);
             return false;
@@ -50,6 +65,32 @@ export class InventoryComponent extends Component {
             this.inventory[itemName] = InventoryItem.create(itemType);
         }
         this.inventory[itemName].itemQuantity += quantity;
+        return true;
+    }
+
+    addItem(itemName:string, quantity:number=1):boolean {
+        if(! (itemName in this.itemRegistry.itemTypes)){
+            console.log(`Warning: itemName ${itemName} is not in the itemRegistry`);
+            return false;
+        }
+        for(let i:number=0;i<this.itemSlots.length;i++) {
+            let itemSlot:InventoryItem = this.itemSlots[i];
+            if (itemSlot.itemName == itemName) {
+                itemSlot.itemQuantity += quantity;
+                return true;
+            }
+        }
+        for(let i:number=0;i<this.itemSlots.length;i++) {
+            let itemSlot:InventoryItem = this.itemSlots[i];
+            if (itemSlot.itemName == "nothing") {
+                let itemType:InventoryItemType = this.itemRegistry.itemTypes[itemName]
+                this.itemSlots[i] = InventoryItem.create(itemType);
+                this.itemSlots[i].itemQuantity = 1;
+                return;
+            }
+        }
+        
+        return true;
     }
     update(entity:Entity):void{
         let events:GameEvent[] = entity.targetedEvents;

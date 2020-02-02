@@ -1245,6 +1245,7 @@ System.register("components/inventory-component/item-registry", ["components/inv
                     this.registerItemType("corn", "corn2", "its corn");
                     this.registerItemType("pumpkin", "pumpkin2", "its a pumpkin");
                     this.registerItemType("turnip", "turnip2", "its a turnip");
+                    this.registerItemType("nothing", "", "its a turnip");
                 };
                 return InventoryItemRegistry;
             }());
@@ -1292,11 +1293,26 @@ System.register("components/inventory-component/inventory-component", ["engine/c
                 function InventoryComponent(itemRegistry) {
                     var _this = _super.call(this, "inventory") || this;
                     _this.inventory = {};
+                    _this.itemSlots = [];
                     _this.selectedItemSlot = 0;
                     _this.itemRegistry = itemRegistry;
                     _this.itemSlots = new Array(10);
+                    for (var i = 0; i < _this.itemSlots.length; i++) {
+                        var itemType = _this.itemRegistry.itemTypes["nothing"];
+                        _this.itemSlots[i] = inventory_item_1.InventoryItem.create(itemType);
+                    }
                     return _this;
                 }
+                InventoryComponent.prototype.hashInventoryToString = function () {
+                    var inventoryString = "Inventory:";
+                    for (var i = 0; i < this.itemSlots.length; i++) {
+                        var item = void 0;
+                        item = this.itemSlots[i];
+                        inventoryString += "\n" + item.itemName + ": " + item.itemQuantity;
+                    }
+                    inventoryString += "\n<---------->";
+                    console.log(inventoryString);
+                };
                 InventoryComponent.prototype.inventoryToString = function () {
                     var inventoryString = "Inventory:";
                     for (var i = 0; i < this.itemSlots.length; i++) {
@@ -1313,7 +1329,7 @@ System.register("components/inventory-component/inventory-component", ["engine/c
                 InventoryComponent.prototype.getSelectedItem = function () {
                     return this.itemSlots[this.selectedItemSlot];
                 };
-                InventoryComponent.prototype.addItem = function (itemName, quantity) {
+                InventoryComponent.prototype.addItemToHashTable = function (itemName, quantity) {
                     if (quantity === void 0) { quantity = 1; }
                     if (!(itemName in this.itemRegistry.itemTypes)) {
                         console.log("Warning: itemName " + itemName + " is not in the itemRegistry");
@@ -1324,6 +1340,31 @@ System.register("components/inventory-component/inventory-component", ["engine/c
                         this.inventory[itemName] = inventory_item_1.InventoryItem.create(itemType);
                     }
                     this.inventory[itemName].itemQuantity += quantity;
+                    return true;
+                };
+                InventoryComponent.prototype.addItem = function (itemName, quantity) {
+                    if (quantity === void 0) { quantity = 1; }
+                    if (!(itemName in this.itemRegistry.itemTypes)) {
+                        console.log("Warning: itemName " + itemName + " is not in the itemRegistry");
+                        return false;
+                    }
+                    for (var i = 0; i < this.itemSlots.length; i++) {
+                        var itemSlot = this.itemSlots[i];
+                        if (itemSlot.itemName == itemName) {
+                            itemSlot.itemQuantity += quantity;
+                            return true;
+                        }
+                    }
+                    for (var i = 0; i < this.itemSlots.length; i++) {
+                        var itemSlot = this.itemSlots[i];
+                        if (itemSlot.itemName == "nothing") {
+                            var itemType = this.itemRegistry.itemTypes[itemName];
+                            this.itemSlots[i] = inventory_item_1.InventoryItem.create(itemType);
+                            this.itemSlots[i].itemQuantity = 1;
+                            return;
+                        }
+                    }
+                    return true;
                 };
                 InventoryComponent.prototype.update = function (entity) {
                     var events = entity.targetedEvents;
