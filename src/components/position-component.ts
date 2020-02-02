@@ -39,6 +39,13 @@ export class PositionComponent extends Component {
             }
         }
     }
+    private _rotate:number=0;
+    get rotate():number{
+        return this._rotate;
+    }
+    set rotate(radiansToRotate:number){
+        this._rotate = radiansToRotate%(2*Math.PI);
+    }
     x:number=0;
     y:number=0;
     width:number=100;

@@ -2,6 +2,7 @@ import { SpriteManager} from "../../sprite-manager";
 import { HtmlSprite } from "./html-sprite";
 import { Renderer } from "../../render";
 import { createSpriteManager } from "../../../../render/sprite-manager";
+import { RenderOptions } from "../../render-options";
 
 export class HtmlRenderer implements Renderer {
     canvas:HTMLCanvasElement;
@@ -19,19 +20,26 @@ export class HtmlRenderer implements Renderer {
         //this.ctx.fillRect(0,0,this.canvas.width,this.canvas.height);
     }
 
-    sprite(spriteName:string, x:number, y:number, width:number, height:number, spriteNumber:number, flip:boolean=false){
-        var sprite:HtmlSprite = <HtmlSprite>this.spriteManager.getSprite(spriteName);
-        var spriteImg = sprite.sprite;
-        var fc = sprite.frameCoords(spriteNumber);
+    sprite(spriteName:string, x:number, y:number, width:number, height:number, spriteNumber:number, options:RenderOptions){
+        let flip:boolean = options.flip;
+        let sprite:HtmlSprite = <HtmlSprite>this.spriteManager.getSprite(spriteName);
+        let spriteImg = sprite.sprite;
+        let fc = sprite.frameCoords(spriteNumber);
 
         if(flip){
             this.ctx.translate(2*x, 0);
             this.ctx.scale(-1,1);
         }
+        if(options.rotate){
+            this.ctx.rotate(options.rotate);
+        }
         
         this.ctx.drawImage(spriteImg, fc[0], fc[1], sprite.frameWidth,
                            sprite.frameHeight, x-width/2, y-height, width, height);
 
+        if(options.rotate){
+            this.ctx.rotate(-options.rotate);
+        }
         if (flip){
             this.ctx.scale(-1,1);
             this.ctx.translate(-2*x,0);
