@@ -82,13 +82,13 @@ export class WasdSystem extends EntitySystem {
                     entity.emit(ge);
                 break;
                 case EventType.spaceUp:
-                    position = <PositionComponent>entity.getComponent("position");
-                    let placeItem:PlaceItemComponent;
-                    placeItem = <PlaceItemComponent>entity.getComponent("placeItem");
-                    placeItem.placeItem("crop", [0, 0], (entity:Entity)=>{
-                        let crop:CropComponent = <CropComponent>entity.getComponent("crop");
-                        crop.setCrop("onion")
-                    });
+                    // position = <PositionComponent>entity.getComponent("position");
+                    // let placeItem:PlaceItemComponent;
+                    // placeItem = <PlaceItemComponent>entity.getComponent("placeItem");
+                    // placeItem.placeItem("crop", [0, 0], (entity:Entity)=>{
+                    //     let crop:CropComponent = <CropComponent>entity.getComponent("crop");
+                    //     crop.setCrop("onion")
+                    // });
                 break;
                 case EventType.fUp:
                     let cropHarvester:CropHarvesterComponent;

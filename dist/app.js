@@ -1708,13 +1708,6 @@ System.register("systems/wasd-system", ["engine/system/system", "engine/events/g
                                 entity.emit(ge);
                                 break;
                             case EventType_3.EventType.spaceUp:
-                                position = entity.getComponent("position");
-                                var placeItem = void 0;
-                                placeItem = entity.getComponent("placeItem");
-                                placeItem.placeItem("crop", [0, 0], function (entity) {
-                                    var crop = entity.getComponent("crop");
-                                    crop.setCrop("onion");
-                                });
                                 break;
                             case EventType_3.EventType.fUp:
                                 var cropHarvester = void 0;
