@@ -48,8 +48,14 @@ export class HtmlRenderer implements Renderer {
 
     static create():HtmlRenderer{
         var canvas:HTMLCanvasElement = <HTMLCanvasElement>document.getElementById("canvas");
-        canvas.width = 1000;
-        canvas.height = 760;
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        canvas.style.margin = "0";
+        canvas.style.padding = "0";
+        canvas.style.overflow = "hidden";
+        canvas.style.position = "fixed";
+        canvas.style.top = "0px";
+        canvas.style.left = "0px";
         var spriteManager:SpriteManager = SpriteManager.create();
         //var spriteManager:SpriteManager = createSpriteManager();
         return new HtmlRenderer(canvas, spriteManager);

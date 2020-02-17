@@ -1016,8 +1016,14 @@ System.register("engine/renderers/implementations/html/html-renderer", ["engine/
                 };
                 HtmlRenderer.create = function () {
                     var canvas = document.getElementById("canvas");
-                    canvas.width = 1000;
-                    canvas.height = 760;
+                    canvas.width = window.innerWidth;
+                    canvas.height = window.innerHeight;
+                    canvas.style.margin = "0";
+                    canvas.style.padding = "0";
+                    canvas.style.overflow = "hidden";
+                    canvas.style.position = "fixed";
+                    canvas.style.top = "0px";
+                    canvas.style.left = "0px";
                     var spriteManager = sprite_manager_3.SpriteManager.create();
                     return new HtmlRenderer(canvas, spriteManager);
                 };
@@ -2745,6 +2751,35 @@ System.register("game", ["systems/render-system", "systems/wasd-system", "system
             (function () {
                 startGame();
             })();
+        }
+    };
+});
+System.register("systems/inventory-system", ["engine/system/system"], function (exports_52, context_52) {
+    "use strict";
+    var system_11, InventorySystem;
+    var __moduleName = context_52 && context_52.id;
+    return {
+        setters: [
+            function (system_11_1) {
+                system_11 = system_11_1;
+            }
+        ],
+        execute: function () {
+            InventorySystem = (function (_super) {
+                __extends(InventorySystem, _super);
+                function InventorySystem(game) {
+                    return _super.call(this, game) || this;
+                }
+                InventorySystem.create = function (game) {
+                    return new InventorySystem(game);
+                };
+                InventorySystem.prototype.apply = function (entity) {
+                };
+                InventorySystem.prototype.applyEvents = function (entity) {
+                };
+                return InventorySystem;
+            }(system_11.EntitySystem));
+            exports_52("InventorySystem", InventorySystem);
         }
     };
 });
