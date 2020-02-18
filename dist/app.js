@@ -1710,8 +1710,8 @@ System.register("entities/player-entity", ["engine/entity/entity", "builders/bui
                     var placeItem = _this.addComponent("placeItem");
                     var cropHarvester;
                     cropHarvester = _this.addComponent("cropHarvester");
-                    var sprite = "grey";
-                    var walkSprite = "greyWalk";
+                    var sprite = "blond";
+                    var walkSprite = "blondWalk";
                     animation.setSprite(sprite);
                     wasd.sprite = sprite;
                     wasd.walkSprite = walkSprite;
