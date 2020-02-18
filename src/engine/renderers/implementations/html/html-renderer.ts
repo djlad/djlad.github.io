@@ -7,11 +7,22 @@ import { RenderOptions } from "../../render-options";
 export class HtmlRenderer implements Renderer {
     canvas:HTMLCanvasElement;
     ctx:CanvasRenderingContext2D;
+    offset:number[];
     public spriteManager:SpriteManager;
     constructor(context:HTMLCanvasElement, spriteManager:SpriteManager){
         this.canvas = context;
         this.ctx = <CanvasRenderingContext2D>this.canvas.getContext("2d");
         this.spriteManager = spriteManager;
+        this.offset = [0, 0];
+    }
+    
+    setOffset(offset:number[]){
+        if(offset.length>2){
+            console.log("warning incorrect number of offsets");
+            return;
+        }
+        this.offset[0] = offset[0] - this.canvas.width/2;
+        this.offset[1] = offset[1] - this.canvas.height/2;
     }
 
     cbox(){
@@ -25,24 +36,28 @@ export class HtmlRenderer implements Renderer {
         let sprite:HtmlSprite = <HtmlSprite>this.spriteManager.getSprite(spriteName);
         let spriteImg = sprite.sprite;
         let fc = sprite.frameCoords(spriteNumber);
-
+        // flip = false;
+        x = x - width/2;//draw at middle of sprite
+        x -= this.offset[0]; //offset all drawings to the left
+        y = y - height;//draw at bottom of sprite
+        y -= this.offset[1];
+        let flipTranslation:number = 2*(x+width/2);
         if(flip){
-            this.ctx.translate(2*x, 0);
+            this.ctx.translate(flipTranslation, 0);
             this.ctx.scale(-1,1);
         }
         if(options.rotate){
             this.ctx.rotate(options.rotate);
         }
-        
         this.ctx.drawImage(spriteImg, fc[0], fc[1], sprite.frameWidth,
-                           sprite.frameHeight, x-width/2, y-height, width, height);
+                           sprite.frameHeight, x, y, width, height);
 
         if(options.rotate){
             this.ctx.rotate(-options.rotate);
         }
         if (flip){
             this.ctx.scale(-1,1);
-            this.ctx.translate(-2*x,0);
+            this.ctx.translate(-flipTranslation,0);
         }
     }
 

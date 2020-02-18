@@ -7,6 +7,8 @@ import { Renderer } from '../engine/renderers/render';
 import { HtmlRenderer } from '../engine/renderers/implementations/html/html-renderer';
 import { populateSpriteManager } from '../builders/sprite-builder';
 import { RenderOptions } from '../engine/renderers/render-options';
+import { PlayerEntity } from '../entities/player-entity';
+import { FirstEntity } from '../entities/first-entity';
 
 export class RenderSystem extends EntitySystem{
     /**
@@ -24,6 +26,11 @@ export class RenderSystem extends EntitySystem{
     }
 
     apply(entity:Entity){
+        if (entity.id == 0){
+            let player:Entity = this.game.getById(1);
+            let playerPosition:PositionComponent = <PositionComponent>player.getComponent("position");
+            this.renderer.setOffset([playerPosition.x, playerPosition.y]);
+        }
         var a:AnimationComponent = <AnimationComponent>entity.getComponent("animation", true);
         var p:PositionComponent = <PositionComponent>entity.getComponent("position", true);
         if (a == null || p == null)return;
