@@ -15,7 +15,7 @@ export class ComponentFactory {
 
     createComponent(componentName:string){
         if (!(componentName in this.componentTypes)){
-            throw "component "+componentName+" not registered in componentFactory testing";
+            throw "component "+componentName+" not registered in componentFactory";
         }
         return this.componentTypes[componentName].create();
     }

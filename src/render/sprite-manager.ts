@@ -2,11 +2,15 @@ import { SpriteManager } from "../engine/renderers/sprite-manager";
 
 function populateSpriteManager(spriteManager:SpriteManager):SpriteManager{
     var sm:SpriteManager = spriteManager;
+    sm.loadSprite("nothing", "blond.png", 100, 100);
+    sm.addAnimation("nothing", "nothing", [0], 5);
+
     sm.loadSprite("blondDress", "blond.png", 4, 8);
     
     sm.loadSprite("blond", "blondWalk.png", 4, 2);
     sm.addAnimation("blond", "blondWalk", [4,5,6,7], 5);
     sm.addAnimation("blond", "blond", [4], 5);
+    
    
     sm.loadSprite("fantasySprites", "fantasysprites.png", 12,8);
     sm.addAnimation("fantasySprites", "redHair", [24,25,26,25], 6);

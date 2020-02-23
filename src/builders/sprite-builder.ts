@@ -8,6 +8,8 @@ import { Game } from "../engine/game";
 export function populateSpriteManager(spriteManager:SpriteManager):SpriteManager{
     var sm:SpriteManager = spriteManager;
     sm.loadSprite("blondDress", "blond.png", 4, 8);
+    sm.loadSprite("nothing", "blond.png", 100, 100);
+    sm.addAnimation("nothing", "nothing", [0], 10);
     
     sm.loadSprite("blond", "blondWalk.png", 4, 2);
     sm.addAnimation("blond", "blondWalk", [4,5,6,7], 5);

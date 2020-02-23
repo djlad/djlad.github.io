@@ -26,7 +26,7 @@ export class RenderSystem extends EntitySystem{
     }
 
     apply(entity:Entity){
-        if (entity.id == 0){
+        if (entity instanceof FirstEntity){
             let player:Entity = this.game.getById(1);
             let playerPosition:PositionComponent = <PositionComponent>player.getComponent("position");
             this.renderer.setOffset([playerPosition.x, playerPosition.y]);

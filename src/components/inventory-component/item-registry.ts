@@ -6,9 +6,9 @@ export class InventoryItemRegistry {
     itemTypes:{[key:string]:InventoryItemType}={};
     registerItemType(itemName:string, itemSpriteName:string, description:string){
         let newItemType:InventoryItemType;
-        newItemType = new InventoryItemType(itemName, itemSpriteName, description);
+        newItemType = new InventoryItemType(itemName, description, itemSpriteName);
         if (itemName in this.itemTypes){
-            throw "error: item type: " + itemSpriteName+ " already exists";
+            throw "error: item type: " + itemName+ " already exists";
         }
         this.itemTypes[itemName] = newItemType;
     }
@@ -29,6 +29,6 @@ export class InventoryItemRegistry {
         this.registerItemType("corn", "corn2", "its corn");
         this.registerItemType("pumpkin", "pumpkin2", "its a pumpkin");
         this.registerItemType("turnip", "turnip2", "its a turnip");
-        this.registerItemType("nothing", "", "its a turnip");
+        this.registerItemType("nothing", "nothing", "nothing");
     }
 }

@@ -34,6 +34,7 @@ export class AnimationComponent extends Component {
 
         this.animationName = animationName;
         var animation:SpriteAnimation = this.spriteManager.getAnimation(animationName);
+        if(animation == null)return;
         this.spriteNumbers = animation.spriteNumbers;
         this.spriteName = animation.spriteName;
         this.delay = animation.delay;

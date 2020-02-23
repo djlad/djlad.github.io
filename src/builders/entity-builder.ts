@@ -4,6 +4,7 @@ import { CropEntity } from "../entities/crop-entity";
 import { FirstEntity } from "../entities/first-entity";
 import { ProjectileEntity } from "../entities/projectile-entity";
 import { Game } from "../engine/game";
+import { InventoryItemEntity } from "../entities/inventory-item";
 
 
 export function buildEntities(game:Game):void{
@@ -12,4 +13,5 @@ export function buildEntities(game:Game):void{
     game.registerEntity("crop", CropEntity);
     game.registerEntity("first", FirstEntity);
     game.registerEntity("projectile", ProjectileEntity);
+    game.registerEntity("inventoryItem", InventoryItemEntity);
 }

@@ -4,6 +4,7 @@ export class InventoryItemType {
         this.itemId = InventoryItemType.largestItemId;
         this.itemName = itemName;
         this.itemDescription = itemDescription;
+        this.itemSpriteName = itemSpriteName;
     }
     static largestItemId:number = -1;
     itemId:number = -1;

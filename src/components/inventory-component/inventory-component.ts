@@ -6,6 +6,8 @@ import { GiveItemEventData } from "./give-item-event-data";
 import { InventoryItemType } from "./inventory-item-type";
 import { GameEvent } from "../../engine/events/game-event";
 import { EventType } from "../../engine/events/EventType";
+import { InventoryItemEntity } from "../../entities/inventory-item";
+import { AnimationComponent } from "../animation-component";
 
 export class InventoryComponent extends Component {
     constructor(itemRegistry:InventoryItemRegistry){
@@ -22,6 +24,7 @@ export class InventoryComponent extends Component {
     private itemSlots:InventoryItem[] = [];
     private selectedItemSlot:number=0;
     private itemRegistry:InventoryItemRegistry;
+    inventoryItemEntities:InventoryItemEntity[] = [];//inventory item entities that appear on screen
 
     hashInventoryToString():void{
         let inventoryString:string = "Inventory:";
@@ -93,10 +96,13 @@ export class InventoryComponent extends Component {
         return true;
     }
     update(entity:Entity):void{
-        let events:GameEvent[] = entity.targetedEvents;
-        for(let i:number;i < events.length;i++){
-            let event:GameEvent = events[i];
-            this.handleEvents(event);
+        for(let i:number=0;i<this.inventoryItemEntities.length;i++){
+            let inventoryItemEntity:InventoryItemEntity = this.inventoryItemEntities[i];
+            let spriteComponent:AnimationComponent;
+            spriteComponent = <AnimationComponent>inventoryItemEntity.getComponent("animation");
+            let item:InventoryItem = this.itemSlots[i];
+            let itemType:InventoryItemType = this.itemRegistry.itemTypes[item.itemName];
+            spriteComponent.setSprite(itemType.itemSpriteName);
         }
     }
 
