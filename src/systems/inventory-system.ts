@@ -2,8 +2,10 @@ import { EntitySystem } from "../engine/system/system";
 import { Game } from "../engine/game";
 import { Entity } from "../engine/entity/entity";
 import { InventoryComponent } from "../components/inventory-component/inventory-component";
-import { InventoryItemEntity } from "../entities/inventory-item";
+import { InventoryItemEntity } from "../entities/inventory-item-entity";
 import { PositionComponent } from "../components/position-component";
+import { TextComponent } from "../components/text-component/text-component";
+import { InventoryItem } from "../components/inventory-component/inventory-item";
 
 export class InventorySystem extends EntitySystem {
     constructor(game:Game){
@@ -25,6 +27,7 @@ export class InventorySystem extends EntitySystem {
                 .push(this.game.addEntity("inventoryItem"));
             }
         }
+        let itemSlots:InventoryItem[] = inventory.getItems();
         for(let i:number=0;i<inventory.inventoryItemEntities.length;i++){
             let inventoryItem:InventoryItemEntity;
             let itemPosition:PositionComponent;
@@ -38,6 +41,10 @@ export class InventorySystem extends EntitySystem {
             itemPosition.y = entityPosition.y + 400;
             itemPosition.x -= entityPosition.vx;
             itemPosition.y -= entityPosition.vy;
+            
+            let text:TextComponent = <TextComponent>inventoryItem.getComponent("text");
+            
+            text.setText(itemSlots[i].itemQuantity.toString());
         }
     }
 

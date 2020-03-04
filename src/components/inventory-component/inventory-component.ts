@@ -6,8 +6,9 @@ import { GiveItemEventData } from "./give-item-event-data";
 import { InventoryItemType } from "./inventory-item-type";
 import { GameEvent } from "../../engine/events/game-event";
 import { EventType } from "../../engine/events/EventType";
-import { InventoryItemEntity } from "../../entities/inventory-item";
+import { InventoryItemEntity } from "../../entities/inventory-item-entity";
 import { AnimationComponent } from "../animation-component";
+import { TextComponent } from "../text-component/text-component";
 
 export class InventoryComponent extends Component {
     constructor(itemRegistry:InventoryItemRegistry){
@@ -48,7 +49,6 @@ export class InventoryComponent extends Component {
         inventoryString += "\n<---------->";
         console.log(inventoryString);
     }
-
  
     selectItemSlot(itemSlotNumber:number) {
         this.selectedItemSlot = itemSlotNumber % this.itemSlots.length;
@@ -69,6 +69,10 @@ export class InventoryComponent extends Component {
         }
         this.inventory[itemName].itemQuantity += quantity;
         return true;
+    }
+
+    getItems():InventoryItem[]{
+        return this.itemSlots;
     }
 
     addItem(itemName:string, quantity:number=1):boolean {

@@ -31,7 +31,7 @@ export class HtmlRenderer implements Renderer {
         //this.ctx.fillRect(0,0,this.canvas.width,this.canvas.height);
     }
 
-    sprite(spriteName:string, x:number, y:number, width:number, height:number, spriteNumber:number, options:RenderOptions){
+    sprite(spriteName:string, x:number, y:number, width:number, height:number, spriteNumber:number, options:RenderOptions):void{
         let flip:boolean = options.flip;
         let sprite:HtmlSprite = <HtmlSprite>this.spriteManager.getSprite(spriteName);
         let spriteImg = sprite.sprite;
@@ -59,6 +59,12 @@ export class HtmlRenderer implements Renderer {
             this.ctx.scale(-1,1);
             this.ctx.translate(-flipTranslation,0);
         }
+    }
+
+    text(text:string, x:number, y:number, size:number=10):void{
+        x -= this.offset[0]; //offset all drawings to the left
+        y -= this.offset[1];
+        this.ctx.fillText(text, x, y);
     }
 
     static create():HtmlRenderer{

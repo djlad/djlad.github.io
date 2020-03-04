@@ -21,10 +21,6 @@ export class SpriteManager {
     }
 
     loadSprite(spriteName:string, fileName:string, widthImgs:number, heightImgs:number){
-        // if (spriteName=="nothing" && !this.logged){
-        //     console.log(this.sprites);
-        //     this.logged = true;
-        // }
         var sprite = this.createSprite(fileName, widthImgs, heightImgs);
         this.addSprite(spriteName, sprite);
     }

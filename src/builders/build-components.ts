@@ -11,6 +11,7 @@ import { InventoryComponent } from '../components/inventory-component/inventory-
 import { ComponentFactory } from '../engine/component/component-factory';
 import { PlaceItemComponent } from '../components/place-item/place-item-component';
 import { CropHarvesterComponent } from '../components/crop-harvester-component';
+import { TextComponent } from '../components/text-component/text-component';
 
 export function createComponentFactory():ComponentFactory{
     var cf:ComponentFactory = new ComponentFactory();
@@ -25,6 +26,7 @@ export function createComponentFactory():ComponentFactory{
     cf.registerComponent(InventoryComponent);
     cf.registerComponent(PlaceItemComponent);
     cf.registerComponent(CropHarvesterComponent);
+    cf.registerComponent(TextComponent);
     return cf;
 }
 
