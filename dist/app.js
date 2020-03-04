@@ -999,6 +999,7 @@ System.register("engine/renderers/implementations/html/html-renderer", ["engine/
                     this.ctx = this.canvas.getContext("2d");
                     this.spriteManager = spriteManager;
                     this.offset = [0, 0];
+                    this.ctx.font = "30px Arial";
                 }
                 HtmlRenderer.prototype.setOffset = function (offset) {
                     if (offset.length > 2) {
@@ -1389,7 +1390,7 @@ System.register("entities/inventory-item-entity", ["engine/entity/entity", "buil
                     _this.addComponent("position");
                     _this.addComponent("animation");
                     var text = _this.addComponent("text");
-                    text.addTextPlacement("0", 0, 0);
+                    text.addTextPlacement("", 0, 0);
                     return _this;
                 }
                 InventoryItemEntity.prototype.handleEvents = function (events) {
@@ -2842,7 +2843,9 @@ System.register("systems/inventory-system", ["engine/system/system"], function (
                         itemPosition.x -= entityPosition.vx;
                         itemPosition.y -= entityPosition.vy;
                         var text = inventoryItem.getComponent("text");
-                        text.setText(itemSlots[i].itemQuantity.toString());
+                        if (itemSlots[i].itemQuantity != 0) {
+                            text.setText(itemSlots[i].itemQuantity.toString());
+                        }
                     }
                 };
                 InventorySystem.prototype.applyEvents = function (entity) {

@@ -14,6 +14,7 @@ export class HtmlRenderer implements Renderer {
         this.ctx = <CanvasRenderingContext2D>this.canvas.getContext("2d");
         this.spriteManager = spriteManager;
         this.offset = [0, 0];
+        this.ctx.font = "30px Arial";
     }
     
     setOffset(offset:number[]){

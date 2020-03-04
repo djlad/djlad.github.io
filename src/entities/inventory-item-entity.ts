@@ -12,7 +12,7 @@ export class InventoryItemEntity extends Entity {
         this.addComponent("position");
         this.addComponent("animation");
         let text:TextComponent = <TextComponent>this.addComponent("text");
-        text.addTextPlacement("0", 0, 0);
+        text.addTextPlacement("", 0, 0);
     }
     static create():InventoryItemEntity {
         return new InventoryItemEntity(createComponentFactory());

@@ -43,8 +43,9 @@ export class InventorySystem extends EntitySystem {
             itemPosition.y -= entityPosition.vy;
             
             let text:TextComponent = <TextComponent>inventoryItem.getComponent("text");
-            
-            text.setText(itemSlots[i].itemQuantity.toString());
+            if(itemSlots[i].itemQuantity != 0 ){
+                text.setText(itemSlots[i].itemQuantity.toString());
+            }
         }
     }
 
