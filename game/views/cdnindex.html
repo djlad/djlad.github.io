@@ -6,7 +6,8 @@
     var app;
     var game;
     System.import("game")
-    .then(function(app){
-        game = app.game;
+    .then(function(appLocal){
+        app = appLocal;
+        game = app.startGame();
     });
 </script>
