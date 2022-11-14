@@ -19,10 +19,10 @@ export class ParticleSystem extends EntitySystem{
         while(center.particles.length < center.targetParticles){
             center.particles.push(this.game.addEntity("particle"));
             let position = <PositionComponent>center.particles[center.particles.length-1].getComponent("position");
-            position.x = centerPosition.x - Math.random()*10;
-            position.y = centerPosition.y - Math.random()*10;
-            position.vx = Math.random()*.5;
-            position.vy = Math.random()*.5;
+            position.x = centerPosition.x - Math.random()*30;
+            position.y = centerPosition.y - Math.random()*30;
+            // position.vx = Math.random()*.5;
+            // position.vy = Math.random()*.5;
         }
     }
 

@@ -52,12 +52,6 @@ export function startGame(){
     game.entityFactory.componentFactory.createComponent("animation");
     game.addEntity("first");
 
-    var player = game.addEntity("player");
-
-    var pc= <PositionComponent>player.getComponent("position");
-    var ac = <AnimationComponent>player.getComponent("animation");
-    pc.x = 300;
-    pc.y = 380;
     //ac.setSprite("onion");
 
     /*var villager = game.addEntity("villager");
@@ -81,11 +75,11 @@ export function startGame(){
     fight.target = villager;
     fight.attack = true;*/
 
-    var projectile:ProjectileEntity = <ProjectileEntity> game.addEntity("projectile");
-    pc = <PositionComponent>projectile.getComponent("position");
+    /*var projectile:ProjectileEntity = <ProjectileEntity> game.addEntity("projectile");
+    let pc = <PositionComponent>projectile.getComponent("position");
     pc.x = 100;
     pc.y = 500;
-    pc.vx = 0
+    pc.vx = 0*/
 
     let particle: ParticleEntity = <ParticleEntity> game.addEntity("particles");
     let pPos = <PositionComponent>particle.getComponent("position");
@@ -96,7 +90,8 @@ export function startGame(){
     /*placeField(650,300, "corn", 50)
     placeField(350,600, "turnip", 50)
     placeField(650,600, "onion", 50)*/
-
+    // setTimeout(makePlayer, 1000);
+    makePlayer();
     function placeField(x:number,y:number, cropName:string, d:number=50, width:number=5){
         var crop:CropEntity;
         var cc:CropComponent;
@@ -116,6 +111,15 @@ export function startGame(){
         component.x = x;
         component.y = y;
         return crop
+    }
+
+    function makePlayer(){
+        var player = game.addEntity("player");
+        var pc= <PositionComponent>player.getComponent("position");
+        var ac = <AnimationComponent>player.getComponent("animation");
+        pc.x = 300;
+        pc.y = 380;
+        return player;
     }
     let intervalId:number = game.start();
     return game;

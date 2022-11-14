@@ -12,18 +12,25 @@ export class ParticleComponent extends Component{
     time: number = 0;
     maxSpeed: number = 50;
     paths = [
-        (center: PositionComponent, position: PositionComponent) => {
+        /*(center: PositionComponent, position: PositionComponent) => {
             let dx = center.x - position.x;
             let dy = center.y - position.y;
             if (Math.abs(position.vx) < this.maxSpeed) position.vx += dx/Math.abs(dx) * .1;
             if (Math.abs(position.vy) < this.maxSpeed) position.vy += dy/Math.abs(dy) * .1;
-        },
-        (center: PositionComponent, position: PositionComponent) => {
+        },*/
+        /*(center: PositionComponent, position: PositionComponent) => {
             let dx = center.x - position.x;
             let dy = center.y - position.y;
             if (Math.abs(position.vx) < this.maxSpeed) position.vx += dx/Math.abs(dx) * .2;
             if (dy > 50)position.vy = 1
             if (dy < -50)position.vy = -1
+        }*/
+        (center: PositionComponent, position: PositionComponent) => {
+            let dx = center.x - position.x;
+            let dy = center.y - position.y;
+            position.vx += dx/Math.abs(dx) * .2;
+            position.vy += dy/Math.abs(dy) * .2;
+            
         }
     ]
     addParticle(particle: Entity){

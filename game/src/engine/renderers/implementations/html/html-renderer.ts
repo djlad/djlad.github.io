@@ -71,9 +71,15 @@ export class HtmlRenderer implements Renderer {
     circle(x: number, y: number, r: number): void {
         this.ctx.beginPath();
         this.ctx.fillStyle = "#690055";
-        this.ctx.shadowColor = "black"
+        // this.ctx.fillStyle = "black";
         this.ctx.globalAlpha = .6;
-        this.ctx.arc(x - this.offset[0], y - this.offset[1], r, 0, 2 * Math.PI);
+        this.ctx.arc(x - this.offset[0], y - this.offset[1], r*2, 0, 2 * Math.PI);
+        this.ctx.fill();
+        this.ctx.beginPath();
+        this.ctx.fillStyle = "black";
+        // this.ctx.fillStyle = "#690055";
+        this.ctx.globalAlpha = 1;
+        this.ctx.arc(x - this.offset[0], y - this.offset[1], r*1, 0, 2 * Math.PI);
         this.ctx.fill();
         this.ctx.globalAlpha = 1;
         // this.ctx.stroke();

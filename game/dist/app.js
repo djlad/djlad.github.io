@@ -1049,9 +1049,13 @@ System.register("engine/renderers/implementations/html/html-renderer", ["engine/
                 HtmlRenderer.prototype.circle = function (x, y, r) {
                     this.ctx.beginPath();
                     this.ctx.fillStyle = "#690055";
-                    this.ctx.shadowColor = "black";
                     this.ctx.globalAlpha = .6;
-                    this.ctx.arc(x - this.offset[0], y - this.offset[1], r, 0, 2 * Math.PI);
+                    this.ctx.arc(x - this.offset[0], y - this.offset[1], r * 2, 0, 2 * Math.PI);
+                    this.ctx.fill();
+                    this.ctx.beginPath();
+                    this.ctx.fillStyle = "black";
+                    this.ctx.globalAlpha = 1;
+                    this.ctx.arc(x - this.offset[0], y - this.offset[1], r * 1, 0, 2 * Math.PI);
                     this.ctx.fill();
                     this.ctx.globalAlpha = 1;
                 };
@@ -1697,20 +1701,8 @@ System.register("components/particle-componet", ["engine/component/component"], 
                         function (center, position) {
                             var dx = center.x - position.x;
                             var dy = center.y - position.y;
-                            if (Math.abs(position.vx) < _this.maxSpeed)
-                                position.vx += dx / Math.abs(dx) * .1;
-                            if (Math.abs(position.vy) < _this.maxSpeed)
-                                position.vy += dy / Math.abs(dy) * .1;
-                        },
-                        function (center, position) {
-                            var dx = center.x - position.x;
-                            var dy = center.y - position.y;
-                            if (Math.abs(position.vx) < _this.maxSpeed)
-                                position.vx += dx / Math.abs(dx) * .2;
-                            if (dy > 50)
-                                position.vy = 1;
-                            if (dy < -50)
-                                position.vy = -1;
+                            position.vx += dx / Math.abs(dx) * .2;
+                            position.vy += dy / Math.abs(dy) * .2;
                         }
                     ];
                     return _this;
@@ -3076,10 +3068,8 @@ System.register("systems/particle-system", ["engine/system/system"], function (e
                     while (center.particles.length < center.targetParticles) {
                         center.particles.push(this.game.addEntity("particle"));
                         var position = center.particles[center.particles.length - 1].getComponent("position");
-                        position.x = centerPosition.x - Math.random() * 10;
-                        position.y = centerPosition.y - Math.random() * 10;
-                        position.vx = Math.random() * .5;
-                        position.vy = Math.random() * .5;
+                        position.x = centerPosition.x - Math.random() * 30;
+                        position.y = centerPosition.y - Math.random() * 30;
                     }
                 };
                 ParticleSystem.prototype.updateParticles = function (entity) {
@@ -3134,20 +3124,11 @@ System.register("game", ["systems/render-system", "systems/wasd-system", "system
         var game = createGame();
         game.entityFactory.componentFactory.createComponent("animation");
         game.addEntity("first");
-        var player = game.addEntity("player");
-        var pc = player.getComponent("position");
-        var ac = player.getComponent("animation");
-        pc.x = 300;
-        pc.y = 380;
-        var projectile = game.addEntity("projectile");
-        pc = projectile.getComponent("position");
-        pc.x = 100;
-        pc.y = 500;
-        pc.vx = 0;
         var particle = game.addEntity("particles");
         var pPos = particle.getComponent("position");
         pPos.x = 150;
         pPos.y = 400;
+        makePlayer();
         function placeField(x, y, cropName, d, width) {
             if (d === void 0) { d = 50; }
             if (width === void 0) { width = 5; }
@@ -3167,6 +3148,14 @@ System.register("game", ["systems/render-system", "systems/wasd-system", "system
             component.x = x;
             component.y = y;
             return crop;
+        }
+        function makePlayer() {
+            var player = game.addEntity("player");
+            var pc = player.getComponent("position");
+            var ac = player.getComponent("animation");
+            pc.x = 300;
+            pc.y = 380;
+            return player;
         }
         var intervalId = game.start();
         return game;
