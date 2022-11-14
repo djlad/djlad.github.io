@@ -20,8 +20,11 @@ import { buildComponents } from './builders/build-components';
 import { FightSystem } from './systems/fight-system';
 import { PlaceItemSystem } from './systems/place-item-system';
 import { InventorySystem } from './systems/inventory-system';
+import { ParticleSystem } from './systems/particle-system';
+import { ParticleEntity } from './entities/particles/particle-entity';
 
 declare var synaptic:any;
+export declare var g:Game;
 
 function createGame():Game{
     let game:Game = Game.create()
@@ -36,6 +39,7 @@ function createGame():Game{
     game.addSystem(NeuralFightSystem.create(game));
     game.addSystem(PlaceItemSystem.create(game));
     game.addSystem(InventorySystem.create(game));
+    game.addSystem(ParticleSystem.create(game));
 
     buildSprites(game)
     buildEntities(game);
@@ -56,7 +60,7 @@ export function startGame(){
     pc.y = 380;
     //ac.setSprite("onion");
 
-    var villager = game.addEntity("villager");
+    /*var villager = game.addEntity("villager");
     var component = <PositionComponent>villager.getComponent("position");
     var fight = <FightComponent>villager.getComponent("fight");
     ac = <AnimationComponent>villager.getComponent("animation");
@@ -75,7 +79,7 @@ export function startGame(){
     component.y = 800;
     component.vx = 0;
     fight.target = villager;
-    fight.attack = true;
+    fight.attack = true;*/
 
     var projectile:ProjectileEntity = <ProjectileEntity> game.addEntity("projectile");
     pc = <PositionComponent>projectile.getComponent("position");
@@ -83,11 +87,15 @@ export function startGame(){
     pc.y = 500;
     pc.vx = 0
 
+    let particle: ParticleEntity = <ParticleEntity> game.addEntity("particles");
+    let pPos = <PositionComponent>particle.getComponent("position");
+    pPos.x = 150;
+    pPos.y = 400;
 
-    placeField(350,300, "wheat", 50)
-    placeField(650,300, "corn", 50)
+    // placeField(350,300, "wheat", 50)
+    /*placeField(650,300, "corn", 50)
     placeField(350,600, "turnip", 50)
-    placeField(650,600, "onion", 50)
+    placeField(650,600, "onion", 50)*/
 
     function placeField(x:number,y:number, cropName:string, d:number=50, width:number=5){
         var crop:CropEntity;
@@ -110,7 +118,8 @@ export function startGame(){
         return crop
     }
     let intervalId:number = game.start();
+    return game;
 }
-(function(){
-    startGame();
-})();
+// (function(){
+// startGame();
+// })();

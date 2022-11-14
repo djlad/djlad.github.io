@@ -20,10 +20,10 @@ export class PlayerEntity extends Entity{
         let cropHarvester:CropHarvesterComponent;
         cropHarvester = <CropHarvesterComponent>this.addComponent("cropHarvester");
         
-        // var sprite:string = "grey";
-        // var walkSprite:string = "greyWalk";
-        var sprite:string = "blond";
-        var walkSprite:string = "blondWalk";
+        var sprite:string = "grey";
+        var walkSprite:string = "greyWalk";
+        // var sprite:string = "blond";
+        // var walkSprite:string = "blondWalk";
         
         animation.setSprite(sprite)
         wasd.sprite = sprite;

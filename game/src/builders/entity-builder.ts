@@ -5,6 +5,8 @@ import { FirstEntity } from "../entities/first-entity";
 import { ProjectileEntity } from "../entities/projectile-entity";
 import { Game } from "../engine/game";
 import { InventoryItemEntity } from "../entities/inventory-item-entity";
+import { ParticleEntity } from "../entities/particles/particle-entity";
+import { ParticlesEntity } from "../entities/particles/particles-entity";
 
 
 export function buildEntities(game:Game):void{
@@ -14,4 +16,6 @@ export function buildEntities(game:Game):void{
     game.registerEntity("first", FirstEntity);
     game.registerEntity("projectile", ProjectileEntity);
     game.registerEntity("inventoryItem", InventoryItemEntity);
+    game.registerEntity("particle", ParticleEntity);
+    game.registerEntity("particles", ParticlesEntity);
 }

@@ -11,6 +11,7 @@ import { PlayerEntity } from '../entities/player-entity';
 import { FirstEntity } from '../entities/first-entity';
 import { TextComponent } from '../components/text-component/text-component';
 import { TextPlacement } from '../components/text-component/text-placement';
+import { PrimitiveComponent } from '../components/primitive-component';
 
 export class RenderSystem extends EntitySystem{
     /**
@@ -34,6 +35,7 @@ export class RenderSystem extends EntitySystem{
         }
         this.renderAnimationComponent(entity);
         this.renderText(entity);
+        this.renderPrimitive(entity);
     }
 
     renderText(entity:Entity){
@@ -56,6 +58,13 @@ export class RenderSystem extends EntitySystem{
         options.flip = !p.faceRight;
         options.rotate = p.rotate;
         r.sprite(a.spriteName, p.x, p.y, p.width, p.height, a.getSpriteNumber(), options);
+    }
+
+    renderPrimitive(entity:Entity){
+        var primitive:PrimitiveComponent = <PrimitiveComponent>entity.getComponent("primitive", true);
+        var position:PositionComponent = <PositionComponent>entity.getComponent("position", true);
+        if (primitive == null || position == null) return;
+        this.renderer.circle(position.x, position.y, 4);
     }
 
     centerCameraOn(entity:Entity){

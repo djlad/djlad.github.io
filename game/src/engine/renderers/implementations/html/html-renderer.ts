@@ -68,6 +68,17 @@ export class HtmlRenderer implements Renderer {
         this.ctx.fillText(text, x, y);
     }
 
+    circle(x: number, y: number, r: number): void {
+        this.ctx.beginPath();
+        this.ctx.fillStyle = "#690055";
+        this.ctx.shadowColor = "black"
+        this.ctx.globalAlpha = .6;
+        this.ctx.arc(x - this.offset[0], y - this.offset[1], r, 0, 2 * Math.PI);
+        this.ctx.fill();
+        this.ctx.globalAlpha = 1;
+        // this.ctx.stroke();
+    }
+
     static create():HtmlRenderer{
         var canvas:HTMLCanvasElement = <HTMLCanvasElement>document.getElementById("canvas");
         canvas.width = window.innerWidth;
