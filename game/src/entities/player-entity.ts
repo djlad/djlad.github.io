@@ -8,6 +8,7 @@ import { InventoryComponent } from '../components/inventory-component/inventory-
 import { PlaceItemComponent } from '../components/place-item/place-item-component';
 import { GameEvent } from '../engine/events/game-event';
 import { CropHarvesterComponent } from '../components/crop-harvester-component';
+import { ParticleComponent } from '../components/particle-componet';
 
 export class PlayerEntity extends Entity{
     constructor(componentFactory:ComponentFactory){
@@ -19,6 +20,8 @@ export class PlayerEntity extends Entity{
         let placeItem:PlaceItemComponent = <PlaceItemComponent>this.addComponent("placeItem");
         let cropHarvester:CropHarvesterComponent;
         cropHarvester = <CropHarvesterComponent>this.addComponent("cropHarvester");
+        let particles = <ParticleComponent>this.addComponent("particles");
+        particles.targetParticles = 4;
         
         var sprite:string = "grey";
         var walkSprite:string = "greyWalk";

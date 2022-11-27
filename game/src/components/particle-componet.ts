@@ -30,6 +30,8 @@ export class ParticleComponent extends Component{
             let dy = center.y - position.y;
             position.vx += dx/Math.abs(dx) * .2;
             position.vy += dy/Math.abs(dy) * .2;
+            // position.x += 1;
+            // center.x += 1;
             
         }
     ]

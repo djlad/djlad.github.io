@@ -1972,6 +1972,8 @@ System.register("entities/player-entity", ["engine/entity/entity", "builders/bui
                     var placeItem = _this.addComponent("placeItem");
                     var cropHarvester;
                     cropHarvester = _this.addComponent("cropHarvester");
+                    var particles = _this.addComponent("particles");
+                    particles.targetParticles = 4;
                     var sprite = "grey";
                     var walkSprite = "greyWalk";
                     animation.setSprite(sprite);
