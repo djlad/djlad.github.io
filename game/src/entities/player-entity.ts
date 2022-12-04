@@ -21,7 +21,7 @@ export class PlayerEntity extends Entity{
         let cropHarvester:CropHarvesterComponent;
         cropHarvester = <CropHarvesterComponent>this.addComponent("cropHarvester");
         let particles = <ParticleComponent>this.addComponent("particles");
-        particles.targetParticles = 4;
+        particles.targetParticles = 8;
         
         var sprite:string = "grey";
         var walkSprite:string = "greyWalk";

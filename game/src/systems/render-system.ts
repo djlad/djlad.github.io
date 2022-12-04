@@ -57,14 +57,14 @@ export class RenderSystem extends EntitySystem{
         let options:RenderOptions = new RenderOptions();
         options.flip = !p.faceRight;
         options.rotate = p.rotate;
-        r.sprite(a.spriteName, p.x, p.y, p.width, p.height, a.getSpriteNumber(), options);
+        r.sprite(a.spriteName, Math.round(p.x), Math.round(p.y + p.h), p.width, p.height, a.getSpriteNumber(), options);
     }
 
     renderPrimitive(entity:Entity){
         var primitive:PrimitiveComponent = <PrimitiveComponent>entity.getComponent("primitive", true);
         var position:PositionComponent = <PositionComponent>entity.getComponent("position", true);
         if (primitive == null || position == null) return;
-        this.renderer.circle(position.x, position.y, 4);
+        this.renderer.circle(Math.round(position.x), Math.round(position.y + position.h), 4);
     }
 
     centerCameraOn(entity:Entity){

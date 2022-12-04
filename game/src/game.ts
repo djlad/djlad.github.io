@@ -80,18 +80,19 @@ export function startGame(){
     pc.x = 100;
     pc.y = 500;
     pc.vx = 0*/
+    makePlayer();
 
     let particle: ParticleEntity = <ParticleEntity> game.addEntity("particles");
     let pPos = <PositionComponent>particle.getComponent("position");
     pPos.x = 150;
     pPos.y = 400;
+    
 
-    // placeField(350,300, "wheat", 50)
+    placeField(350,300, "wheat", 50)
     /*placeField(650,300, "corn", 50)
     placeField(350,600, "turnip", 50)
     placeField(650,600, "onion", 50)*/
     // setTimeout(makePlayer, 1000);
-    makePlayer();
     function placeField(x:number,y:number, cropName:string, d:number=50, width:number=5){
         var crop:CropEntity;
         var cc:CropComponent;

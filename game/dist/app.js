@@ -217,6 +217,7 @@ System.register("components/position-component", ["engine/component/component"],
                     _this._rotate = 0;
                     _this.x = 0;
                     _this.y = 0;
+                    _this.h = 0;
                     _this.width = 100;
                     _this.height = 100;
                     _this.faceRight = true;
@@ -1662,7 +1663,7 @@ System.register("entities/particles/particle-entity", ["builders/build-component
                 __extends(ParticleEntity, _super);
                 function ParticleEntity(cf) {
                     var _this = _super.call(this, cf) || this;
-                    _this.addComponent("position");
+                    var position = _this.addComponent("position");
                     _this.addComponent("primitive");
                     return _this;
                 }
@@ -1698,11 +1699,19 @@ System.register("components/particle-componet", ["engine/component/component"], 
                     _this.time = 0;
                     _this.maxSpeed = 50;
                     _this.paths = [
-                        function (center, position) {
-                            var dx = center.x - position.x;
-                            var dy = center.y - position.y;
-                            position.vx += dx / Math.abs(dx) * .2;
-                            position.vy += dy / Math.abs(dy) * .2;
+                        function (center, position, time) {
+                            var f = function () { return Math.sin(.05 * time / 2); };
+                            var f2 = function () { return 40 * Math.cos(.2 * time / 2); };
+                            position.h = -2 + center.h - 2 * center.width / 3 + 30 * f();
+                            position.x = center.x + f2();
+                            position.y = center.y - 1;
+                        },
+                        function (center, position, time) {
+                            var f = function () { return Math.sin(.05 * time / 2); };
+                            var f2 = function () { return 40 * Math.cos(.2 * time / 2); };
+                            position.h = -2 + center.h - 2 * center.width / 3 + 30 * f();
+                            position.x = center.x - f2();
+                            position.y = center.y + 1;
                         }
                     ];
                     return _this;
@@ -1716,7 +1725,7 @@ System.register("components/particle-componet", ["engine/component/component"], 
                         var path = this.paths[i % this.paths.length];
                         var center = entity.getComponent("position");
                         var particlePosition = particle.getComponent("position");
-                        path(center, particlePosition);
+                        path(center, particlePosition, this.time + i * 20);
                     }
                 };
                 ParticleComponent.create = function () {
@@ -1973,7 +1982,7 @@ System.register("entities/player-entity", ["engine/entity/entity", "builders/bui
                     var cropHarvester;
                     cropHarvester = _this.addComponent("cropHarvester");
                     var particles = _this.addComponent("particles");
-                    particles.targetParticles = 4;
+                    particles.targetParticles = 8;
                     var sprite = "grey";
                     var walkSprite = "greyWalk";
                     animation.setSprite(sprite);
@@ -2086,14 +2095,14 @@ System.register("systems/render-system", ["engine/system/system", "engine/render
                     var options = new render_options_1.RenderOptions();
                     options.flip = !p.faceRight;
                     options.rotate = p.rotate;
-                    r.sprite(a.spriteName, p.x, p.y, p.width, p.height, a.getSpriteNumber(), options);
+                    r.sprite(a.spriteName, Math.round(p.x), Math.round(p.y + p.h), p.width, p.height, a.getSpriteNumber(), options);
                 };
                 RenderSystem.prototype.renderPrimitive = function (entity) {
                     var primitive = entity.getComponent("primitive", true);
                     var position = entity.getComponent("position", true);
                     if (primitive == null || position == null)
                         return;
-                    this.renderer.circle(position.x, position.y, 4);
+                    this.renderer.circle(Math.round(position.x), Math.round(position.y + position.h), 4);
                 };
                 RenderSystem.prototype.centerCameraOn = function (entity) {
                     var position = entity.getComponent("position");
@@ -3028,7 +3037,7 @@ System.register("systems/inventory-system", ["engine/system/system"], function (
                             continue;
                         }
                         itemPosition.x = entityPosition.x - 4 * 100 - 50 + i * 100;
-                        itemPosition.y = entityPosition.y + 400;
+                        itemPosition.y = entityPosition.y + 350;
                         itemPosition.x -= entityPosition.vx;
                         itemPosition.y -= entityPosition.vy;
                         var text = inventoryItem.getComponent("text");
@@ -3126,11 +3135,12 @@ System.register("game", ["systems/render-system", "systems/wasd-system", "system
         var game = createGame();
         game.entityFactory.componentFactory.createComponent("animation");
         game.addEntity("first");
+        makePlayer();
         var particle = game.addEntity("particles");
         var pPos = particle.getComponent("position");
         pPos.x = 150;
         pPos.y = 400;
-        makePlayer();
+        placeField(350, 300, "wheat", 50);
         function placeField(x, y, cropName, d, width) {
             if (d === void 0) { d = 50; }
             if (width === void 0) { width = 5; }

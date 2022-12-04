@@ -38,7 +38,7 @@ export class InventorySystem extends EntitySystem {
                 continue;
             }
             itemPosition.x = entityPosition.x - 4*100 - 50 + i * 100;
-            itemPosition.y = entityPosition.y + 400;
+            itemPosition.y = entityPosition.y + 350;
             itemPosition.x -= entityPosition.vx;
             itemPosition.y -= entityPosition.vy;
             

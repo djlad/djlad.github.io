@@ -48,6 +48,7 @@ export class PositionComponent extends Component {
     }
     x:number=0;
     y:number=0;
+    h: number=0;
     width:number=100;
     height:number=100;
     faceRight:boolean=true;
