@@ -6,7 +6,7 @@
         "preserveConstEnums": true,
         "outFile": "./dist/app.js",
         "sourceMap": true,
-        "target":"es5"
+        "target":"ES2015"
     },
     "include": [
         "src/**/*"

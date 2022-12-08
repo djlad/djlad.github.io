@@ -30,4 +30,6 @@ export enum EventType {
     changeVelocity,
 
     giveItem,
+
+    dash
 }

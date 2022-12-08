@@ -1,17 +1,18 @@
 import { SpriteManager} from "../../sprite-manager";
-import { HtmlSprite } from "./html-sprite";
+import { HtmlRectSprite } from "./html-rect-sprite";
 import { Renderer } from "../../render";
-import { createSpriteManager } from "../../../../render/sprite-manager";
 import { RenderOptions } from "../../render-options";
+import { SpriteAnimation } from "../../sprite-animation";
+import { HtmlCanvas } from "./html-canvas";
 
 export class HtmlRenderer implements Renderer {
     canvas:HTMLCanvasElement;
     ctx:CanvasRenderingContext2D;
     offset:number[];
     public spriteManager:SpriteManager;
-    constructor(context:HTMLCanvasElement, spriteManager:SpriteManager){
-        this.canvas = context;
-        this.ctx = <CanvasRenderingContext2D>this.canvas.getContext("2d");
+    constructor(context:HtmlCanvas, spriteManager:SpriteManager){
+        this.canvas = context.canvas;
+        this.ctx = context.ctx;
         this.spriteManager = spriteManager;
         this.offset = [0, 0];
         this.ctx.font = "30px Arial";
@@ -27,17 +28,16 @@ export class HtmlRenderer implements Renderer {
     }
 
     cbox(){
-        this.ctx.clearRect(0,0,this.canvas.width,this.canvas.height);
-        //this.ctx.fillStyle = "#00ffff";
-        //this.ctx.fillRect(0,0,this.canvas.width,this.canvas.height);
+        // this.ctx.clearRect(0,0,this.canvas.width,this.canvas.height);
+        // this.ctx.fillStyle = "#00ffff";
+        this.ctx.fillStyle = "#7CFC00";
+        this.ctx.fillRect(0,0,this.canvas.width,this.canvas.height);
     }
 
     sprite(spriteName:string, x:number, y:number, width:number, height:number, spriteNumber:number, options:RenderOptions):void{
         let flip:boolean = options.flip;
-        let sprite:HtmlSprite = <HtmlSprite>this.spriteManager.getSprite(spriteName);
-        let spriteImg = sprite.sprite;
+        let sprite:Sprite = <Sprite>this.spriteManager.getSprite(spriteName);
         let fc = sprite.frameCoords(spriteNumber);
-        // flip = false;
         x = x - width/2;//draw at middle of sprite
         x -= this.offset[0]; //offset all drawings to the left
         y = y - height;//draw at bottom of sprite
@@ -50,8 +50,7 @@ export class HtmlRenderer implements Renderer {
         if(options.rotate){
             this.ctx.rotate(options.rotate);
         }
-        this.ctx.drawImage(spriteImg, fc[0], fc[1], sprite.frameWidth,
-                           sprite.frameHeight, x, y, width, height);
+        sprite.drawImage(spriteNumber, x, y, width, height);
 
         if(options.rotate){
             this.ctx.rotate(-options.rotate);
@@ -85,17 +84,16 @@ export class HtmlRenderer implements Renderer {
         // this.ctx.stroke();
     }
 
+    line(x1: number, y1: number, x2: number, y2: number): void {
+        this.ctx.beginPath();
+        this.ctx.moveTo(x1, y1);
+        this.ctx.lineTo(x2, y2);
+        this.ctx.stroke();
+    }
+
     static create():HtmlRenderer{
-        var canvas:HTMLCanvasElement = <HTMLCanvasElement>document.getElementById("canvas");
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        canvas.style.margin = "0";
-        canvas.style.padding = "0";
-        canvas.style.overflow = "hidden";
-        canvas.style.position = "fixed";
-        canvas.style.top = "0px";
-        canvas.style.left = "0px";
-        var spriteManager:SpriteManager = SpriteManager.create();
+        let canvas = HtmlCanvas.createSingleton();
+        var spriteManager:SpriteManager = SpriteManager.singeltonCreate();
         //var spriteManager:SpriteManager = createSpriteManager();
         return new HtmlRenderer(canvas, spriteManager);
     }

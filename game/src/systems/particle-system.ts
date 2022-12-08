@@ -29,7 +29,6 @@ export class ParticleSystem extends EntitySystem{
     updateParticles(entity: Entity){
         let particles = <ParticleComponent> entity.getComponent("particles", true);
         let position = <PositionComponent> entity.getComponent("position", true);
-        
         particles.time = (particles.time + 1) % 1000;
         
         for(let i:number = 0; i<particles.particles.length; i++){

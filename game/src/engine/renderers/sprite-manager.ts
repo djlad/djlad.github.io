@@ -1,4 +1,5 @@
 import { SpriteAnimation } from "./sprite-animation";
+import { HtmlRectSprite } from "./implementations/html/html-rect-sprite";
 import { HtmlSprite } from "./implementations/html/html-sprite";
 
 export class SpriteManager {
@@ -6,11 +7,11 @@ export class SpriteManager {
     sprites:{ [key: string]: Sprite} = {};
     animations:{ [key: string]: SpriteAnimation} = {};
     
-    createSprite(fileName:string, widthImgs:number, heightImgs:number):HtmlSprite{
-        return new HtmlSprite(fileName, widthImgs, heightImgs);
+    createSprite(fileName:string, widthImgs:number, heightImgs:number):HtmlRectSprite{
+        return new HtmlRectSprite(fileName, widthImgs, heightImgs);
     }
 
-    addSprite(spriteName:string, sprite:HtmlSprite){
+    addSprite(spriteName:string, sprite:Sprite){
         this.sprites[spriteName] = sprite;
     }
     getSprite(spriteName:string):Sprite{
@@ -23,6 +24,10 @@ export class SpriteManager {
     loadSprite(spriteName:string, fileName:string, widthImgs:number, heightImgs:number){
         var sprite = this.createSprite(fileName, widthImgs, heightImgs);
         this.addSprite(spriteName, sprite);
+    }
+
+    loadSpriteOverlapping(spriteName:string, fileName:string){
+        let sprite = HtmlSprite.create(fileName);
     }
 
     addAnimation(spriteName:string, animationName:string, spriteNumbers:Array<number>, delay=1){
@@ -47,5 +52,11 @@ export class SpriteManager {
 
     static create():SpriteManager{
         return new SpriteManager();
+    }
+    private static spriteManager:SpriteManager = null;
+    static singeltonCreate():SpriteManager{
+        if (SpriteManager.spriteManager != null) return SpriteManager.spriteManager;
+        SpriteManager.spriteManager = new SpriteManager();
+        return SpriteManager.spriteManager;
     }
 }

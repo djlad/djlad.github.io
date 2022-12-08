@@ -68,6 +68,12 @@ export function populateSpriteManager(spriteManager:SpriteManager):SpriteManager
     sm.addAnimation("tilesetcrops", "tomato3", [cn + 27]);
     sm.addAnimation("tilesetcrops", "tomato4", [cn + 36]);
 
+    sm.loadSprite("arm", "arm.png", 1, 1);
+    sm.addAnimation("arm", "arm0", [1]);
+    
+    sm.loadSpriteOverlapping("swords", "sword-7Soul1.png");
+    // sm.addAnimation("swords", "arrowsword", [0], 30)
+
     return sm;
 }
 

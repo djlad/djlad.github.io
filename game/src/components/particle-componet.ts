@@ -39,17 +39,24 @@ export class ParticleComponent extends Component{
             position.y = center.y +  10*f();
             position.x = center.x + f2();
         },*/
-        (center:PositionComponent, position: PositionComponent, time: number) => {
-            let f = ()=>Math.sin(.05 * time/2);
+        /*(center:PositionComponent, position: PositionComponent, time: number) => {
+            let f = ()=>Math.sin(.05 * time/3);
             let f2 = ()=>40 * Math.cos(.2 * time/2);
             position.h = -2 + center.h - 2*center.width/3 +  30*f();
             position.x = center.x + f2();
             position.y = center.y - 1
         },
         (center:PositionComponent, position: PositionComponent, time: number) => {
-            let f = ()=>Math.sin(.05 * time/2);
+            let f = ()=>Math.sin(.05 * time/3);
             let f2 = ()=>40 * Math.cos(.2 * time/2);
             position.h = -2 + center.h - 2*center.width/3 +  30*f();
+            position.x = center.x - f2();
+            position.y = center.y + 1
+        },*/
+        (center:PositionComponent, position: PositionComponent, time: number) => {
+            let f = ()=>40 * Math.sin(.2 * time/2);
+            let f2 = ()=>40 * Math.cos(.2 * time/2);
+            position.h = -2 + center.h - 2*center.width/3 +  f();
             position.x = center.x - f2();
             position.y = center.y + 1
         }
@@ -63,7 +70,7 @@ export class ParticleComponent extends Component{
             let path = this.paths[i%this.paths.length];
             let center = <PositionComponent>entity.getComponent("position");
             let particlePosition = <PositionComponent>particle.getComponent("position");
-            path(center, particlePosition, this.time + i * 20);
+            path(center, particlePosition, -(this.time + i * 10));
         }
     }
     public static create(): ParticleComponent {

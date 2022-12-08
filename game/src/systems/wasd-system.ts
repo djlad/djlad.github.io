@@ -12,6 +12,7 @@ import { PlaceItemRequest } from '../components/place-item/place-item-request';
 import { PlaceItemComponent } from '../components/place-item/place-item-component';
 import { CropHarvesterComponent } from '../components/crop-harvester-component';
 import { CropComponent } from '../components/crop-component';
+import { Component } from '../engine/component/component';
 
 export class WasdSystem extends EntitySystem {
     constructor(game:Game){
@@ -42,38 +43,47 @@ export class WasdSystem extends EntitySystem {
         for (var i=0;i<events.length;i++){
             event = events[i];
             //console.log(event)
+            // console.log(event.eventName);
             switch(event.eventName){
                 case EventType.wDown:
+                    if (wasdComponent.dashing)break;
                     animation.setSprite(walkSprite);
                     position.vy = -speed;
                 break;
                 case EventType.wUp:
+                    if (wasdComponent.dashing)break;
                     animation.setSprite(sprite);
                     position.vy = 0;
                 break;
                 case EventType.aDown:
+                    if (wasdComponent.dashing)break;
                     position.faceRight = false;
                     animation.setSprite(walkSprite);
                     position.vx = -speed;
                 break;
                 case EventType.aUp:
+                    if (wasdComponent.dashing)break;
                     animation.setSprite(sprite);
                     position.vx = 0;
                 break;
                 case EventType.sDown:
+                    if (wasdComponent.dashing)break;
                     animation.setSprite(walkSprite);
                     position.vy = speed;
                 break;
                 case EventType.sUp:
+                    if (wasdComponent.dashing)break;
                     animation.setSprite(sprite);
                     position.vy = 0;
                 break;
                 case EventType.dDown:
+                    if (wasdComponent.dashing)break;
                     position.faceRight = true;
                     animation.setSprite(walkSprite);
                     position.vx = speed;
                 break;
                 case EventType.dUp:
+                    if (wasdComponent.dashing)break;
                     animation.setSprite(sprite);
                     position.vx = 0;
                 break;
@@ -90,13 +100,13 @@ export class WasdSystem extends EntitySystem {
                     //     crop.setCrop("onion")
                     // });
                 break;
-                case EventType.fUp:
+                /*case EventType.fUp:
                     let cropHarvester:CropHarvesterComponent;
                     try{
                         cropHarvester = <CropHarvesterComponent>entity.getComponent("cropHarvester");
                     } catch {return}
                     cropHarvester.startHarvest();
-                break;
+                break;*/
                 case EventType.pUp:
                     //console.log("p up")
                     console.log(this.game);
@@ -106,7 +116,35 @@ export class WasdSystem extends EntitySystem {
                     inventory = <InventoryComponent>entity.getComponent("inventory", true);
                     inventory.inventoryToString();
                 break;
+                case EventType.fUp:
+                    if(wasdComponent.dashing)break;
+                    wasdComponent.startDashing();
+                    wasdComponent.dashWidth = position.width;
+                    wasdComponent.dashHeight = position.height;
+                    // position.width /= 2;
+                    // position.height /= 2;
+                    wasdComponent.dashSprite = animation.animationName;
+                    animation.setSprite('fireball');
+                    // position.h = position.h - (wasdComponent.dashHeight - position.height)/2
+                break;
             }
         }
+        this.updateDashing(entity, wasdComponent, position, animation);
+    }
+    private updateDashing(entity: Entity, wasdComponent: WasdComponent, position: PositionComponent, animation: AnimationComponent){
+        if (!wasdComponent.dashing)return;
+        if (wasdComponent.dashingTime == 0){
+            wasdComponent.dashing = false;
+            position.vx = 0;
+            position.vy = 0;
+            position.h = 0;
+            // position.width = wasdComponent.dashWidth;
+            // position.height = wasdComponent.dashHeight;
+            animation.setSprite(wasdComponent.dashSprite);
+            return;
+        }
+        wasdComponent.dashingTime -= 1; 
+        position.vx = Math.sign(position.faceX) * wasdComponent.dashSpeed;
+        position.vy = Math.sign(position.faceY) * wasdComponent.dashSpeed;
     }
 }

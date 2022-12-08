@@ -1,5 +1,4 @@
 interface Sprite {
-    widthImgs:number,
-    heightImgs:number,
+    drawImage(spriteNumber:number, x: number, y: number, width: number, height: number): void;
     frameCoords(spriteNumber:number):number[]
 }

@@ -6,7 +6,7 @@ export class CropHarvesterComponent extends Component{
     private harvestTime:number = 0;
     private timeItTakesToHarvest:number = 10;
 
-    startHarvest():void {
+    private startHarvest():void {
         this.harvesting = true;
         this.harvestTime = this.timeItTakesToHarvest;
     }

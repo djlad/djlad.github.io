@@ -1,8 +1,6 @@
 import { Component } from '../engine/component/component';
 import { SpriteManager } from '../engine/renderers/sprite-manager';
 import { SpriteAnimation } from '../engine/renderers/sprite-animation';
-import { createSpriteManager } from '../render/sprite-manager';
-
 export class AnimationComponent extends Component {
     constructor(animationName:string, delay:number, spriteManager:SpriteManager){
         super("animation");
@@ -34,7 +32,10 @@ export class AnimationComponent extends Component {
 
         this.animationName = animationName;
         var animation:SpriteAnimation = this.spriteManager.getAnimation(animationName);
-        if(animation == null)return;
+        if(animation == null){
+            console.log(`no animation found: ${animationName}`);
+            return;
+        }
         this.spriteNumbers = animation.spriteNumbers;
         this.spriteName = animation.spriteName;
         this.delay = animation.delay;
@@ -53,8 +54,8 @@ export class AnimationComponent extends Component {
     }
 
     static create():AnimationComponent{
-        //var spriteManager:SpriteManager = SpriteManager.create();
-        var spriteManager:SpriteManager = createSpriteManager();
+        var spriteManager:SpriteManager = SpriteManager.singeltonCreate();
+        // var spriteManager:SpriteManager = createSpriteManager();
         var ac:AnimationComponent = new AnimationComponent("blond", 2, spriteManager);
         return ac;
     }

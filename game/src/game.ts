@@ -22,13 +22,13 @@ import { PlaceItemSystem } from './systems/place-item-system';
 import { InventorySystem } from './systems/inventory-system';
 import { ParticleSystem } from './systems/particle-system';
 import { ParticleEntity } from './entities/particles/particle-entity';
+import { ParticleComponent } from './components/particle-componet';
 
 declare var synaptic:any;
 export declare var g:Game;
 
 function createGame():Game{
     let game:Game = Game.create()
-    game.addSystem(RenderSystem.create(game));
     game.addSystem(WasdSystem.create(game));
     game.addSystem(CropSystem.create(game));
     game.addSystem(CollisionSystem.create(game));
@@ -40,6 +40,7 @@ function createGame():Game{
     game.addSystem(PlaceItemSystem.create(game));
     game.addSystem(InventorySystem.create(game));
     game.addSystem(ParticleSystem.create(game));
+    game.addSystem(RenderSystem.create(game));
 
     buildSprites(game)
     buildEntities(game);
@@ -51,19 +52,23 @@ export function startGame(){
     let game:Game = createGame();
     game.entityFactory.componentFactory.createComponent("animation");
     game.addEntity("first");
-
+    makePlayer();
     //ac.setSprite("onion");
 
-    /*var villager = game.addEntity("villager");
+    var villager = game.addEntity("villager");
     var component = <PositionComponent>villager.getComponent("position");
-    var fight = <FightComponent>villager.getComponent("fight");
-    ac = <AnimationComponent>villager.getComponent("animation");
+    let ac = <AnimationComponent>villager.getComponent("animation");
     component.x = 150;
     component.y = 300;
     component.vx = 0;
+    // component.height/=2
+    // component.width/=2
+    // ac.setSprite("grey");
+    ac.setSprite("arrowsword");
+    /*
     fight.attack = true;
 
-    var v2 = game.addEntity("villager");
+    // var v2 = game.addEntity("villager");
     fight.target = v2;
 
     var component = <PositionComponent>v2.getComponent("position");
@@ -80,15 +85,16 @@ export function startGame(){
     pc.x = 100;
     pc.y = 500;
     pc.vx = 0*/
-    makePlayer();
 
     let particle: ParticleEntity = <ParticleEntity> game.addEntity("particles");
+    let particleC = <ParticleComponent>particle.getComponent("particles");
+    particleC.targetParticles = 4;
     let pPos = <PositionComponent>particle.getComponent("position");
     pPos.x = 150;
     pPos.y = 400;
     
 
-    placeField(350,300, "wheat", 50)
+    placeField(350,300, "wheat", 50, 5)
     /*placeField(650,300, "corn", 50)
     placeField(350,600, "turnip", 50)
     placeField(650,600, "onion", 50)*/
@@ -120,6 +126,7 @@ export function startGame(){
         var ac = <AnimationComponent>player.getComponent("animation");
         pc.x = 300;
         pc.y = 380;
+        // ac.setSprite("redHair");
         return player;
     }
     let intervalId:number = game.start();
