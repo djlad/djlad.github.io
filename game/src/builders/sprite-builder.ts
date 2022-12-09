@@ -72,7 +72,14 @@ export function populateSpriteManager(spriteManager:SpriteManager):SpriteManager
     sm.addAnimation("arm", "arm0", [1]);
     
     sm.loadSpriteOverlapping("swords", "sword-7Soul1.png");
-    // sm.addAnimation("swords", "arrowsword", [0], 30)
+    // sm.addAnimation("swordAs", "arrowsword", [0], 30)
+    sm.loadSprite("dwarves", "fantasysprites/DwarfSprites2.png", 12, 8);
+    sm.addAnimation("dwarves", "dwarfopeneyes", [35])
+    sm.addAnimation("dwarves", "dwarfopeneyesWalk", [33, 35, 34, 35], 5)
+    
+    sm.loadSprite("goblins", "fantasysprites/EnemySpriteSheet1.png", 12, 8);
+    sm.addAnimation("goblins", "speargoblin", [35])
+    sm.addAnimation("goblins", "speargoblinWalk", [33, 35, 34, 35], 5)
 
     return sm;
 }

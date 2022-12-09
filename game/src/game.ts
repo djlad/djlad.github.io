@@ -64,7 +64,8 @@ export function startGame(){
     // component.height/=2
     // component.width/=2
     // ac.setSprite("grey");
-    ac.setSprite("arrowsword");
+    component.height = 60
+    ac.setSprite("speargoblin");
     /*
     fight.attack = true;
 
@@ -126,7 +127,6 @@ export function startGame(){
         var ac = <AnimationComponent>player.getComponent("animation");
         pc.x = 300;
         pc.y = 380;
-        // ac.setSprite("redHair");
         return player;
     }
     let intervalId:number = game.start();

@@ -6,6 +6,8 @@ import { ProjectileComponent } from '../components/projectile-component';
 import { ProjectileEntity } from '../entities/projectile-entity';
 import { GameEvent } from '../engine/events/game-event';
 import { EventType } from '../engine/events/EventType';
+import { PrimitiveComponent } from '../components/primitive-component';
+import { ParticlesEntity } from '../entities/particles/particles-entity';
 
 export class ProjectileSystem extends EntitySystem {
 
@@ -69,11 +71,12 @@ export class ProjectileSystem extends EntitySystem {
                     var isProjectile = event.eventData instanceof ProjectileEntity;
                     var collidedId:number = event.eventData.id;
                     var collided:Entity = this.game.getById(collidedId);
+                    var hitParticle = event.eventData instanceof ParticlesEntity;
                     /*console.log(entity)
                     console.log(event.eventData)
                     console.log(isShooter)
                     console.log("-")*/
-                    if(!isShooter && !isSelf && !isProjectile){
+                    if(!isShooter && !isSelf && !isProjectile && !hitParticle){
                         var ge = GameEvent.create(EventType.inflictDamage)
                         collided.emit(ge, true);
                         //console.log(other.id)

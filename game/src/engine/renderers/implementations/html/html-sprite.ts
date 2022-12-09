@@ -33,26 +33,12 @@ export class HtmlSprite implements Sprite {
                 averages.push(average);
             }
             let frames = sprite.findFrames(averages, pixelData.width, pixelData.height);
-            sprite.ctx.fillRect(0, 0, 400,400);
-            let dy = 0;
-            for (let i1=0;i1<frames.length;i1++){
-                let frame = frames[i1+1];
-                for(let i=0;i<frame.length;i++){
-                    let frameIndex = frame[i+1];
-                    pixelData.data[frameIndex*4] = 255
-                    pixelData.data[frameIndex*4+2] = 0
-                }
-                frame = frames[i1];
-                for(let i=0;i<frame.length;i++){
-                    let frameIndex = frame[i];
-                    pixelData.data[frameIndex*4] = 0
-                    // pixelData.data[frameIndex*4+1] = 0
-                    // pixelData.data[frameIndex*4+2] = 0
-                }
-                if (i1%6 == 5)dy+=pixelData.height;
-                // sprite.ctx.putImageData(pixelData, 0, 0);
-                sprite.ctx.putImageData(pixelData, 0+i1*pixelData.width%(pixelData.width*6), 0+i1+dy);
-            }
+            frames.forEach(f => {
+                f.sort();
+                let highestY = Math.floor(f[0]/pixelData.width);
+                let lowestY = Math.floor(f[f.length-1]/pixelData.width);
+                let height = lowestY - highestY;
+            });
         }
     }
 

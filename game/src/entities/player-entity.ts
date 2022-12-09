@@ -21,17 +21,24 @@ export class PlayerEntity extends Entity{
         let cropHarvester:CropHarvesterComponent;
         cropHarvester = <CropHarvesterComponent>this.addComponent("cropHarvester");
         let particles = <ParticleComponent>this.addComponent("particles");
-        particles.targetParticles = 8;
+        particles.targetParticles = 0;
         
         var sprite:string = "grey";
         var walkSprite:string = "greyWalk";
         // var sprite:string = "blond";
         // var walkSprite:string = "blondWalk";
+        // var sprite:string = "dwarfopeneyes";
+        // var walkSprite:string = "dwarfopeneyesWalk";
+        // var sprite:string = "speargoblin";
+        // var walkSprite:string = "speargoblinWalk";
         
         animation.setSprite(sprite)
         wasd.sprite = sprite;
         wasd.walkSprite = walkSprite;
         position.width = 70;
+        // position.height=60
+        // position.width *= 3
+        // position.height *= 3
     }
 
     handleEvents(events:{[key:string]:GameEvent}){
