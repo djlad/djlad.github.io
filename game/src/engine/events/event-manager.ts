@@ -1,5 +1,6 @@
 import { GameEvent } from "./game-event";
 import { EventType } from "./EventType";
+import { keyEvents } from "./key-events";
 
 export class EventManager {
     constructor(){
@@ -27,24 +28,17 @@ export class EventManager {
 
     update(){
         this.events = [];
-
-        //wasd controls
-        var controls:EventType[] = [EventType.wDown, EventType.aDown, EventType.sDown,
-            EventType.dDown, EventType.spaceDown, EventType.pDown, EventType.iDown, EventType.fDown];
-        var controlRelease:EventType[] = [EventType.wUp, EventType.aUp, EventType.sUp,
-            EventType.dUp, EventType.spaceUp, EventType.pUp, EventType.iUp, EventType.fUp];
-        var controlKeys:number[] = [87, 65, 83, 68, 32, 80, 73, 70];
-
-        for(var i:number=0;i<controls.length;i++){
-            if(this.keys[controlKeys[i]]){
+        for(var i:number=0;i<keyEvents.length;i++){
+            let keyEvent = keyEvents[i];
+            if(this.keys[keyEvent.keyCode]){
                 //emit key down event
-                this.emit(controls[i]);
-                this.keysReleased[controlKeys[i]] = true;
+                this.emit(keyEvent.downKey);
+                this.keysReleased[keyEvent.keyCode] = true;
             } else {
-                if(this.keysReleased[controlKeys[i]]){
+                if(this.keysReleased[keyEvent.keyCode]){
                     //emit key up event
-                    this.emit(controlRelease[i]);
-                    this.keysReleased[controlKeys[i]] = false;
+                    this.emit(keyEvent.upKey);
+                    this.keysReleased[keyEvent.keyCode] = false;
                 }
             }
         }

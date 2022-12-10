@@ -88,8 +88,7 @@ export class WasdSystem extends EntitySystem {
                     position.vx = 0;
                 break;
                 case EventType.spaceUp:
-                    var ge:GameEvent = GameEvent.create(EventType.fireProjectile);
-                    entity.emit(ge);
+                    this.dash(wasdComponent, position, animation);
                 break;
                 case EventType.spaceUp:
                     // position = <PositionComponent>entity.getComponent("position");
@@ -117,15 +116,10 @@ export class WasdSystem extends EntitySystem {
                     inventory.inventoryToString();
                 break;
                 case EventType.fUp:
-                    if(wasdComponent.dashing)break;
-                    wasdComponent.startDashing();
-                    wasdComponent.dashWidth = position.width;
-                    wasdComponent.dashHeight = position.height;
-                    // position.width /= 2;
-                    // position.height /= 2;
-                    wasdComponent.dashSprite = animation.animationName;
-                    animation.setSprite('fireball');
-                    // position.h = position.h - (wasdComponent.dashHeight - position.height)/2
+                break;
+                case EventType.jUp:
+                    var ge:GameEvent = GameEvent.create(EventType.fireProjectile);
+                    entity.emit(ge);
                 break;
             }
         }
@@ -146,5 +140,13 @@ export class WasdSystem extends EntitySystem {
         wasdComponent.dashingTime -= 1; 
         position.vx = Math.sign(position.faceX) * wasdComponent.dashSpeed;
         position.vy = Math.sign(position.faceY) * wasdComponent.dashSpeed;
+    }
+    private dash(wasdComponent:WasdComponent, position:PositionComponent, animation:AnimationComponent){
+        if(wasdComponent.dashing)return;
+        wasdComponent.startDashing();
+        wasdComponent.dashWidth = position.width;
+        wasdComponent.dashHeight = position.height;
+        wasdComponent.dashSprite = animation.animationName;
+        animation.setSprite('fireball');
     }
 }

@@ -22,6 +22,18 @@ export enum EventType {
     fDown,
     fUp,
 
+    jUp,
+    kUp,
+    lUp,
+    hUp,
+    semicolonUp,
+    
+    jDown,
+    kDown,
+    lDown,
+    hDown,
+    semicolonDown,
+
     collision,
     fireProjectile,
 
