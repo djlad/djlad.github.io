@@ -2137,6 +2137,7 @@ System.register("builders/sprite-builder", [], function (exports_44, context_44)
         sm.loadSprite("goblins", "fantasysprites/EnemySpriteSheet1.png", 12, 8);
         sm.addAnimation("goblins", "speargoblin", [35]);
         sm.addAnimation("goblins", "speargoblinWalk", [33, 35, 34, 35], 5);
+        sm.loadSprite("grass", "tilesets/submission_daneeklu/tilesets/grass.png", 3, 6);
         return sm;
     }
     exports_44("populateSpriteManager", populateSpriteManager);
@@ -2403,6 +2404,11 @@ System.register("systems/wasd-system", ["engine/system/system", "engine/events/g
                                 break;
                             case EventType_4.EventType.spaceUp:
                                 break;
+                            case EventType_4.EventType.fUp:
+                                let cropHarvester;
+                                cropHarvester = entity.getComponent("cropHarvester", true);
+                                cropHarvester.startHarvest();
+                                break;
                             case EventType_4.EventType.pUp:
                                 console.log(this.game);
                                 break;
@@ -2410,8 +2416,6 @@ System.register("systems/wasd-system", ["engine/system/system", "engine/events/g
                                 let inventory;
                                 inventory = entity.getComponent("inventory", true);
                                 inventory.inventoryToString();
-                                break;
-                            case EventType_4.EventType.fUp:
                                 break;
                             case EventType_4.EventType.jUp:
                                 var ge = game_event_2.GameEvent.create(EventType_4.EventType.fireProjectile);

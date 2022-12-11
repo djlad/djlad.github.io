@@ -101,13 +101,11 @@ export class WasdSystem extends EntitySystem {
                     //     crop.setCrop("onion")
                     // });
                 break;
-                /*case EventType.fUp:
+                case EventType.fUp:
                     let cropHarvester:CropHarvesterComponent;
-                    try{
-                        cropHarvester = <CropHarvesterComponent>entity.getComponent("cropHarvester");
-                    } catch {return}
+                    cropHarvester = <CropHarvesterComponent>entity.getComponent("cropHarvester", true);
                     cropHarvester.startHarvest();
-                break;*/
+                break;
                 case EventType.pUp:
                     //console.log("p up")
                     console.log(this.game);
@@ -116,8 +114,6 @@ export class WasdSystem extends EntitySystem {
                     let inventory:InventoryComponent;
                     inventory = <InventoryComponent>entity.getComponent("inventory", true);
                     inventory.inventoryToString();
-                break;
-                case EventType.fUp:
                 break;
                 case EventType.jUp:
                     var ge:GameEvent = GameEvent.create(EventType.fireProjectile);
