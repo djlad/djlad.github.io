@@ -51,7 +51,6 @@ export class TransitionComponent extends Component{
         }
         animation.setFilter(this.current);
         if (noChanges){
-            console.log("reached");
             animation.isFiltered = false;
             this.running = false;
         }

@@ -1927,7 +1927,6 @@ System.register("components/transitions/transition-component", ["engine/componen
                     }
                     animation.setFilter(this.current);
                     if (noChanges) {
-                        console.log("reached");
                         animation.isFiltered = false;
                         this.running = false;
                     }
