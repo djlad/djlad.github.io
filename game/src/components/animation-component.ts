@@ -27,9 +27,9 @@ export class AnimationComponent extends Component {
         return spriteNum;
     }
 
-    getRGBs(animationName:string=null, spriteNumber:number = 0):ImageData{
-        if (animationName != null) return this.spriteManager.getRGBs(animationName, spriteNumber);
-        return this.spriteManager.getRGBs(this.animationName, this.getSpriteNumber());
+    getRGBs(animationName:string=null, spriteNumber:number = 0, width:number=null, height:number=null,):ImageData{
+        if (animationName != null) return this.spriteManager.getRGBs(animationName, spriteNumber, width, height);
+        return this.spriteManager.getRGBs(this.animationName, this.getSpriteNumber(), width, height);
     }
     
     setFilter(pixelData: ImageData) {

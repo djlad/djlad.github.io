@@ -12,6 +12,7 @@ export class WasdComponent extends Component {
     dashWidth: number = 0;
     dashHeight: number = 0;
     dashSprite: string = "";
+    dashSpriteNumber: number = 0;
     sprite:string="grey";
     walkSprite:string="greyWalk";
     startDashing(){

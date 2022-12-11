@@ -11,16 +11,22 @@ export class HtmlRectSprite implements Sprite {
         this.canvas = HtmlCanvas.createSingleton();
         this.ctx = HtmlCanvas.createSingleton().ctx;
     }
-    getRGBs(spriteNumber: number): ImageData{
+    getRGBs(width:number, height:number, spriteNumber: number): ImageData{
         let fc = this.frameCoords(spriteNumber);
         let canvas = document.createElement('canvas');
         let context = canvas.getContext('2d');
-        canvas.width = this.frameWidth;
-        canvas.height = this.frameHeight;
+        if (width == null || height == null)
+        {
+            canvas.width = this.frameWidth;
+            canvas.height = this.frameHeight;
+        } else {
+            canvas.width = width;
+            canvas.height = height;
+        }
         context.clearRect(0, 0, canvas.width, canvas.height);
         context.drawImage(this.sprite, fc[0], fc[1], this.frameWidth,
-                          this.frameHeight, 0, 0, this.frameWidth, this.frameHeight);
-        let pixelData = context.getImageData(0, 0, this.frameWidth, this.frameHeight);
+                          this.frameHeight, 0, 0, canvas.width, canvas.height);
+        let pixelData = context.getImageData(0, 0, canvas.width, canvas.height);
         return pixelData;
     }
     drawImage(spriteNumber: number, x: number, y: number, width: number, height: number): void {
@@ -32,15 +38,17 @@ export class HtmlRectSprite implements Sprite {
     spriteDir:string = "../sprites/";
     widthImgs:number;
     heightImgs:number;
-    frameWidth:number;
-    frameHeight:number;
+    frameWidth:number=1;
+    frameHeight:number=1;
     sprite:HTMLImageElement;
     canvas: HtmlCanvas;
+    loaded: boolean = false;
 
     private setFrameDimensions(sprite:HtmlRectSprite){
         return function(){
             sprite.frameWidth = sprite.sprite.width/sprite.widthImgs;
             sprite.frameHeight = sprite.sprite.height/sprite.heightImgs;
+            sprite.loaded = true;
         }
     }
 

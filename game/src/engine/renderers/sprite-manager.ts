@@ -51,13 +51,16 @@ export class SpriteManager {
         }
     }
 
-    getRGBs(animationName:string, spriteNumber:number): ImageData{
+    getRGBs(animationName:string=null, spriteNumber:number = 0, width:number=null, height:number=null):ImageData{
         let key = animationName + spriteNumber;
         if (key in this.RGBs) return this.RGBs[key];
         let animation = this.animations[animationName];
         let name = animation.spriteName;
         let sprite = this.sprites[name];
-        this.RGBs[key] = sprite.getRGBs(spriteNumber);
+        if (!sprite.loaded){
+            return sprite.getRGBs(width, height, spriteNumber);
+        }
+        this.RGBs[key] = sprite.getRGBs(width, height, spriteNumber);
         return this.RGBs[key];
     }
 

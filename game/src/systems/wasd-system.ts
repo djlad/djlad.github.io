@@ -13,6 +13,7 @@ import { PlaceItemComponent } from '../components/place-item/place-item-componen
 import { CropHarvesterComponent } from '../components/crop-harvester-component';
 import { CropComponent } from '../components/crop-component';
 import { Component } from '../engine/component/component';
+import { TransitionComponent } from '../components/transitions/transition-component';
 
 export class WasdSystem extends EntitySystem {
     constructor(game:Game){
@@ -33,6 +34,7 @@ export class WasdSystem extends EntitySystem {
         if (wasdComponent == null)return;
         var position:PositionComponent = <PositionComponent>entity.getComponent("position");
         var animation:AnimationComponent = <AnimationComponent>entity.getComponent("animation");
+        var transition:TransitionComponent = <TransitionComponent>entity.getComponent("transition");
         
         var speed:number = wasdComponent.speed;
         var sprite:string = wasdComponent.sprite;
@@ -88,7 +90,7 @@ export class WasdSystem extends EntitySystem {
                     position.vx = 0;
                 break;
                 case EventType.spaceUp:
-                    this.dash(wasdComponent, position, animation);
+                    this.dash(wasdComponent, position, animation, transition);
                 break;
                 case EventType.spaceUp:
                     // position = <PositionComponent>entity.getComponent("position");
@@ -123,30 +125,31 @@ export class WasdSystem extends EntitySystem {
                 break;
             }
         }
-        this.updateDashing(entity, wasdComponent, position, animation);
+        this.updateDashing(entity, wasdComponent, position, animation, transition);
     }
-    private updateDashing(entity: Entity, wasdComponent: WasdComponent, position: PositionComponent, animation: AnimationComponent){
+    private updateDashing(entity: Entity, wasdComponent: WasdComponent, position: PositionComponent, animation: AnimationComponent, transition: TransitionComponent){
         if (!wasdComponent.dashing)return;
+        if (wasdComponent.dashingTime == Math.floor(wasdComponent.maxDashingTime/2)){
+            transition.start(wasdComponent.dashSprite, wasdComponent.dashSpriteNumber, false);
+        }
         if (wasdComponent.dashingTime == 0){
             wasdComponent.dashing = false;
             position.vx = 0;
             position.vy = 0;
             position.h = 0;
-            // position.width = wasdComponent.dashWidth;
-            // position.height = wasdComponent.dashHeight;
-            animation.setSprite(wasdComponent.dashSprite);
             return;
         }
         wasdComponent.dashingTime -= 1; 
         position.vx = Math.sign(position.faceX) * wasdComponent.dashSpeed;
         position.vy = Math.sign(position.faceY) * wasdComponent.dashSpeed;
     }
-    private dash(wasdComponent:WasdComponent, position:PositionComponent, animation:AnimationComponent){
+    private dash(wasdComponent:WasdComponent, position:PositionComponent, animation:AnimationComponent, transition:TransitionComponent){
         if(wasdComponent.dashing)return;
         wasdComponent.startDashing();
         wasdComponent.dashWidth = position.width;
         wasdComponent.dashHeight = position.height;
         wasdComponent.dashSprite = animation.animationName;
-        animation.setSprite('fireball');
+        wasdComponent.dashSpriteNumber = animation.getSpriteNumber();
+        transition.start(null, 32);
     }
 }

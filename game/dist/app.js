@@ -335,6 +335,9 @@ System.register("engine/renderers/implementations/html/html-rect-sprite", ["engi
             HtmlRectSprite = class HtmlRectSprite {
                 constructor(fileName, widthImgs, heightImgs) {
                     this.spriteDir = "../sprites/";
+                    this.frameWidth = 1;
+                    this.frameHeight = 1;
+                    this.loaded = false;
                     var spriteImg = new Image();
                     spriteImg.src = this.spriteDir + fileName;
                     this.sprite = spriteImg;
@@ -344,15 +347,21 @@ System.register("engine/renderers/implementations/html/html-rect-sprite", ["engi
                     this.canvas = html_canvas_1.HtmlCanvas.createSingleton();
                     this.ctx = html_canvas_1.HtmlCanvas.createSingleton().ctx;
                 }
-                getRGBs(spriteNumber) {
+                getRGBs(width, height, spriteNumber) {
                     let fc = this.frameCoords(spriteNumber);
                     let canvas = document.createElement('canvas');
                     let context = canvas.getContext('2d');
-                    canvas.width = this.frameWidth;
-                    canvas.height = this.frameHeight;
+                    if (width == null || height == null) {
+                        canvas.width = this.frameWidth;
+                        canvas.height = this.frameHeight;
+                    }
+                    else {
+                        canvas.width = width;
+                        canvas.height = height;
+                    }
                     context.clearRect(0, 0, canvas.width, canvas.height);
-                    context.drawImage(this.sprite, fc[0], fc[1], this.frameWidth, this.frameHeight, 0, 0, this.frameWidth, this.frameHeight);
-                    let pixelData = context.getImageData(0, 0, this.frameWidth, this.frameHeight);
+                    context.drawImage(this.sprite, fc[0], fc[1], this.frameWidth, this.frameHeight, 0, 0, canvas.width, canvas.height);
+                    let pixelData = context.getImageData(0, 0, canvas.width, canvas.height);
                     return pixelData;
                 }
                 drawImage(spriteNumber, x, y, width, height) {
@@ -363,6 +372,7 @@ System.register("engine/renderers/implementations/html/html-rect-sprite", ["engi
                     return function () {
                         sprite.frameWidth = sprite.sprite.width / sprite.widthImgs;
                         sprite.frameHeight = sprite.sprite.height / sprite.heightImgs;
+                        sprite.loaded = true;
                     };
                 }
                 frameCoords(spriteNum) {
@@ -534,14 +544,17 @@ System.register("engine/renderers/sprite-manager", ["engine/renderers/sprite-ani
                         return null;
                     }
                 }
-                getRGBs(animationName, spriteNumber) {
+                getRGBs(animationName = null, spriteNumber = 0, width = null, height = null) {
                     let key = animationName + spriteNumber;
                     if (key in this.RGBs)
                         return this.RGBs[key];
                     let animation = this.animations[animationName];
                     let name = animation.spriteName;
                     let sprite = this.sprites[name];
-                    this.RGBs[key] = sprite.getRGBs(spriteNumber);
+                    if (!sprite.loaded) {
+                        return sprite.getRGBs(width, height, spriteNumber);
+                    }
+                    this.RGBs[key] = sprite.getRGBs(width, height, spriteNumber);
                     return this.RGBs[key];
                 }
                 static create() {
@@ -590,10 +603,10 @@ System.register("components/animation-component", ["engine/component/component",
                     var spriteNum = this.spriteNumbers[frameNum];
                     return spriteNum;
                 }
-                getRGBs(animationName = null, spriteNumber = 0) {
+                getRGBs(animationName = null, spriteNumber = 0, width = null, height = null) {
                     if (animationName != null)
-                        return this.spriteManager.getRGBs(animationName, spriteNumber);
-                    return this.spriteManager.getRGBs(this.animationName, this.getSpriteNumber());
+                        return this.spriteManager.getRGBs(animationName, spriteNumber, width, height);
+                    return this.spriteManager.getRGBs(this.animationName, this.getSpriteNumber(), width, height);
                 }
                 setFilter(pixelData) {
                     this.filter = pixelData;
@@ -657,6 +670,7 @@ System.register("components/wasd-component", ["engine/component/component"], fun
                     this.dashWidth = 0;
                     this.dashHeight = 0;
                     this.dashSprite = "";
+                    this.dashSpriteNumber = 0;
                     this.sprite = "grey";
                     this.walkSprite = "greyWalk";
                 }
@@ -1867,30 +1881,64 @@ System.register("components/transitions/transition-component", ["engine/componen
                     this.reference = null;
                     this.current = null;
                     this.targetAnimationName = "fireball";
+                    this.targetSpriteNumber = 0;
+                    this.running = false;
+                    this.speed = 15;
                 }
                 update(entity) {
+                    if (!this.running)
+                        return;
                     let animation = entity.getComponent("animation", true);
                     if (animation == null)
                         return;
-                    if (this.reference == null) {
-                        this.reference = animation.getRGBs();
-                        this.target = animation.getRGBs(this.targetAnimationName, 32);
+                    this.reference = animation.getRGBs();
+                    this.target = animation.getRGBs(this.targetAnimationName, this.targetSpriteNumber, this.reference.width, this.reference.height);
+                    if (this.targetAnimationName == null) {
+                        let newTarget = new ImageData(this.reference.width, this.reference.height);
+                        for (let i = 0; i < this.target.data.length; i++) {
+                            newTarget.data[i] = 0;
+                        }
+                        this.target = newTarget;
+                    }
+                    if (this.current == null) {
+                        if (this.reference.data.length == 4 || this.target.data.length == 4)
+                            return;
                         this.current = new ImageData(this.reference.width, this.reference.height);
                         for (let i = 0; i < this.reference.data.length; i++) {
                             this.current.data[i] = this.reference.data[i];
                         }
                     }
+                    let noChanges = true;
                     for (let i = 0; i < this.reference.data.length; i++) {
                         let target = this.target.data[i];
                         if (this.current.data[i] < target) {
-                            this.current.data[i] += 1;
+                            this.current.data[i] += this.speed;
                         }
                         else if (this.current.data[i] > target) {
-                            this.current.data[i] -= 1;
+                            this.current.data[i] -= this.speed;
+                        }
+                        let distance = Math.abs(this.current.data[i] - target);
+                        if (distance < this.speed) {
+                            this.current.data[i] = target;
+                        }
+                        else {
+                            noChanges = false;
                         }
                     }
                     animation.setFilter(this.current);
-                    this.time = (this.time + 1) % 255;
+                    if (noChanges) {
+                        console.log("reached");
+                        animation.isFiltered = false;
+                        this.running = false;
+                    }
+                }
+                start(targetAnimationName = "fireball", targetSpriteNumber, resetCurrent = true) {
+                    this.running = true;
+                    this.time = 300;
+                    this.targetAnimationName = targetAnimationName;
+                    if (resetCurrent)
+                        this.current = null;
+                    this.targetSpriteNumber = targetSpriteNumber;
                 }
                 static create() {
                     return new TransitionComponent();
@@ -2292,6 +2340,7 @@ System.register("systems/wasd-system", ["engine/system/system", "engine/events/g
                         return;
                     var position = entity.getComponent("position");
                     var animation = entity.getComponent("animation");
+                    var transition = entity.getComponent("transition");
                     var speed = wasdComponent.speed;
                     var sprite = wasdComponent.sprite;
                     var walkSprite = wasdComponent.walkSprite;
@@ -2351,7 +2400,7 @@ System.register("systems/wasd-system", ["engine/system/system", "engine/events/g
                                 position.vx = 0;
                                 break;
                             case EventType_4.EventType.spaceUp:
-                                this.dash(wasdComponent, position, animation);
+                                this.dash(wasdComponent, position, animation, transition);
                                 break;
                             case EventType_4.EventType.spaceUp:
                                 break;
@@ -2371,31 +2420,34 @@ System.register("systems/wasd-system", ["engine/system/system", "engine/events/g
                                 break;
                         }
                     }
-                    this.updateDashing(entity, wasdComponent, position, animation);
+                    this.updateDashing(entity, wasdComponent, position, animation, transition);
                 }
-                updateDashing(entity, wasdComponent, position, animation) {
+                updateDashing(entity, wasdComponent, position, animation, transition) {
                     if (!wasdComponent.dashing)
                         return;
+                    if (wasdComponent.dashingTime == Math.floor(wasdComponent.maxDashingTime / 2)) {
+                        transition.start(wasdComponent.dashSprite, wasdComponent.dashSpriteNumber, false);
+                    }
                     if (wasdComponent.dashingTime == 0) {
                         wasdComponent.dashing = false;
                         position.vx = 0;
                         position.vy = 0;
                         position.h = 0;
-                        animation.setSprite(wasdComponent.dashSprite);
                         return;
                     }
                     wasdComponent.dashingTime -= 1;
                     position.vx = Math.sign(position.faceX) * wasdComponent.dashSpeed;
                     position.vy = Math.sign(position.faceY) * wasdComponent.dashSpeed;
                 }
-                dash(wasdComponent, position, animation) {
+                dash(wasdComponent, position, animation, transition) {
                     if (wasdComponent.dashing)
                         return;
                     wasdComponent.startDashing();
                     wasdComponent.dashWidth = position.width;
                     wasdComponent.dashHeight = position.height;
                     wasdComponent.dashSprite = animation.animationName;
-                    animation.setSprite('fireball');
+                    wasdComponent.dashSpriteNumber = animation.getSpriteNumber();
+                    transition.start(null, 32);
                 }
             };
             exports_48("WasdSystem", WasdSystem);
