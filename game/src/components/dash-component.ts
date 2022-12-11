@@ -4,6 +4,6 @@ import { Entity } from "../engine/entity/entity";
 export class DashComponent extends Component
 {
     update(entity: Entity): void {
-        throw new Error("Method not implemented.");
+        
     }
 }

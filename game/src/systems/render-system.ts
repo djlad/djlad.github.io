@@ -57,6 +57,10 @@ export class RenderSystem extends EntitySystem{
         let options:RenderOptions = new RenderOptions();
         options.flip = !p.faceRight;
         options.rotate = p.rotate;
+        if (a.isFiltered){
+            r.spriteFilter(a.filter, Math.round(p.x), Math.round(p.y + p.h), p.width, p.height, a.getSpriteNumber(), options);
+            return;
+        }
         r.sprite(a.spriteName, Math.round(p.x), Math.round(p.y + p.h), p.width, p.height, a.getSpriteNumber(), options);
     }
 

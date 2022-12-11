@@ -8,6 +8,9 @@ export class HtmlSprite implements Sprite {
         spriteImg.onload = this.setFrameDimensions(this);
         this.ctx = HtmlCanvas.createSingleton().ctx;
     }
+    getRGBs(spriteNumber: number): ImageData {
+        throw new Error("Method not implemented.");
+    }
     spriteDir:string = "../sprites/";
     sprite:HTMLImageElement;
     ctx:CanvasRenderingContext2D;

@@ -4,8 +4,9 @@ import { HtmlSprite } from "./implementations/html/html-sprite";
 
 export class SpriteManager {
     constructor(spriteDir:string="../sprites/"){}
-    sprites:{ [key: string]: Sprite} = {};
-    animations:{ [key: string]: SpriteAnimation} = {};
+    sprites:{ [key: string]: Sprite} = {};//sprite name to sprite
+    animations:{ [key: string]: SpriteAnimation} = {};//animation name to animation
+    RGBs: {[key:string]: ImageData}= {};
     
     createSprite(fileName:string, widthImgs:number, heightImgs:number):HtmlRectSprite{
         return new HtmlRectSprite(fileName, widthImgs, heightImgs);
@@ -48,6 +49,16 @@ export class SpriteManager {
         } else {
             return null;
         }
+    }
+
+    getRGBs(animationName:string, spriteNumber:number): ImageData{
+        let key = animationName + spriteNumber;
+        if (key in this.RGBs) return this.RGBs[key];
+        let animation = this.animations[animationName];
+        let name = animation.spriteName;
+        let sprite = this.sprites[name];
+        this.RGBs[key] = sprite.getRGBs(spriteNumber);
+        return this.RGBs[key];
     }
 
     static create():SpriteManager{

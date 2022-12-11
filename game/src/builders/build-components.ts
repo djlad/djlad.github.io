@@ -14,6 +14,7 @@ import { CropHarvesterComponent } from '../components/crop-harvester-component';
 import { TextComponent } from '../components/text-component/text-component';
 import { ParticleComponent } from '../components/particle-componet';
 import { PrimitiveComponent } from '../components/primitive-component';
+import { TransitionComponent } from '../components/transitions/transition-component';
 
 export function createComponentFactory():ComponentFactory{
     var cf:ComponentFactory = new ComponentFactory();
@@ -31,6 +32,7 @@ export function createComponentFactory():ComponentFactory{
     cf.registerComponent(TextComponent);
     cf.registerComponent(ParticleComponent);
     cf.registerComponent(PrimitiveComponent);
+    cf.registerComponent(TransitionComponent);
     return cf;
 }
 
@@ -46,4 +48,5 @@ export function buildComponents(game:Game):void{
     game.registerComponent(InventoryComponent);
     game.registerComponent(ParticleComponent);
     game.registerComponent(PrimitiveComponent);
+    game.registerComponent(TransitionComponent);
 }

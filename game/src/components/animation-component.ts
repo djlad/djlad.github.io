@@ -18,11 +18,23 @@ export class AnimationComponent extends Component {
     spriteNum:number=0;
     spriteManager:SpriteManager;
     currentDelay:number;
+    filter: ImageData;
+    isFiltered:boolean = false;
 
     getSpriteNumber(){
         var frameNum = this.frameNum;
         var spriteNum = this.spriteNumbers[frameNum];
         return spriteNum;
+    }
+
+    getRGBs(animationName:string=null, spriteNumber:number = 0):ImageData{
+        if (animationName != null) return this.spriteManager.getRGBs(animationName, spriteNumber);
+        return this.spriteManager.getRGBs(this.animationName, this.getSpriteNumber());
+    }
+    
+    setFilter(pixelData: ImageData) {
+        this.filter = pixelData;
+        this.isFiltered = true;
     }
 
     setSprite(animationName:string){

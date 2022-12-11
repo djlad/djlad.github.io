@@ -33,6 +33,38 @@ export class HtmlRenderer implements Renderer {
         this.ctx.fillStyle = "#7CFC00";
         this.ctx.fillRect(0,0,this.canvas.width,this.canvas.height);
     }
+    
+    spriteFilter(filter: ImageData, x: number, y: number, width: number, height: number, spriteNumber: number, options: RenderOptions): void {
+        let flip:boolean = options.flip;
+        // let sprite:Sprite = <Sprite>this.spriteManager.getSprite(spriteName);
+        x = x - width/2;//draw at middle of sprite
+        x -= this.offset[0]; //offset all drawings to the left
+        y = y - height;//draw at bottom of sprite
+        y -= this.offset[1];
+        let flipTranslation:number = 2*(x+width/2);
+        if(flip){
+            this.ctx.translate(flipTranslation, 0);
+            this.ctx.scale(-1,1);
+        }
+        if(options.rotate){
+            this.ctx.rotate(options.rotate);
+        }
+
+        let canvas = document.createElement("canvas");
+        canvas.width = filter.width;
+        canvas.height = filter.height;
+        let context = canvas.getContext("2d");
+        context.putImageData(filter, 0, 0);
+        this.ctx.drawImage(canvas, 0, 0, filter.width, filter.height, x, y , width, height);
+
+        if(options.rotate){
+            this.ctx.rotate(-options.rotate);
+        }
+        if (flip){
+            this.ctx.scale(-1,1);
+            this.ctx.translate(-flipTranslation,0);
+        }
+    }
 
     sprite(spriteName:string, x:number, y:number, width:number, height:number, spriteNumber:number, options:RenderOptions):void{
         let flip:boolean = options.flip;

@@ -344,6 +344,17 @@ System.register("engine/renderers/implementations/html/html-rect-sprite", ["engi
                     this.canvas = html_canvas_1.HtmlCanvas.createSingleton();
                     this.ctx = html_canvas_1.HtmlCanvas.createSingleton().ctx;
                 }
+                getRGBs(spriteNumber) {
+                    let fc = this.frameCoords(spriteNumber);
+                    let canvas = document.createElement('canvas');
+                    let context = canvas.getContext('2d');
+                    canvas.width = this.frameWidth;
+                    canvas.height = this.frameHeight;
+                    context.clearRect(0, 0, canvas.width, canvas.height);
+                    context.drawImage(this.sprite, fc[0], fc[1], this.frameWidth, this.frameHeight, 0, 0, this.frameWidth, this.frameHeight);
+                    let pixelData = context.getImageData(0, 0, this.frameWidth, this.frameHeight);
+                    return pixelData;
+                }
                 drawImage(spriteNumber, x, y, width, height) {
                     let fc = this.frameCoords(spriteNumber);
                     this.ctx.drawImage(this.sprite, fc[0], fc[1], this.frameWidth, this.frameHeight, x, y, width, height);
@@ -386,6 +397,9 @@ System.register("engine/renderers/implementations/html/html-sprite", ["engine/re
                     this.sprite = spriteImg;
                     spriteImg.onload = this.setFrameDimensions(this);
                     this.ctx = html_canvas_2.HtmlCanvas.createSingleton().ctx;
+                }
+                getRGBs(spriteNumber) {
+                    throw new Error("Method not implemented.");
                 }
                 drawImage(spriteNumber, x, y, width, height) {
                     let fc = this.frameCoords(spriteNumber);
@@ -480,6 +494,7 @@ System.register("engine/renderers/sprite-manager", ["engine/renderers/sprite-ani
                 constructor(spriteDir = "../sprites/") {
                     this.sprites = {};
                     this.animations = {};
+                    this.RGBs = {};
                 }
                 createSprite(fileName, widthImgs, heightImgs) {
                     return new html_rect_sprite_1.HtmlRectSprite(fileName, widthImgs, heightImgs);
@@ -519,6 +534,16 @@ System.register("engine/renderers/sprite-manager", ["engine/renderers/sprite-ani
                         return null;
                     }
                 }
+                getRGBs(animationName, spriteNumber) {
+                    let key = animationName + spriteNumber;
+                    if (key in this.RGBs)
+                        return this.RGBs[key];
+                    let animation = this.animations[animationName];
+                    let name = animation.spriteName;
+                    let sprite = this.sprites[name];
+                    this.RGBs[key] = sprite.getRGBs(spriteNumber);
+                    return this.RGBs[key];
+                }
                 static create() {
                     return new SpriteManager();
                 }
@@ -553,6 +578,7 @@ System.register("components/animation-component", ["engine/component/component",
                     super("animation");
                     this.frameNum = 0;
                     this.spriteNum = 0;
+                    this.isFiltered = false;
                     this.delay = delay;
                     this.currentDelay = delay;
                     this.spriteManager = spriteManager;
@@ -563,6 +589,15 @@ System.register("components/animation-component", ["engine/component/component",
                     var frameNum = this.frameNum;
                     var spriteNum = this.spriteNumbers[frameNum];
                     return spriteNum;
+                }
+                getRGBs(animationName = null, spriteNumber = 0) {
+                    if (animationName != null)
+                        return this.spriteManager.getRGBs(animationName, spriteNumber);
+                    return this.spriteManager.getRGBs(this.animationName, this.getSpriteNumber());
+                }
+                setFilter(pixelData) {
+                    this.filter = pixelData;
+                    this.isFiltered = true;
                 }
                 setSprite(animationName) {
                     if (animationName == this.animationName) {
@@ -1094,6 +1129,34 @@ System.register("engine/renderers/implementations/html/html-renderer", ["engine/
                 cbox() {
                     this.ctx.fillStyle = "#7CFC00";
                     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+                }
+                spriteFilter(filter, x, y, width, height, spriteNumber, options) {
+                    let flip = options.flip;
+                    x = x - width / 2;
+                    x -= this.offset[0];
+                    y = y - height;
+                    y -= this.offset[1];
+                    let flipTranslation = 2 * (x + width / 2);
+                    if (flip) {
+                        this.ctx.translate(flipTranslation, 0);
+                        this.ctx.scale(-1, 1);
+                    }
+                    if (options.rotate) {
+                        this.ctx.rotate(options.rotate);
+                    }
+                    let canvas = document.createElement("canvas");
+                    canvas.width = filter.width;
+                    canvas.height = filter.height;
+                    let context = canvas.getContext("2d");
+                    context.putImageData(filter, 0, 0);
+                    this.ctx.drawImage(canvas, 0, 0, filter.width, filter.height, x, y, width, height);
+                    if (options.rotate) {
+                        this.ctx.rotate(-options.rotate);
+                    }
+                    if (flip) {
+                        this.ctx.scale(-1, 1);
+                        this.ctx.translate(-flipTranslation, 0);
+                    }
                 }
                 sprite(spriteName, x, y, width, height, spriteNumber, options) {
                     let flip = options.flip;
@@ -1786,10 +1849,61 @@ System.register("components/primitive-component", ["engine/component/component"]
         }
     };
 });
-System.register("builders/build-components", ["components/position-component", "components/animation-component", "components/wasd-component", "components/crop-component", "components/projectile-component", "components/fight-component", "components/health-component", "components/neural-fight-component", "components/inventory-component/inventory-component", "engine/component/component-factory", "components/place-item/place-item-component", "components/crop-harvester-component", "components/text-component/text-component", "components/particle-componet", "components/primitive-component"], function (exports_41, context_41) {
+System.register("components/transitions/transition-component", ["engine/component/component"], function (exports_41, context_41) {
     "use strict";
-    var position_component_1, animation_component_1, wasd_component_1, crop_component_1, projectile_component_1, fight_component_1, health_component_1, neural_fight_component_1, inventory_component_1, component_factory_2, place_item_component_1, crop_harvester_component_1, text_component_1, particle_componet_1, primitive_component_1;
+    var component_16, TransitionComponent;
     var __moduleName = context_41 && context_41.id;
+    return {
+        setters: [
+            function (component_16_1) {
+                component_16 = component_16_1;
+            }
+        ],
+        execute: function () {
+            TransitionComponent = class TransitionComponent extends component_16.Component {
+                constructor() {
+                    super("transition");
+                    this.time = 0;
+                    this.reference = null;
+                    this.current = null;
+                    this.targetAnimationName = "fireball";
+                }
+                update(entity) {
+                    let animation = entity.getComponent("animation", true);
+                    if (animation == null)
+                        return;
+                    if (this.reference == null) {
+                        this.reference = animation.getRGBs();
+                        this.target = animation.getRGBs(this.targetAnimationName, 32);
+                        this.current = new ImageData(this.reference.width, this.reference.height);
+                        for (let i = 0; i < this.reference.data.length; i++) {
+                            this.current.data[i] = this.reference.data[i];
+                        }
+                    }
+                    for (let i = 0; i < this.reference.data.length; i++) {
+                        let target = this.target.data[i];
+                        if (this.current.data[i] < target) {
+                            this.current.data[i] += 1;
+                        }
+                        else if (this.current.data[i] > target) {
+                            this.current.data[i] -= 1;
+                        }
+                    }
+                    animation.setFilter(this.current);
+                    this.time = (this.time + 1) % 255;
+                }
+                static create() {
+                    return new TransitionComponent();
+                }
+            };
+            exports_41("TransitionComponent", TransitionComponent);
+        }
+    };
+});
+System.register("builders/build-components", ["components/position-component", "components/animation-component", "components/wasd-component", "components/crop-component", "components/projectile-component", "components/fight-component", "components/health-component", "components/neural-fight-component", "components/inventory-component/inventory-component", "engine/component/component-factory", "components/place-item/place-item-component", "components/crop-harvester-component", "components/text-component/text-component", "components/particle-componet", "components/primitive-component", "components/transitions/transition-component"], function (exports_42, context_42) {
+    "use strict";
+    var position_component_1, animation_component_1, wasd_component_1, crop_component_1, projectile_component_1, fight_component_1, health_component_1, neural_fight_component_1, inventory_component_1, component_factory_2, place_item_component_1, crop_harvester_component_1, text_component_1, particle_componet_1, primitive_component_1, transition_component_1;
+    var __moduleName = context_42 && context_42.id;
     function createComponentFactory() {
         var cf = new component_factory_2.ComponentFactory();
         cf.registerComponent(animation_component_1.AnimationComponent);
@@ -1806,9 +1920,10 @@ System.register("builders/build-components", ["components/position-component", "
         cf.registerComponent(text_component_1.TextComponent);
         cf.registerComponent(particle_componet_1.ParticleComponent);
         cf.registerComponent(primitive_component_1.PrimitiveComponent);
+        cf.registerComponent(transition_component_1.TransitionComponent);
         return cf;
     }
-    exports_41("createComponentFactory", createComponentFactory);
+    exports_42("createComponentFactory", createComponentFactory);
     function buildComponents(game) {
         game.registerComponent(animation_component_1.AnimationComponent);
         game.registerComponent(position_component_1.PositionComponent);
@@ -1821,8 +1936,9 @@ System.register("builders/build-components", ["components/position-component", "
         game.registerComponent(inventory_component_1.InventoryComponent);
         game.registerComponent(particle_componet_1.ParticleComponent);
         game.registerComponent(primitive_component_1.PrimitiveComponent);
+        game.registerComponent(transition_component_1.TransitionComponent);
     }
-    exports_41("buildComponents", buildComponents);
+    exports_42("buildComponents", buildComponents);
     return {
         setters: [
             function (position_component_1_1) {
@@ -1869,16 +1985,19 @@ System.register("builders/build-components", ["components/position-component", "
             },
             function (primitive_component_1_1) {
                 primitive_component_1 = primitive_component_1_1;
+            },
+            function (transition_component_1_1) {
+                transition_component_1 = transition_component_1_1;
             }
         ],
         execute: function () {
         }
     };
 });
-System.register("entities/crop-entity", ["engine/entity/entity", "builders/build-components"], function (exports_42, context_42) {
+System.register("entities/crop-entity", ["engine/entity/entity", "builders/build-components"], function (exports_43, context_43) {
     "use strict";
     var entity_4, build_components_3, CropEntity;
-    var __moduleName = context_42 && context_42.id;
+    var __moduleName = context_43 && context_43.id;
     return {
         setters: [
             function (entity_4_1) {
@@ -1906,13 +2025,13 @@ System.register("entities/crop-entity", ["engine/entity/entity", "builders/build
                     return new CropEntity(cf);
                 }
             };
-            exports_42("CropEntity", CropEntity);
+            exports_43("CropEntity", CropEntity);
         }
     };
 });
-System.register("builders/sprite-builder", [], function (exports_43, context_43) {
+System.register("builders/sprite-builder", [], function (exports_44, context_44) {
     "use strict";
-    var __moduleName = context_43 && context_43.id;
+    var __moduleName = context_44 && context_44.id;
     function populateSpriteManager(spriteManager) {
         var sm = spriteManager;
         sm.loadSprite("blondDress", "blond.png", 4, 8);
@@ -1973,21 +2092,21 @@ System.register("builders/sprite-builder", [], function (exports_43, context_43)
         sm.addAnimation("goblins", "speargoblinWalk", [33, 35, 34, 35], 5);
         return sm;
     }
-    exports_43("populateSpriteManager", populateSpriteManager);
+    exports_44("populateSpriteManager", populateSpriteManager);
     function buildSprites(game) {
         populateSpriteManager(game.spriteManager);
     }
-    exports_43("buildSprites", buildSprites);
+    exports_44("buildSprites", buildSprites);
     return {
         setters: [],
         execute: function () {
         }
     };
 });
-System.register("entities/player-entity", ["engine/entity/entity", "builders/build-components"], function (exports_44, context_44) {
+System.register("entities/player-entity", ["engine/entity/entity", "builders/build-components"], function (exports_45, context_45) {
     "use strict";
     var entity_5, build_components_4, PlayerEntity;
-    var __moduleName = context_44 && context_44.id;
+    var __moduleName = context_45 && context_45.id;
     return {
         setters: [
             function (entity_5_1) {
@@ -2010,6 +2129,7 @@ System.register("entities/player-entity", ["engine/entity/entity", "builders/bui
                     cropHarvester = this.addComponent("cropHarvester");
                     let particles = this.addComponent("particles");
                     particles.targetParticles = 0;
+                    this.addComponent("transition");
                     var sprite = "grey";
                     var walkSprite = "greyWalk";
                     animation.setSprite(sprite);
@@ -2025,14 +2145,14 @@ System.register("entities/player-entity", ["engine/entity/entity", "builders/bui
                     return entity;
                 }
             };
-            exports_44("PlayerEntity", PlayerEntity);
+            exports_45("PlayerEntity", PlayerEntity);
         }
     };
 });
-System.register("entities/first-entity", ["engine/entity/entity", "builders/build-components"], function (exports_45, context_45) {
+System.register("entities/first-entity", ["engine/entity/entity", "builders/build-components"], function (exports_46, context_46) {
     "use strict";
     var entity_6, build_components_5, FirstEntity;
-    var __moduleName = context_45 && context_45.id;
+    var __moduleName = context_46 && context_46.id;
     return {
         setters: [
             function (entity_6_1) {
@@ -2057,14 +2177,14 @@ System.register("entities/first-entity", ["engine/entity/entity", "builders/buil
                     return entity;
                 }
             };
-            exports_45("FirstEntity", FirstEntity);
+            exports_46("FirstEntity", FirstEntity);
         }
     };
 });
-System.register("systems/render-system", ["engine/system/system", "engine/renderers/render-options", "entities/first-entity"], function (exports_46, context_46) {
+System.register("systems/render-system", ["engine/system/system", "engine/renderers/render-options", "entities/first-entity"], function (exports_47, context_47) {
     "use strict";
     var system_1, render_options_1, first_entity_1, RenderSystem;
-    var __moduleName = context_46 && context_46.id;
+    var __moduleName = context_47 && context_47.id;
     return {
         setters: [
             function (system_1_1) {
@@ -2115,6 +2235,10 @@ System.register("systems/render-system", ["engine/system/system", "engine/render
                     let options = new render_options_1.RenderOptions();
                     options.flip = !p.faceRight;
                     options.rotate = p.rotate;
+                    if (a.isFiltered) {
+                        r.spriteFilter(a.filter, Math.round(p.x), Math.round(p.y + p.h), p.width, p.height, a.getSpriteNumber(), options);
+                        return;
+                    }
                     r.sprite(a.spriteName, Math.round(p.x), Math.round(p.y + p.h), p.width, p.height, a.getSpriteNumber(), options);
                 }
                 renderPrimitive(entity) {
@@ -2130,14 +2254,14 @@ System.register("systems/render-system", ["engine/system/system", "engine/render
                 }
                 applyEvents() { }
             };
-            exports_46("RenderSystem", RenderSystem);
+            exports_47("RenderSystem", RenderSystem);
         }
     };
 });
-System.register("systems/wasd-system", ["engine/system/system", "engine/events/game-event", "engine/events/EventType"], function (exports_47, context_47) {
+System.register("systems/wasd-system", ["engine/system/system", "engine/events/game-event", "engine/events/EventType"], function (exports_48, context_48) {
     "use strict";
     var system_2, game_event_2, EventType_4, WasdSystem;
-    var __moduleName = context_47 && context_47.id;
+    var __moduleName = context_48 && context_48.id;
     return {
         setters: [
             function (system_2_1) {
@@ -2274,14 +2398,14 @@ System.register("systems/wasd-system", ["engine/system/system", "engine/events/g
                     animation.setSprite('fireball');
                 }
             };
-            exports_47("WasdSystem", WasdSystem);
+            exports_48("WasdSystem", WasdSystem);
         }
     };
 });
-System.register("entities/projectile-entity", ["engine/entity/entity", "builders/build-components"], function (exports_48, context_48) {
+System.register("entities/projectile-entity", ["engine/entity/entity", "builders/build-components"], function (exports_49, context_49) {
     "use strict";
     var entity_7, build_components_6, ProjectileEntity;
-    var __moduleName = context_48 && context_48.id;
+    var __moduleName = context_49 && context_49.id;
     return {
         setters: [
             function (entity_7_1) {
@@ -2309,14 +2433,14 @@ System.register("entities/projectile-entity", ["engine/entity/entity", "builders
                     return pe;
                 }
             };
-            exports_48("ProjectileEntity", ProjectileEntity);
+            exports_49("ProjectileEntity", ProjectileEntity);
         }
     };
 });
-System.register("systems/crop-system", ["engine/system/system", "engine/entity/entity", "engine/events/EventType"], function (exports_49, context_49) {
+System.register("systems/crop-system", ["engine/system/system", "engine/entity/entity", "engine/events/EventType"], function (exports_50, context_50) {
     "use strict";
     var system_3, entity_8, EventType_5, CropSystem;
-    var __moduleName = context_49 && context_49.id;
+    var __moduleName = context_50 && context_50.id;
     return {
         setters: [
             function (system_3_1) {
@@ -2392,14 +2516,14 @@ System.register("systems/crop-system", ["engine/system/system", "engine/entity/e
                     }
                 }
             };
-            exports_49("CropSystem", CropSystem);
+            exports_50("CropSystem", CropSystem);
         }
     };
 });
-System.register("systems/collision-system", ["engine/system/system", "entities/first-entity", "entities/projectile-entity", "engine/events/game-event", "engine/events/EventType"], function (exports_50, context_50) {
+System.register("systems/collision-system", ["engine/system/system", "entities/first-entity", "entities/projectile-entity", "engine/events/game-event", "engine/events/EventType"], function (exports_51, context_51) {
     "use strict";
     var system_4, first_entity_2, projectile_entity_1, game_event_3, EventType_6, CollisionSystem;
-    var __moduleName = context_50 && context_50.id;
+    var __moduleName = context_51 && context_51.id;
     return {
         setters: [
             function (system_4_1) {
@@ -2514,14 +2638,14 @@ System.register("systems/collision-system", ["engine/system/system", "entities/f
                     return new CollisionSystem(game);
                 }
             };
-            exports_50("CollisionSystem", CollisionSystem);
+            exports_51("CollisionSystem", CollisionSystem);
         }
     };
 });
-System.register("entities/particles/particles-entity", ["builders/build-components", "engine/entity/entity"], function (exports_51, context_51) {
+System.register("entities/particles/particles-entity", ["builders/build-components", "engine/entity/entity"], function (exports_52, context_52) {
     "use strict";
     var build_components_7, entity_9, ParticlesEntity;
-    var __moduleName = context_51 && context_51.id;
+    var __moduleName = context_52 && context_52.id;
     return {
         setters: [
             function (build_components_7_1) {
@@ -2546,14 +2670,14 @@ System.register("entities/particles/particles-entity", ["builders/build-componen
                     return new ParticlesEntity(cf);
                 }
             };
-            exports_51("ParticlesEntity", ParticlesEntity);
+            exports_52("ParticlesEntity", ParticlesEntity);
         }
     };
 });
-System.register("systems/projectile-system", ["engine/system/system", "entities/projectile-entity", "engine/events/game-event", "engine/events/EventType", "entities/particles/particles-entity"], function (exports_52, context_52) {
+System.register("systems/projectile-system", ["engine/system/system", "entities/projectile-entity", "engine/events/game-event", "engine/events/EventType", "entities/particles/particles-entity"], function (exports_53, context_53) {
     "use strict";
     var system_5, projectile_entity_2, game_event_4, EventType_7, particles_entity_1, ProjectileSystem;
-    var __moduleName = context_52 && context_52.id;
+    var __moduleName = context_53 && context_53.id;
     return {
         setters: [
             function (system_5_1) {
@@ -2645,14 +2769,14 @@ System.register("systems/projectile-system", ["engine/system/system", "entities/
                     return new ProjectileSystem(game);
                 }
             };
-            exports_52("ProjectileSystem", ProjectileSystem);
+            exports_53("ProjectileSystem", ProjectileSystem);
         }
     };
 });
-System.register("systems/health-system", ["engine/system/system", "engine/events/EventType"], function (exports_53, context_53) {
+System.register("systems/health-system", ["engine/system/system", "engine/events/EventType"], function (exports_54, context_54) {
     "use strict";
     var system_6, EventType_8, HealthSystem;
-    var __moduleName = context_53 && context_53.id;
+    var __moduleName = context_54 && context_54.id;
     return {
         setters: [
             function (system_6_1) {
@@ -2699,14 +2823,14 @@ System.register("systems/health-system", ["engine/system/system", "engine/events
                     return new HealthSystem(game);
                 }
             };
-            exports_53("HealthSystem", HealthSystem);
+            exports_54("HealthSystem", HealthSystem);
         }
     };
 });
-System.register("systems/position-system", ["engine/system/system", "engine/events/EventType"], function (exports_54, context_54) {
+System.register("systems/position-system", ["engine/system/system", "engine/events/EventType"], function (exports_55, context_55) {
     "use strict";
     var system_7, EventType_9, PositionSystem;
-    var __moduleName = context_54 && context_54.id;
+    var __moduleName = context_55 && context_55.id;
     return {
         setters: [
             function (system_7_1) {
@@ -2747,14 +2871,14 @@ System.register("systems/position-system", ["engine/system/system", "engine/even
                     }
                 }
             };
-            exports_54("PositionSystem", PositionSystem);
+            exports_55("PositionSystem", PositionSystem);
         }
     };
 });
-System.register("systems/neural-fight-system", ["engine/system/system"], function (exports_55, context_55) {
+System.register("systems/neural-fight-system", ["engine/system/system"], function (exports_56, context_56) {
     "use strict";
     var system_8, NeuralFightSystem;
-    var __moduleName = context_55 && context_55.id;
+    var __moduleName = context_56 && context_56.id;
     return {
         setters: [
             function (system_8_1) {
@@ -2783,14 +2907,14 @@ System.register("systems/neural-fight-system", ["engine/system/system"], functio
                     }
                 }
             };
-            exports_55("NeuralFightSystem", NeuralFightSystem);
+            exports_56("NeuralFightSystem", NeuralFightSystem);
         }
     };
 });
-System.register("entities/villager-entity", ["engine/entity/entity", "builders/build-components"], function (exports_56, context_56) {
+System.register("entities/villager-entity", ["engine/entity/entity", "builders/build-components"], function (exports_57, context_57) {
     "use strict";
     var entity_10, build_components_8, VillagerEntity;
-    var __moduleName = context_56 && context_56.id;
+    var __moduleName = context_57 && context_57.id;
     return {
         setters: [
             function (entity_10_1) {
@@ -2819,14 +2943,14 @@ System.register("entities/villager-entity", ["engine/entity/entity", "builders/b
                     return entity;
                 }
             };
-            exports_56("VillagerEntity", VillagerEntity);
+            exports_57("VillagerEntity", VillagerEntity);
         }
     };
 });
-System.register("builders/entity-builder", ["entities/player-entity", "entities/villager-entity", "entities/crop-entity", "entities/first-entity", "entities/projectile-entity", "entities/inventory-item-entity", "entities/particles/particle-entity", "entities/particles/particles-entity"], function (exports_57, context_57) {
+System.register("builders/entity-builder", ["entities/player-entity", "entities/villager-entity", "entities/crop-entity", "entities/first-entity", "entities/projectile-entity", "entities/inventory-item-entity", "entities/particles/particle-entity", "entities/particles/particles-entity"], function (exports_58, context_58) {
     "use strict";
     var player_entity_1, villager_entity_1, crop_entity_1, first_entity_3, projectile_entity_3, inventory_item_entity_1, particle_entity_1, particles_entity_2;
-    var __moduleName = context_57 && context_57.id;
+    var __moduleName = context_58 && context_58.id;
     function buildEntities(game) {
         game.registerEntity("player", player_entity_1.PlayerEntity);
         game.registerEntity("villager", villager_entity_1.VillagerEntity);
@@ -2837,7 +2961,7 @@ System.register("builders/entity-builder", ["entities/player-entity", "entities/
         game.registerEntity("particle", particle_entity_1.ParticleEntity);
         game.registerEntity("particles", particles_entity_2.ParticlesEntity);
     }
-    exports_57("buildEntities", buildEntities);
+    exports_58("buildEntities", buildEntities);
     return {
         setters: [
             function (player_entity_1_1) {
@@ -2869,10 +2993,10 @@ System.register("builders/entity-builder", ["entities/player-entity", "entities/
         }
     };
 });
-System.register("systems/fight-system", ["engine/system/system", "engine/events/game-event", "engine/events/EventType"], function (exports_58, context_58) {
+System.register("systems/fight-system", ["engine/system/system", "engine/events/game-event", "engine/events/EventType"], function (exports_59, context_59) {
     "use strict";
     var system_9, game_event_5, EventType_10, FightSystem;
-    var __moduleName = context_58 && context_58.id;
+    var __moduleName = context_59 && context_59.id;
     return {
         setters: [
             function (system_9_1) {
@@ -2943,14 +3067,14 @@ System.register("systems/fight-system", ["engine/system/system", "engine/events/
                 }
                 ;
             };
-            exports_58("FightSystem", FightSystem);
+            exports_59("FightSystem", FightSystem);
         }
     };
 });
-System.register("systems/place-item-system", ["engine/system/system"], function (exports_59, context_59) {
+System.register("systems/place-item-system", ["engine/system/system"], function (exports_60, context_60) {
     "use strict";
     var system_10, PlaceItemSystem;
-    var __moduleName = context_59 && context_59.id;
+    var __moduleName = context_60 && context_60.id;
     return {
         setters: [
             function (system_10_1) {
@@ -3015,14 +3139,14 @@ System.register("systems/place-item-system", ["engine/system/system"], function 
                     return new PlaceItemSystem(game);
                 }
             };
-            exports_59("PlaceItemSystem", PlaceItemSystem);
+            exports_60("PlaceItemSystem", PlaceItemSystem);
         }
     };
 });
-System.register("systems/inventory-system", ["engine/system/system"], function (exports_60, context_60) {
+System.register("systems/inventory-system", ["engine/system/system"], function (exports_61, context_61) {
     "use strict";
     var system_11, InventorySystem;
-    var __moduleName = context_60 && context_60.id;
+    var __moduleName = context_61 && context_61.id;
     return {
         setters: [
             function (system_11_1) {
@@ -3074,14 +3198,14 @@ System.register("systems/inventory-system", ["engine/system/system"], function (
                 applyEvents(entity) {
                 }
             };
-            exports_60("InventorySystem", InventorySystem);
+            exports_61("InventorySystem", InventorySystem);
         }
     };
 });
-System.register("systems/particle-system", ["engine/system/system"], function (exports_61, context_61) {
+System.register("systems/particle-system", ["engine/system/system"], function (exports_62, context_62) {
     "use strict";
     var system_12, ParticleSystem;
-    var __moduleName = context_61 && context_61.id;
+    var __moduleName = context_62 && context_62.id;
     return {
         setters: [
             function (system_12_1) {
@@ -3127,14 +3251,14 @@ System.register("systems/particle-system", ["engine/system/system"], function (e
                 applyEvents(entity, eventManager) {
                 }
             };
-            exports_61("ParticleSystem", ParticleSystem);
+            exports_62("ParticleSystem", ParticleSystem);
         }
     };
 });
-System.register("game", ["systems/render-system", "systems/wasd-system", "systems/crop-system", "systems/collision-system", "systems/projectile-system", "systems/health-system", "systems/position-system", "systems/neural-fight-system", "engine/game", "builders/sprite-builder", "builders/entity-builder", "builders/build-components", "systems/place-item-system", "systems/inventory-system", "systems/particle-system"], function (exports_62, context_62) {
+System.register("game", ["systems/render-system", "systems/wasd-system", "systems/crop-system", "systems/collision-system", "systems/projectile-system", "systems/health-system", "systems/position-system", "systems/neural-fight-system", "engine/game", "builders/sprite-builder", "builders/entity-builder", "builders/build-components", "systems/place-item-system", "systems/inventory-system", "systems/particle-system"], function (exports_63, context_63) {
     "use strict";
     var render_system_1, wasd_system_1, crop_system_1, collision_system_1, projectile_system_1, health_system_1, position_system_1, neural_fight_system_1, game_1, sprite_builder_1, entity_builder_1, build_components_9, place_item_system_1, inventory_system_1, particle_system_1;
-    var __moduleName = context_62 && context_62.id;
+    var __moduleName = context_63 && context_63.id;
     function createGame() {
         let game = game_1.Game.create();
         game.addSystem(wasd_system_1.WasdSystem.create(game));
@@ -3202,7 +3326,7 @@ System.register("game", ["systems/render-system", "systems/wasd-system", "system
         let intervalId = game.start();
         return game;
     }
-    exports_62("startGame", startGame);
+    exports_63("startGame", startGame);
     return {
         setters: [
             function (render_system_1_1) {
@@ -3255,29 +3379,9 @@ System.register("game", ["systems/render-system", "systems/wasd-system", "system
         }
     };
 });
-System.register("components/dash-component", ["engine/component/component"], function (exports_63, context_63) {
+System.register("components/dash-component", ["engine/component/component"], function (exports_64, context_64) {
     "use strict";
-    var component_16, DashComponent;
-    var __moduleName = context_63 && context_63.id;
-    return {
-        setters: [
-            function (component_16_1) {
-                component_16 = component_16_1;
-            }
-        ],
-        execute: function () {
-            DashComponent = class DashComponent extends component_16.Component {
-                update(entity) {
-                    throw new Error("Method not implemented.");
-                }
-            };
-            exports_63("DashComponent", DashComponent);
-        }
-    };
-});
-System.register("components/lines-component", ["engine/component/component"], function (exports_64, context_64) {
-    "use strict";
-    var component_17, LinesComponent;
+    var component_17, DashComponent;
     var __moduleName = context_64 && context_64.id;
     return {
         setters: [
@@ -3286,20 +3390,17 @@ System.register("components/lines-component", ["engine/component/component"], fu
             }
         ],
         execute: function () {
-            LinesComponent = class LinesComponent extends component_17.Component {
-                constructor() {
-                    super("lines");
-                }
+            DashComponent = class DashComponent extends component_17.Component {
                 update(entity) {
                 }
             };
-            exports_64("LinesComponent", LinesComponent);
+            exports_64("DashComponent", DashComponent);
         }
     };
 });
-System.register("engine/component/components/effect/effect-component", ["engine/component/component"], function (exports_65, context_65) {
+System.register("components/lines-component", ["engine/component/component"], function (exports_65, context_65) {
     "use strict";
-    var component_18, EffectComponent, EffectType;
+    var component_18, LinesComponent;
     var __moduleName = context_65 && context_65.id;
     return {
         setters: [
@@ -3308,7 +3409,29 @@ System.register("engine/component/components/effect/effect-component", ["engine/
             }
         ],
         execute: function () {
-            EffectComponent = class EffectComponent extends component_18.Component {
+            LinesComponent = class LinesComponent extends component_18.Component {
+                constructor() {
+                    super("lines");
+                }
+                update(entity) {
+                }
+            };
+            exports_65("LinesComponent", LinesComponent);
+        }
+    };
+});
+System.register("engine/component/components/effect/effect-component", ["engine/component/component"], function (exports_66, context_66) {
+    "use strict";
+    var component_19, EffectComponent, EffectType;
+    var __moduleName = context_66 && context_66.id;
+    return {
+        setters: [
+            function (component_19_1) {
+                component_19 = component_19_1;
+            }
+        ],
+        execute: function () {
+            EffectComponent = class EffectComponent extends component_19.Component {
                 constructor() {
                     super(...arguments);
                     this.targets = [];
@@ -3322,17 +3445,17 @@ System.register("engine/component/components/effect/effect-component", ["engine/
                 update(entity) {
                 }
             };
-            exports_65("EffectComponent", EffectComponent);
+            exports_66("EffectComponent", EffectComponent);
             (function (EffectType) {
                 EffectType[EffectType["line"] = 0] = "line";
             })(EffectType || (EffectType = {}));
         }
     };
 });
-System.register("entities/lines-entity", ["builders/build-components", "engine/entity/entity", "entities/crop-entity"], function (exports_66, context_66) {
+System.register("entities/lines-entity", ["builders/build-components", "engine/entity/entity", "entities/crop-entity"], function (exports_67, context_67) {
     "use strict";
     var build_components_10, entity_11, crop_entity_2, LinesEntity;
-    var __moduleName = context_66 && context_66.id;
+    var __moduleName = context_67 && context_67.id;
     return {
         setters: [
             function (build_components_10_1) {
@@ -3358,7 +3481,7 @@ System.register("entities/lines-entity", ["builders/build-components", "engine/e
                     return new crop_entity_2.CropEntity(cf);
                 }
             };
-            exports_66("LinesEntity", LinesEntity);
+            exports_67("LinesEntity", LinesEntity);
         }
     };
 });
