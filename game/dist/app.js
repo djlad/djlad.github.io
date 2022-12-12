@@ -1992,8 +1992,8 @@ System.register("components/tile-component/tile-component", ["engine/component/c
                 static create() {
                     let tc = new TileComponent();
                     let spriteName = "grass";
-                    let mapWidth = 100;
-                    let centerOffset = 50;
+                    let mapWidth = 50;
+                    let centerOffset = mapWidth / 2;
                     let xlow = 4;
                     let xhigh = xlow + 6;
                     let ylow = 3;
@@ -2281,7 +2281,7 @@ System.register("entities/player-entity", ["engine/entity/entity", "builders/bui
                     wasd.walkSprite = walkSprite;
                     position.width = 32;
                     position.height = 48;
-                    let multi = 2.5;
+                    let multi = 2.4;
                     position.width *= multi;
                     position.height *= multi;
                 }
@@ -3364,8 +3364,8 @@ System.register("systems/inventory-system", ["engine/system/system"], function (
                             console.log("Warning: inventory item lost position component");
                             continue;
                         }
-                        itemPosition.x = entityPosition.x - 4 * 100 - 50 + i * 100;
-                        itemPosition.y = entityPosition.y + 350;
+                        itemPosition.x = entityPosition.x - 4 * 100 - 50 + i * 100 + entityPosition.vx;
+                        itemPosition.y = entityPosition.y + 350 + entityPosition.vy;
                         itemPosition.x -= entityPosition.vx;
                         itemPosition.y -= entityPosition.vy;
                         let text = inventoryItem.getComponent("text");

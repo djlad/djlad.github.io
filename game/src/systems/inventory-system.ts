@@ -37,8 +37,8 @@ export class InventorySystem extends EntitySystem {
                 console.log("Warning: inventory item lost position component");
                 continue;
             }
-            itemPosition.x = entityPosition.x - 4*100 - 50 + i * 100;
-            itemPosition.y = entityPosition.y + 350;
+            itemPosition.x = entityPosition.x - 4*100 - 50 + i * 100 + entityPosition.vx;
+            itemPosition.y = entityPosition.y + 350 + entityPosition.vy;
             itemPosition.x -= entityPosition.vx;
             itemPosition.y -= entityPosition.vy;
             

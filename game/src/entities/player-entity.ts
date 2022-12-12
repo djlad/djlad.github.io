@@ -38,7 +38,7 @@ export class PlayerEntity extends Entity{
         wasd.walkSprite = walkSprite;
         position.width = 32;
         position.height = 48;
-        let multi = 2.5
+        let multi = 2.4
         position.width *= multi
         position.height *= multi
     }
