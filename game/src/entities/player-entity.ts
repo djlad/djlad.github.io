@@ -36,10 +36,11 @@ export class PlayerEntity extends Entity{
         animation.setSprite(sprite)
         wasd.sprite = sprite;
         wasd.walkSprite = walkSprite;
-        position.width = 70;
-        // position.height=60
-        // position.width *= 3
-        // position.height *= 3
+        position.width = 32;
+        position.height = 48;
+        let multi = 2.5
+        position.width *= multi
+        position.height *= multi
     }
 
     handleEvents(events:{[key:string]:GameEvent}){

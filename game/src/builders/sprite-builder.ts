@@ -82,6 +82,11 @@ export function populateSpriteManager(spriteManager:SpriteManager):SpriteManager
     sm.addAnimation("goblins", "speargoblinWalk", [33, 35, 34, 35], 5);
 
     sm.loadSprite("grass", "tilesets/submission_daneeklu/tilesets/grass.png", 3, 6);
+    sm.loadSprite("soil", "tilesets/submission_daneeklu/tilesets/plowed_soil.png", 3, 6);
+
+    sm.loadSprite("people3", "fantasysprites/PeopleSpriteSheet2.png", 12, 8);
+    sm.addAnimation("people3", "brownpuffgirl", [80]);
+    sm.addAnimation("people3", "brownpuffgirlwalk", [79, 80, 81], 5);
 
     return sm;
 }

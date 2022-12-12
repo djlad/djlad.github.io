@@ -3,6 +3,7 @@ import { PositionComponent } from '../components/position-component';
 import { ComponentFactory } from '../engine/component/component-factory';
 import { createComponentFactory } from '../builders/build-components';
 import { GameEvent } from '../engine/events/game-event';
+import {TileComponent} from '../components/tile-component/tile-component';
 
 export class FirstEntity extends Entity{
     /**
@@ -13,7 +14,8 @@ export class FirstEntity extends Entity{
     constructor(cf:ComponentFactory){
         super(cf);
         var position:PositionComponent = <PositionComponent>this.addComponent("position");
-        position.y = 9999999;
+        position.y = -9999999;
+        var tiles = <TileComponent>this.addComponent("tile");
     }
 
     handleEvents(events:{[key:string]:GameEvent}){

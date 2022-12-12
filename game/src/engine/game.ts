@@ -36,7 +36,7 @@ export class Game {
     intervalId:number;
     spriteManager:SpriteManager;
     update(){
-        this.renderer.cbox();
+        // this.renderer.cbox();
         this.eventManager.update();
         for(var i=0;i<this.entities.length;i++){
             this.entities[i].update();

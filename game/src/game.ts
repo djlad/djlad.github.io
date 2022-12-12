@@ -64,8 +64,8 @@ export function startGame(){
     // component.height/=2
     // component.width/=2
     // ac.setSprite("grey");
-    component.height = 60
-    ac.setSprite("speargoblin");
+    // component.height = 60
+    // ac.setSprite("speargoblin");
     /*
     fight.attack = true;
 

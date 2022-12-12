@@ -12,6 +12,8 @@ import { FirstEntity } from '../entities/first-entity';
 import { TextComponent } from '../components/text-component/text-component';
 import { TextPlacement } from '../components/text-component/text-placement';
 import { PrimitiveComponent } from '../components/primitive-component';
+import { TileComponent } from '../components/tile-component/tile-component';
+import { Tile } from '../components/tile-component/tile';
 
 export class RenderSystem extends EntitySystem{
     /**
@@ -32,10 +34,29 @@ export class RenderSystem extends EntitySystem{
         if (entity instanceof FirstEntity){
             let player:Entity = this.game.getById(1);
             this.centerCameraOn(player);
+            this.renderer.cbox();
+            this.renderTileSet(entity);
         }
         this.renderAnimationComponent(entity);
         this.renderText(entity);
         this.renderPrimitive(entity);
+    }
+    renderTileSet(entity: FirstEntity) {
+        let tileComp = <TileComponent>entity.getComponent("tile");
+        let tiles = tileComp.tiles;
+        let options:RenderOptions = new RenderOptions();
+        options.flip = false;
+        options.rotate = 0;
+        for (let i=0;i<tiles.length;i++){
+            let tile = tiles[i];
+            let x = this.tileCoordToReal(tileComp.tileWidth, tile.tileX);
+            let y = this.tileCoordToReal(tileComp.tileWidth, tile.tileY);
+            this.renderer.sprite(tile.spriteName, x, y, tileComp.tileWidth, tileComp.tileWidth+1, tile.spriteNumber, options);
+        }
+    }
+
+    private tileCoordToReal(tileWidth: number, coord: number): number{
+        return coord * tileWidth;
     }
 
     renderText(entity:Entity){
@@ -73,7 +94,7 @@ export class RenderSystem extends EntitySystem{
 
     centerCameraOn(entity:Entity){
             let position:PositionComponent = <PositionComponent>entity.getComponent("position");
-            this.renderer.setOffset([position.x, position.y]);
+            this.renderer.setOffset([position.x + position.vx, position.y + position.vy]);
     }
 
     applyEvents(){}

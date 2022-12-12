@@ -18,7 +18,13 @@ export class VillagerEntity extends Entity{
         var health:HealthComponent = <HealthComponent>this.addComponent("health");
         var neural:NeuralFightComponent = <NeuralFightComponent>this.addComponent("neural");
         
-        position.width = 70;
+        animation.setSprite("brownpuffgirl");
+        
+        position.width = 32;
+        position.height = 32;
+        let multiplier = 2.5;
+        position.height *= multiplier * 1.1;
+        position.width *= multiplier;
     }
 
     handleEvents(events:{[key:string]:GameEvent}){
