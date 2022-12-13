@@ -1260,6 +1260,7 @@ System.register("engine/game", ["engine/entity/entity-factory", "engine/events/e
                 constructor(entityFactory, renderer, eventManager) {
                     this._entities = [];
                     this.systems = [];
+                    this.targetFps = 45;
                     this.counter = 0;
                     this.entityFactory = entityFactory;
                     this.renderer = renderer;
@@ -1301,11 +1302,11 @@ System.register("engine/game", ["engine/entity/entity-factory", "engine/events/e
                     });
                     this.cleanDestroyedEntities();
                     if (this.counter % 10 == 0) {
-                        this.fps = 100 * (performance.now() - this.performance) / (1000 / 45);
+                        this.frameTime = 100 * (performance.now() - this.performance) / (1000 / this.targetFps);
                     }
                     else
                         performance.now();
-                    this.renderer.text(Math.floor(this.fps).toString(), 0, 0, 1000);
+                    this.renderer.text(Math.floor(this.frameTime).toString(), 0, 0, 1000);
                     this.counter = (this.counter + 1) % 100;
                 }
                 render() {
@@ -1318,7 +1319,7 @@ System.register("engine/game", ["engine/entity/entity-factory", "engine/events/e
                     console.log("starting game");
                     this.intervalId = setInterval((function (game) {
                         return function () { game.step(); };
-                    })(this), 1000 / 45);
+                    })(this), 1000 / this.targetFps);
                     return this.intervalId;
                 }
                 stop() {
