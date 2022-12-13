@@ -8,7 +8,7 @@ import { HtmlCanvas } from "./html-canvas";
 export class HtmlRenderer implements Renderer {
     canvas:HTMLCanvasElement;
     ctx:CanvasRenderingContext2D;
-    offset:number[];
+    public readonly offset:number[];
     public spriteManager:SpriteManager;
     constructor(context:HtmlCanvas, spriteManager:SpriteManager){
         this.canvas = context.canvas;
@@ -28,10 +28,10 @@ export class HtmlRenderer implements Renderer {
     }
 
     cbox(){
-        // this.ctx.clearRect(0,0,this.canvas.width,this.canvas.height);
+        this.ctx.clearRect(0,0,this.canvas.width,this.canvas.height);
         // this.ctx.fillStyle = "#00ffff";
-        this.ctx.fillStyle = "#7CFC00";
-        this.ctx.fillRect(0,0,this.canvas.width,this.canvas.height);
+        // this.ctx.fillStyle = "#7CFC00";
+        // this.ctx.fillRect(0,0,this.canvas.width,this.canvas.height);
     }
     
     spriteFilter(filter: ImageData, x: number, y: number, width: number, height: number, spriteNumber: number, options: RenderOptions): void {
@@ -82,7 +82,10 @@ export class HtmlRenderer implements Renderer {
         if(options.rotate){
             this.ctx.rotate(options.rotate);
         }
-        sprite.drawImage(spriteNumber, x, y, width, height);
+        if (x > -100 && x < this.canvas.width && y > -100 && y<this.canvas.height)
+        {
+            sprite.drawImage(spriteNumber, x, y, width, height);
+        }
 
         if(options.rotate){
             this.ctx.rotate(-options.rotate);

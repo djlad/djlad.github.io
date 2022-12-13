@@ -2,6 +2,7 @@ import { SpriteManager } from "./sprite-manager";
 import { RenderOptions } from "./render-options";
 
 export interface Renderer {
+    readonly offset:number[];
     spriteFilter(filter: ImageData, x: number, y: number, width: number, height: number, spriteNumber: number, options: RenderOptions): void;
     cbox():void;
     setOffset(offset:number[]):void;

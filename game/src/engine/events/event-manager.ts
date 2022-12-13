@@ -23,6 +23,13 @@ export class EventManager {
             keys[e.keyCode] = false;
             //console.log(e.keyCode)
         })
+        let canvas = document.getElementById("canvas");
+        window.addEventListener("mouseup", (e)=>{
+            const rect = canvas.getBoundingClientRect()
+            const x = e.clientX - rect.left
+            const y = e.clientY - rect.top
+            console.log("x: " + x + " y: " + y)
+        })
         return keys;
     }
 

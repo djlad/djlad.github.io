@@ -1004,6 +1004,13 @@ System.register("engine/events/event-manager", ["engine/events/game-event", "eng
                     window.addEventListener("keyup", function (e) {
                         keys[e.keyCode] = false;
                     });
+                    let canvas = document.getElementById("canvas");
+                    window.addEventListener("mouseup", (e) => {
+                        const rect = canvas.getBoundingClientRect();
+                        const x = e.clientX - rect.left;
+                        const y = e.clientY - rect.top;
+                        console.log("x: " + x + " y: " + y);
+                    });
                     return keys;
                 }
                 update() {
@@ -1141,8 +1148,7 @@ System.register("engine/renderers/implementations/html/html-renderer", ["engine/
                     this.offset[1] = offset[1] - this.canvas.height / 2;
                 }
                 cbox() {
-                    this.ctx.fillStyle = "#7CFC00";
-                    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+                    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
                 }
                 spriteFilter(filter, x, y, width, height, spriteNumber, options) {
                     let flip = options.flip;
@@ -1188,7 +1194,9 @@ System.register("engine/renderers/implementations/html/html-renderer", ["engine/
                     if (options.rotate) {
                         this.ctx.rotate(options.rotate);
                     }
-                    sprite.drawImage(spriteNumber, x, y, width, height);
+                    if (x > -100 && x < this.canvas.width && y > -100 && y < this.canvas.height) {
+                        sprite.drawImage(spriteNumber, x, y, width, height);
+                    }
                     if (options.rotate) {
                         this.ctx.rotate(-options.rotate);
                     }
@@ -1252,6 +1260,7 @@ System.register("engine/game", ["engine/entity/entity-factory", "engine/events/e
                 constructor(entityFactory, renderer, eventManager) {
                     this._entities = [];
                     this.systems = [];
+                    this.counter = 0;
                     this.entityFactory = entityFactory;
                     this.renderer = renderer;
                     this.eventManager = eventManager;
@@ -1268,6 +1277,7 @@ System.register("engine/game", ["engine/entity/entity-factory", "engine/events/e
                     this._entities = entities;
                 }
                 update() {
+                    this.performance = performance.now();
                     this.eventManager.update();
                     for (var i = 0; i < this.entities.length; i++) {
                         this.entities[i].update();
@@ -1290,6 +1300,13 @@ System.register("engine/game", ["engine/entity/entity-factory", "engine/events/e
                         return pa.y - pb.y;
                     });
                     this.cleanDestroyedEntities();
+                    if (this.counter % 10 == 0) {
+                        this.fps = 100 * (performance.now() - this.performance) / (1000 / 45);
+                    }
+                    else
+                        performance.now();
+                    this.renderer.text(Math.floor(this.fps).toString(), 0, 0, 1000);
+                    this.counter = (this.counter + 1) % 100;
                 }
                 render() {
                 }
@@ -1301,7 +1318,7 @@ System.register("engine/game", ["engine/entity/entity-factory", "engine/events/e
                     console.log("starting game");
                     this.intervalId = setInterval((function (game) {
                         return function () { game.step(); };
-                    })(this), 1000 / 40);
+                    })(this), 1000 / 45);
                     return this.intervalId;
                 }
                 stop() {
@@ -1993,12 +2010,12 @@ System.register("components/tile-component/tile-component", ["engine/component/c
                     let tc = new TileComponent();
                     let spriteName = "grass";
                     let mapWidth = 50;
-                    let centerOffset = mapWidth / 2;
+                    let centerOffset = mapWidth / 2 - 5;
                     let xlow = 4;
                     let xhigh = xlow + 6;
                     let ylow = 3;
                     let yhigh = ylow + 6;
-                    for (let i = 0; i < 10000; i++) {
+                    for (let i = 0; i < mapWidth * mapWidth; i++) {
                         let x = i % mapWidth - centerOffset;
                         let y = Math.floor(i / mapWidth) - centerOffset;
                         if (x >= xlow && x <= xhigh && y >= ylow && y <= yhigh) {
@@ -2025,6 +2042,9 @@ System.register("components/tile-component/tile-component", ["engine/component/c
                         tc.tiles.push(tile_1.Tile.create(spriteName, 14 + Math.ceil(Math.random() * 3), x, y));
                     }
                     return tc;
+                }
+                createBuilder() {
+                    let tileSetSpriteNames = ["grass", "soil"];
                 }
                 tileCoordToReal(tileWidth, coord) {
                     return coord * tileWidth;
@@ -3629,9 +3649,9 @@ System.register("engine/component/components/effect/effect-component", ["engine/
         }
     };
 });
-System.register("entities/lines-entity", ["builders/build-components", "engine/entity/entity", "entities/crop-entity"], function (exports_69, context_69) {
+System.register("entities/clickable-entity", ["builders/build-components", "engine/entity/entity"], function (exports_69, context_69) {
     "use strict";
-    var build_components_10, entity_11, crop_entity_2, LinesEntity;
+    var build_components_10, entity_11, ClickableEntity;
     var __moduleName = context_69 && context_69.id;
     return {
         setters: [
@@ -3640,13 +3660,47 @@ System.register("entities/lines-entity", ["builders/build-components", "engine/e
             },
             function (entity_11_1) {
                 entity_11 = entity_11_1;
+            }
+        ],
+        execute: function () {
+            ClickableEntity = class ClickableEntity extends entity_11.Entity {
+                constructor(cf) {
+                    super(cf);
+                    var position = this.addComponent("position");
+                    let animation = this.addComponent("animation");
+                }
+                handleEvents(events) {
+                }
+                registerCallback(callback) {
+                    this.callback = callback;
+                }
+                static create() {
+                    let cf = build_components_10.createComponentFactory();
+                    return new ClickableEntity(cf);
+                }
+            };
+            exports_69("ClickableEntity", ClickableEntity);
+        }
+    };
+});
+System.register("entities/lines-entity", ["builders/build-components", "engine/entity/entity", "entities/crop-entity"], function (exports_70, context_70) {
+    "use strict";
+    var build_components_11, entity_12, crop_entity_2, LinesEntity;
+    var __moduleName = context_70 && context_70.id;
+    return {
+        setters: [
+            function (build_components_11_1) {
+                build_components_11 = build_components_11_1;
+            },
+            function (entity_12_1) {
+                entity_12 = entity_12_1;
             },
             function (crop_entity_2_1) {
                 crop_entity_2 = crop_entity_2_1;
             }
         ],
         execute: function () {
-            LinesEntity = class LinesEntity extends entity_11.Entity {
+            LinesEntity = class LinesEntity extends entity_12.Entity {
                 constructor(cf) {
                     super(cf);
                     var position = this.addComponent("position");
@@ -3654,11 +3708,11 @@ System.register("entities/lines-entity", ["builders/build-components", "engine/e
                 handleEvents(events) {
                 }
                 static create() {
-                    let cf = build_components_10.createComponentFactory();
+                    let cf = build_components_11.createComponentFactory();
                     return new crop_entity_2.CropEntity(cf);
                 }
             };
-            exports_69("LinesEntity", LinesEntity);
+            exports_70("LinesEntity", LinesEntity);
         }
     };
 });

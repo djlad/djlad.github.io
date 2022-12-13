@@ -35,8 +35,12 @@ export class Game {
     eventManager:EventManager;
     intervalId:number;
     spriteManager:SpriteManager;
+    performance: number;
+    fps: number;
+    counter: number = 0;
     update(){
         // this.renderer.cbox();
+        this.performance = performance.now();
         this.eventManager.update();
         for(var i=0;i<this.entities.length;i++){
             this.entities[i].update();
@@ -62,6 +66,11 @@ export class Game {
             return pa.y - pb.y;
         });
         this.cleanDestroyedEntities();
+        if (this.counter%10==0){
+            this.fps = 100*(performance.now() - this.performance)/(1000/45)
+        }else performance.now();
+        this.renderer.text(Math.floor(this.fps).toString(),0,0, 1000);
+        this.counter = (this.counter + 1)%100;
     }
     render(){
 
@@ -74,7 +83,7 @@ export class Game {
         console.log("starting game")
         this.intervalId = setInterval((function(game){
             return function(){game.step()}
-        })(this), 1000/40);
+        })(this), 1000/45);
         return this.intervalId;
     }
 
