@@ -29,12 +29,13 @@ export class EventManager {
             const x = e.clientX - rect.left
             const y = e.clientY - rect.top
             console.log("x: " + x + " y: " + y)
+            this.emit(EventType.mouseUp, {x,y});
         })
         return keys;
     }
 
     update(){
-        this.events = [];
+        // this.events = [];
         for(var i:number=0;i<keyEvents.length;i++){
             let keyEvent = keyEvents[i];
             if(this.keys[keyEvent.keyCode]){
@@ -61,24 +62,27 @@ export class EventManager {
         //unused currently
         var events:GameEvent[];
         var callbacks:((event:GameEvent)=>void)[];
-        for (var eventName in this.events){
-            //get emitted events to eventName
-            events = this.events;
+        for (let i=0;i<this.events.length;i++){
+            let event = this.events[i];
             //get listener callbacks listening to this event
-            callbacks = this.callbacks[eventName];
-            events.forEach((event:GameEvent)=>{
-                callbacks.forEach((callback:(event:GameEvent)=>void)=>{
-                    callback(event);
-                })
+            if (!(event.eventName in this.callbacks)) continue;
+            callbacks = this.callbacks[event.eventName];
+            callbacks.forEach((callback)=>{
+                callback(event);
             })
         }
+        this.events = [];
     }
 
     addListener(eventName:EventType, callback:(event:GameEvent)=>void){
         //used with fireCallbacks
         //unused currently
+        if (!(eventName in this.callbacks)){
+            this.callbacks[eventName] = [];
+        }
         this.callbacks[eventName].push(callback);
     }
+
     
     createEvent(eventName:EventType){
         if(eventName in this.events)return;

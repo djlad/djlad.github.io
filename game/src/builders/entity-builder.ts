@@ -7,6 +7,8 @@ import { Game } from "../engine/game";
 import { InventoryItemEntity } from "../entities/inventory-item-entity";
 import { ParticleEntity } from "../entities/particles/particle-entity";
 import { ParticlesEntity } from "../entities/particles/particles-entity";
+import { ClickableEntity } from "../entities/clickable-entity";
+import { DeerEntity } from "../entities/deer-entity";
 
 
 export function buildEntities(game:Game):void{
@@ -18,4 +20,6 @@ export function buildEntities(game:Game):void{
     game.registerEntity("inventoryItem", InventoryItemEntity);
     game.registerEntity("particle", ParticleEntity);
     game.registerEntity("particles", ParticlesEntity);
+    game.registerEntity("click", ClickableEntity);
+    game.registerEntity("deer", DeerEntity);
 }

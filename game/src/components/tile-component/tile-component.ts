@@ -12,6 +12,7 @@ export class TileComponent extends Component{
 
     tileWidth: number = 64;
     tiles: Tile[] = [];
+    tileSpriteNames: string[] = ["grass", "soil"]
     public static create(): TileComponent{
         let tc = new TileComponent();
         let spriteName = "grass";
@@ -45,6 +46,12 @@ export class TileComponent extends Component{
     }
     createBuilder():void{
         let tileSetSpriteNames = ["grass", "soil"];
+    }
+    
+    coordToTile(x:number, y:number):Tile[]{
+        let tileX = Math.floor((x+.5*this.tileWidth)/this.tileWidth);
+        let tileY = Math.ceil(y/this.tileWidth);
+        return this.tiles.filter((tile)=>tile.tileX == tileX && tile.tileY == tileY)
     }
     private tileCoordToReal(tileWidth: number, coord: number): number{
         return coord * tileWidth;        

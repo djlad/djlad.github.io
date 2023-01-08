@@ -9,30 +9,23 @@ import { ComponentFactory } from '../engine/component/component-factory';
 import { createComponentFactory } from '../builders/build-components';
 import { GameEvent } from '../engine/events/game-event';
 
-export class VillagerEntity extends Entity{
+export class DeerEntity extends Entity{
     constructor(cf:ComponentFactory){
         super(cf);
         var animation:AnimationComponent = <AnimationComponent>this.addComponent("animation");
         var position:PositionComponent = <PositionComponent>this.addComponent("position");
-        var fight:FightComponent = <FightComponent>this.addComponent("fight");
-        var health:HealthComponent = <HealthComponent>this.addComponent("health");
-        var neural:NeuralFightComponent = <NeuralFightComponent>this.addComponent("neural");
+        animation.setSprite("deer");
         
-        position.width = 70;
-        /*animation.setSprite("brownpuffgirl");
-        
-        position.height = 32;
-        let multiplier = 2.5;
-        position.height *= multiplier * 1.1;
-        position.width *= multiplier;*/
+        position.width = 110;
+        position.height = 110;
     }
 
     handleEvents(events:{[key:string]:GameEvent}){
     }
 
-    static create():VillagerEntity{
+    static create():DeerEntity{
         let cf:ComponentFactory = createComponentFactory();
-        var entity = new VillagerEntity(cf);
+        var entity = new DeerEntity(cf);
         return entity;
     }
 }

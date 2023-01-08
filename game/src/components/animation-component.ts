@@ -54,6 +54,13 @@ export class AnimationComponent extends Component {
         this.frameNum = 0;
     }
 
+    setSpriteNumber(spriteName:string, spriteNumber:number){
+        this.spriteNumbers = [spriteNumber];
+        this.spriteName = spriteName;
+        this.delay = 100;
+        this.frameNum = 0
+    }
+
     update():void{
         if(this.currentDelay == 0){
             this.frameNum++;

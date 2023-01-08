@@ -16,6 +16,7 @@ import { ParticleComponent } from '../components/particle-componet';
 import { PrimitiveComponent } from '../components/primitive-component';
 import { TransitionComponent } from '../components/transitions/transition-component';
 import { TileComponent } from '../components/tile-component/tile-component';
+import { ClickableComponent } from '../components/clickable-component';
 
 export function createComponentFactory():ComponentFactory{
     var cf:ComponentFactory = new ComponentFactory();
@@ -35,6 +36,7 @@ export function createComponentFactory():ComponentFactory{
     cf.registerComponent(PrimitiveComponent);
     cf.registerComponent(TransitionComponent);
     cf.registerComponent(TileComponent);
+    cf.registerComponent(ClickableComponent);
     return cf;
 }
 
@@ -52,4 +54,5 @@ export function buildComponents(game:Game):void{
     game.registerComponent(PrimitiveComponent);
     game.registerComponent(TransitionComponent);
     game.registerComponent(TileComponent);
+    game.registerComponent(ClickableComponent);
 }

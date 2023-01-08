@@ -19,6 +19,7 @@ export class FirstEntity extends Entity{
     }
 
     handleEvents(events:{[key:string]:GameEvent}){
+        console.log(events);
     }
 
     static create():FirstEntity{

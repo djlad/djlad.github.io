@@ -10,12 +10,9 @@ export class ClickableEntity extends Entity {
         super(cf);
         var position:PositionComponent = <PositionComponent>this.addComponent("position");
         let animation:AnimationComponent = <AnimationComponent>this.addComponent("animation");
+        this.addComponent("click");
     }
-    private callback:()=>{};
     handleEvents(events: { [key: string]: GameEvent; }): void {
-    }
-    registerCallback(callback:()=>{}) {
-        this.callback = callback;
     }
     static create(){
         let cf:ComponentFactory = createComponentFactory();

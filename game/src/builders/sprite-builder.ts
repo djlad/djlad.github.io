@@ -88,6 +88,20 @@ export function populateSpriteManager(spriteManager:SpriteManager):SpriteManager
     sm.addAnimation("people3", "brownpuffgirl", [80]);
     sm.addAnimation("people3", "brownpuffgirlwalk", [79, 80, 81], 5);
 
+    sm.loadSprite("victorian2", "BearSprites.webp", 12, 8);
+    sm.addAnimation("victorian2", "nun", [79], 5);
+    sm.addAnimation("victorian2", "nunwalk", [78,79,80, 79], 5);
+
+    sm.loadSprite("greg", "greg.png", 2,2);
+    sm.addAnimation("greg", "greg", [0]);
+    sm.addAnimation("greg", "gregwalk", [1,0,3,0], 10);
+
+    sm.loadSprite("greyaction", "greyactions.png", 2,2);
+    sm.addAnimation("greyaction", "greythrow", [0,1,2],5)
+
+    sm.loadSprite("deer", "deer/deer male calciumtrice.png", 5, 5);
+    sm.addAnimation("deer", "deer", [0,1,2,3,4,5,6,7,8],10)
+
     return sm;
 }
 

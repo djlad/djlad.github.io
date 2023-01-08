@@ -27,12 +27,17 @@ export enum EventType {
     lUp,
     hUp,
     semicolonUp,
+    tildUp,
     
     jDown,
     kDown,
     lDown,
     hDown,
     semicolonDown,
+    tildDown,
+
+    mouseUp,
+    mouseDown,
 
     collision,
     fireProjectile,

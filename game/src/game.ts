@@ -23,6 +23,7 @@ import { InventorySystem } from './systems/inventory-system';
 import { ParticleSystem } from './systems/particle-system';
 import { ParticleEntity } from './entities/particles/particle-entity';
 import { ParticleComponent } from './components/particle-componet';
+import { MapBuilderSystem } from './systems/map-builder-system';
 
 declare var synaptic:any;
 export declare var g:Game;
@@ -41,6 +42,7 @@ function createGame():Game{
     game.addSystem(InventorySystem.create(game));
     game.addSystem(ParticleSystem.create(game));
     game.addSystem(RenderSystem.create(game));
+    game.addSystem(MapBuilderSystem.create(game));
 
     buildSprites(game)
     buildEntities(game);
@@ -65,27 +67,13 @@ export function startGame(){
     // component.width/=2
     // ac.setSprite("grey");
     // component.height = 60
-    // ac.setSprite("speargoblin");
-    /*
-    fight.attack = true;
-
-    // var v2 = game.addEntity("villager");
-    fight.target = v2;
-
-    var component = <PositionComponent>v2.getComponent("position");
-    ac = <AnimationComponent> v2.getComponent("animation");
-    fight = <FightComponent>v2.getComponent("fight");
-    component.x = 600;
-    component.y = 800;
-    component.vx = 0;
-    fight.target = villager;
-    fight.attack = true;*/
-
-    /*var projectile:ProjectileEntity = <ProjectileEntity> game.addEntity("projectile");
-    let pc = <PositionComponent>projectile.getComponent("position");
-    pc.x = 100;
-    pc.y = 500;
-    pc.vx = 0*/
+    // ac.setSprite("nunwalk");
+    
+    var deer = game.addEntity("deer");
+    let deerPos = <PositionComponent>deer.getComponent("position");
+    let deerAC = <AnimationComponent>deer.getComponent("animation");
+    deerPos.x = 50;
+    deerPos.y = 200;
 
     let particle: ParticleEntity = <ParticleEntity> game.addEntity("particles");
     let particleC = <ParticleComponent>particle.getComponent("particles");

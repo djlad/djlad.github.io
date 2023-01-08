@@ -1,4 +1,5 @@
 import { Entity } from "../entity/entity";
+import { Game } from "../game";
 
 export abstract class Component {
     constructor(componentName:string){
@@ -9,4 +10,6 @@ export abstract class Component {
     static create(){
         throw "Component must implement static create function";
     };
+    static createWithGame(game:Game){
+    }
 }

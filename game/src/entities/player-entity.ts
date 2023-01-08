@@ -25,7 +25,10 @@ export class PlayerEntity extends Entity{
         this.addComponent("transition");
         
         var sprite:string = "grey";
+        // var sprite:string = "greythrow";
         var walkSprite:string = "greyWalk";
+        // var sprite:string = "greg";
+        // var walkSprite:string = "gregwalk";
         // var sprite:string = "blond";
         // var walkSprite:string = "blondWalk";
         // var sprite:string = "dwarfopeneyes";

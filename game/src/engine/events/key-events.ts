@@ -30,6 +30,7 @@ function getKeyEvents()
     results.push(KeyEvents.create(EventType.kDown, EventType.kUp, 75));
     results.push(KeyEvents.create(EventType.lDown, EventType.lUp, 76));
     results.push(KeyEvents.create(EventType.semicolonDown, EventType.semicolonDown, 186));
+    results.push(KeyEvents.create(EventType.tildDown, EventType.tildUp, 192));
     return results;
 }
 
