@@ -113,6 +113,7 @@ export class Game {
     }
 
     cleanDestroyedEntities(){
+        if(this.entities.filter((entity)=>entity.destroyed).length == 0)return;
         let newEntities:Entity[] = [];
         for(let i:number=0;i<this.entities.length;i++){
             if(!this.entities[i].destroyed){
