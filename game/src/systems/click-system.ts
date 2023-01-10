@@ -5,8 +5,11 @@ import { EventManager } from "../engine/events/event-manager";
 import { EventType } from "../engine/events/EventType";
 import { GameEvent } from "../engine/events/game-event";
 import { Game } from "../engine/game";
+import { HtmlRenderer } from "../engine/renderers/implementations/html/html-renderer";
 import { EntitySystem } from "../engine/system/system";
 import { ClickableEntity } from "../entities/clickable-entity";
+import { Renderer } from '../engine/renderers/render';
+import { FirstEntity } from "../entities/first-entity";
 
 export class ClickSystem extends EntitySystem{
     constructor(game:Game){
@@ -14,20 +17,35 @@ export class ClickSystem extends EntitySystem{
         this.game.eventManager.addListener(EventType.mouseUp, (data)=>{
             this.clicks.push(data);
         });
+        this.renderer = game.renderer;
     }
     clicks: GameEvent[] = [];
+    clicksToProcessThisLoop: GameEvent[] = [];
+    renderer: Renderer;
+    private clearClicksAndMoveClicksToProcess(){
+        for (let i=0;i<this.clicksToProcessThisLoop.length;i++){
+            this.clicksToProcessThisLoop.pop();
+        }
+        let numClicks = this.clicks.length;
+        for (let i=0;i<numClicks;i++){
+            this.clicksToProcessThisLoop.push(this.clicks.pop());
+        }
+    }
 
     apply(entity: Entity, eventManager: EventManager): void {
+        if(entity instanceof FirstEntity)this.clearClicksAndMoveClicksToProcess();
         let clickable = <ClickableComponent>entity.getComponent("click", true);
         let position = <PositionComponent>entity.getComponent("position", true);
         if (clickable == null)return;
         if (position == null)return;
-        let event = this.clicks.pop();
-        let x = event.eventData.x;
-        let y = event.eventData.y;
-        if (this.pointInPosition(x, y, position)){
-            clickable.click();
-        }
+        this.clicksToProcessThisLoop.forEach((event)=>{
+            let x = event?.eventData.x;
+            let y = event?.eventData.y;
+            if (x == null || y == null)return;
+            if (this.pointInPosition(x, y, position)){
+                clickable.click();
+            }
+        });
     }
 
     applyEvents(entity: Entity, eventManager: EventManager): void {
@@ -35,10 +53,15 @@ export class ClickSystem extends EntitySystem{
     }
 
     pointInPosition(x:number, y:number, position:PositionComponent):boolean{
+        if (position.applyOffsets){
+            let offset = this.renderer.getOffset();
+            x += offset[0];
+            y += offset[1];
+        }
         let leftx = position.x - position.width/2;
         let rightx = position.x + position.width/2;
-        let topy = position.y - position.height/2;
-        let bottomy = position.y + position.height/2;
+        let topy = position.y - position.height;
+        let bottomy = position.y;
         return x > leftx && x < rightx && y > topy && y < bottomy;
     }
 

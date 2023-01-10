@@ -9,6 +9,7 @@ import { ParticleEntity } from "../entities/particles/particle-entity";
 import { ParticlesEntity } from "../entities/particles/particles-entity";
 import { ClickableEntity } from "../entities/clickable-entity";
 import { DeerEntity } from "../entities/deer-entity";
+import { UIPanelEntity } from "../entities/ui-panel-entity";
 
 
 export function buildEntities(game:Game):void{
@@ -22,4 +23,5 @@ export function buildEntities(game:Game):void{
     game.registerEntity("particles", ParticlesEntity);
     game.registerEntity("click", ClickableEntity);
     game.registerEntity("deer", DeerEntity);
+    game.registerEntity("uipanel", UIPanelEntity);
 }

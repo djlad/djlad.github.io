@@ -6,8 +6,8 @@ export class ClickableComponent extends Component{
         super("click");
     }
     update(entity: Entity): void {}
-    private callback:(()=>{})[] = [];
-    addListener(callback:()=>{}) {
+    private callback:(()=>void)[] = [];
+    addListener(callback:()=>void) {
         this.callback.push(callback);
     }
     click(){

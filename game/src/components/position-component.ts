@@ -55,6 +55,7 @@ export class PositionComponent extends Component {
     faceX:number=0;
     faceY:number=0;
     moved:boolean=false;
+    applyOffsets:boolean=true;
 
 
 

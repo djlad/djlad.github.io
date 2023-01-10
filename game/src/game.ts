@@ -24,6 +24,7 @@ import { ParticleSystem } from './systems/particle-system';
 import { ParticleEntity } from './entities/particles/particle-entity';
 import { ParticleComponent } from './components/particle-componet';
 import { MapBuilderSystem } from './systems/map-builder-system';
+import { ClickSystem } from './systems/click-system';
 
 declare var synaptic:any;
 export declare var g:Game;
@@ -43,6 +44,7 @@ function createGame():Game{
     game.addSystem(ParticleSystem.create(game));
     game.addSystem(RenderSystem.create(game));
     game.addSystem(MapBuilderSystem.create(game));
+    game.addSystem(ClickSystem.create(game));
 
     buildSprites(game)
     buildEntities(game);
@@ -67,13 +69,12 @@ export function startGame(){
     // component.width/=2
     // ac.setSprite("grey");
     // component.height = 60
-    // ac.setSprite("nunwalk");
     
     var deer = game.addEntity("deer");
     let deerPos = <PositionComponent>deer.getComponent("position");
     let deerAC = <AnimationComponent>deer.getComponent("animation");
-    deerPos.x = 50;
-    deerPos.y = 200;
+    deerPos.x = 500;
+    deerPos.y = 100;
 
     let particle: ParticleEntity = <ParticleEntity> game.addEntity("particles");
     let particleC = <ParticleComponent>particle.getComponent("particles");

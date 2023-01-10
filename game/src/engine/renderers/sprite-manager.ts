@@ -8,8 +8,8 @@ export class SpriteManager {
     animations:{ [key: string]: SpriteAnimation} = {};//animation name to animation
     RGBs: {[key:string]: ImageData}= {};
     
-    createSprite(fileName:string, widthImgs:number, heightImgs:number):HtmlRectSprite{
-        return new HtmlRectSprite(fileName, widthImgs, heightImgs);
+    createSprite(fileName:string, widthImgs:number, heightImgs:number, offsetx:number, offsety:number):HtmlRectSprite{
+        return HtmlRectSprite.create(fileName, widthImgs, heightImgs, offsetx, offsety);
     }
 
     addSprite(spriteName:string, sprite:Sprite){
@@ -22,8 +22,13 @@ export class SpriteManager {
         return this.sprites[spriteName];
     }
 
-    loadSprite(spriteName:string, fileName:string, widthImgs:number, heightImgs:number){
-        var sprite = this.createSprite(fileName, widthImgs, heightImgs);
+    loadSprite(spriteName:string, fileName:string, widthImgs:number, heightImgs:number, offsetx:number=0, offsety:number=0){
+        var sprite = this.createSprite(fileName, widthImgs, heightImgs, offsetx, offsety);
+        this.addSprite(spriteName, sprite);
+    }
+
+    loadSpriteWithDimensions(spriteName:string, fileName:string, frameWidth:number, frameHeight:number, offsetx:number=0, offsety:number=0){
+        const sprite = HtmlRectSprite.createWithDimensions(fileName, frameWidth, frameHeight, offsetx, offsety);
         this.addSprite(spriteName, sprite);
     }
 

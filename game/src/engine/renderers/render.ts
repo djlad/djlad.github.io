@@ -5,6 +5,7 @@ export interface Renderer {
     readonly offset:number[];
     spriteFilter(filter: ImageData, x: number, y: number, width: number, height: number, spriteNumber: number, options: RenderOptions): void;
     cbox():void;
+    getOffset():number[];
     setOffset(offset:number[]):void;
     sprite(spriteName:string, x:number, y:number, width:number, height:number, spriteNumber:number, options:RenderOptions):void;
     text(text:string, x:number, y:number, size:number):void;

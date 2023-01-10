@@ -10,12 +10,17 @@ export class HtmlRenderer implements Renderer {
     ctx:CanvasRenderingContext2D;
     public readonly offset:number[];
     public spriteManager:SpriteManager;
+    // offScreenCanvas: OffscreenCanvas;
     constructor(context:HtmlCanvas, spriteManager:SpriteManager){
         this.canvas = context.canvas;
+        // this.offScreenCanvas = new OffscreenCanvas(this.canvas.width, this.canvas.height);
         this.ctx = context.ctx;
         this.spriteManager = spriteManager;
         this.offset = [0, 0];
         this.ctx.font = "30px Arial";
+    }
+    getOffset(): number[] {
+        return this.offset;
     }
     
     setOffset(offset:number[]){
@@ -38,9 +43,11 @@ export class HtmlRenderer implements Renderer {
         let flip:boolean = options.flip;
         // let sprite:Sprite = <Sprite>this.spriteManager.getSprite(spriteName);
         x = x - width/2;//draw at middle of sprite
-        x -= this.offset[0]; //offset all drawings to the left
         y = y - height;//draw at bottom of sprite
-        y -= this.offset[1];
+        if (options.applyOffsets){
+            x -= this.offset[0]; //offset all drawings to the left
+            y -= this.offset[1];
+        }
         let flipTranslation:number = 2*(x+width/2);
         if(flip){
             this.ctx.translate(flipTranslation, 0);
@@ -71,9 +78,11 @@ export class HtmlRenderer implements Renderer {
         let sprite:Sprite = <Sprite>this.spriteManager.getSprite(spriteName);
         let fc = sprite.frameCoords(spriteNumber);
         x = x - width/2;//draw at middle of sprite
-        x -= this.offset[0]; //offset all drawings to the left
         y = y - height;//draw at bottom of sprite
-        y -= this.offset[1];
+        if (options.applyOffsets){
+            x -= this.offset[0]; //offset all drawings to the left
+            y -= this.offset[1];
+        }
         let flipTranslation:number = 2*(x+width/2);
         if(flip){
             this.ctx.translate(flipTranslation, 0);
@@ -82,7 +91,7 @@ export class HtmlRenderer implements Renderer {
         if(options.rotate){
             this.ctx.rotate(options.rotate);
         }
-        if (x > -100 && x < this.canvas.width && y > -100 && y<this.canvas.height)
+        if (x+width > -100 && x < this.canvas.width && y+height > -100 && (y-height)<this.canvas.height)
         {
             sprite.drawImage(spriteNumber, x, y, width, height);
         }

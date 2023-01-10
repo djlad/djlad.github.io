@@ -51,7 +51,9 @@ export class RenderSystem extends EntitySystem{
             let tile = tiles[i];
             let x = this.tileCoordToReal(tileComp.tileWidth, tile.tileX);
             let y = this.tileCoordToReal(tileComp.tileWidth, tile.tileY);
-            this.renderer.sprite(tile.spriteName, x, y, tileComp.tileWidth, tileComp.tileWidth+1, tile.spriteNumber, options);
+            tile.spriteIds.forEach((spriteId)=>{
+                this.renderer.sprite(spriteId.spriteName, x, y, tileComp.tileWidth, tileComp.tileWidth+1, spriteId.spriteNumber, options);
+            });
         }
     }
 
@@ -78,6 +80,7 @@ export class RenderSystem extends EntitySystem{
         let options:RenderOptions = new RenderOptions();
         options.flip = !p.faceRight;
         options.rotate = p.rotate;
+        options.applyOffsets = p.applyOffsets;
         if (a.isFiltered){
             r.spriteFilter(a.filter, Math.round(p.x), Math.round(p.y + p.h), p.width, p.height, a.getSpriteNumber(), options);
             return;

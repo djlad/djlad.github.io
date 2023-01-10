@@ -102,6 +102,10 @@ export function populateSpriteManager(spriteManager:SpriteManager):SpriteManager
     sm.loadSprite("deer", "deer/deer male calciumtrice.png", 5, 5);
     sm.addAnimation("deer", "deer", [0,1,2,3,4,5,6,7,8],10)
 
+    sm.loadSpriteWithDimensions("woodpanelui", "tilesets/submission_daneeklu/ui/scrollsandblocks.png", 96, 96, 0, 128);
+    // sm.loadSpriteWithDimensions("woodpanelui", "tilesets/submission_daneeklu/ui/scrollsandblocks.png", 10,10);
+    sm.addAnimation("woodpanelui", "woodpanelsunken", [0]);
+
     return sm;
 }
 

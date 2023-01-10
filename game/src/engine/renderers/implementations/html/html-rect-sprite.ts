@@ -1,13 +1,14 @@
 import { HtmlCanvas } from "./html-canvas";
 
 export class HtmlRectSprite implements Sprite {
-    constructor(fileName:string, widthImgs:number, heightImgs:number){
-        var spriteImg:HTMLImageElement = new Image();
-        spriteImg.src = this.spriteDir + fileName;
+    constructor(spriteImg:HTMLImageElement, widthImgs:number, heightImgs:number, offsetx:number=0, offsety:number=0, frameWidth:number=0, frameHeight:number=0){
         this.sprite = spriteImg;
         this.widthImgs = widthImgs;
         this.heightImgs = heightImgs;
-        spriteImg.onload = this.setFrameDimensions(this);
+        this.offsetx = offsetx;
+        this.offsety = offsety;
+        this.frameWidth = frameWidth;
+        this.frameHeight = frameHeight;
         this.canvas = HtmlCanvas.createSingleton();
         this.ctx = HtmlCanvas.createSingleton().ctx;
     }
@@ -35,7 +36,7 @@ export class HtmlRectSprite implements Sprite {
                           this.frameHeight, x, y, width, height);
     }
     ctx: CanvasRenderingContext2D;
-    spriteDir:string = "../sprites/";
+    static spriteDir:string = "../sprites/";
     widthImgs:number;
     heightImgs:number;
     frameWidth:number=1;
@@ -43,6 +44,8 @@ export class HtmlRectSprite implements Sprite {
     sprite:HTMLImageElement;
     canvas: HtmlCanvas;
     loaded: boolean = false;
+    offsetx: number;
+    offsety: number;
 
     private setFrameDimensions(sprite:HtmlRectSprite){
         return function(){
@@ -53,11 +56,30 @@ export class HtmlRectSprite implements Sprite {
     }
 
     public frameCoords(spriteNum:number){
-        var frameWidth:number = this.sprite.width/this.widthImgs;
-        var frameHeight:number = this.sprite.height/this.heightImgs;
-        var framex:number = spriteNum%this.widthImgs * frameWidth;
-        var framey:number = Math.floor(spriteNum/this.widthImgs) * frameHeight;
+        // var frameWidth:number = this.sprite.width/this.widthImgs;
+        // var frameHeight:number = this.sprite.height/this.heightImgs;
+        var frameWidth:number = this.frameWidth;
+        var frameHeight:number = this.frameHeight;
+        const widthImgs = Math.floor(this.sprite.width/frameWidth);
+        var framex:number = spriteNum%widthImgs * frameWidth;
+        var framey:number = Math.floor(spriteNum/widthImgs) * frameHeight;
+        framex += this.offsetx;
+        framey += this.offsety;
         return [framex, framey];
     }
 
+    public static create(fileName:string, widthImgs:number, heightImgs:number, offsetx:number=0, offsety:number=0){
+        var spriteImg:HTMLImageElement = new Image();
+        spriteImg.src = this.spriteDir + fileName;
+        const newSprite = new HtmlRectSprite(spriteImg, widthImgs, heightImgs, offsetx, offsety);
+        spriteImg.onload = newSprite.setFrameDimensions(newSprite);
+        return newSprite;
+    }
+
+    public static createWithDimensions(fileName:string, frameWidth:number, frameHeight:number, offsetx:number=0, offsety:number=0){
+        var spriteImg:HTMLImageElement = new Image();
+        spriteImg.src = this.spriteDir + fileName;
+        const newSprite = new HtmlRectSprite(spriteImg, 0, 0, offsetx, offsety, frameWidth, frameHeight);
+        return newSprite;
+    }
 }
