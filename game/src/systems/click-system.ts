@@ -10,6 +10,7 @@ import { EntitySystem } from "../engine/system/system";
 import { ClickableEntity } from "../entities/clickable-entity";
 import { Renderer } from '../engine/renderers/render';
 import { FirstEntity } from "../entities/first-entity";
+import { SystemArgs } from "../engine/system/system-args";
 
 export class ClickSystem extends EntitySystem{
     constructor(game:Game){
@@ -32,7 +33,8 @@ export class ClickSystem extends EntitySystem{
         }
     }
 
-    apply(entity: Entity, eventManager: EventManager): void {
+    apply(args:SystemArgs): void {
+        const entity = args.entity;
         if(entity instanceof FirstEntity)this.clearClicksAndMoveClicksToProcess();
         let clickable = <ClickableComponent>entity.getComponent("click", true);
         let position = <PositionComponent>entity.getComponent("position", true);

@@ -3,6 +3,7 @@ import { Entity } from '../engine/entity/entity';
 import { Game } from '../engine/game';
 import { NeuralFightComponent } from '../components/neural-fight-component';
 import { GameEvent } from '../engine/events/game-event';
+import { SystemArgs } from '../engine/system/system-args';
 
 declare var synaptic:any;
 
@@ -15,7 +16,8 @@ export class NeuralFightSystem extends EntitySystem{
         return new NeuralFightSystem(game);
     }
 
-    apply(entity:Entity){
+    apply(args:SystemArgs){
+        const entity = args.entity;
         var neural:NeuralFightComponent = <NeuralFightComponent>entity.getComponent("neural", true);
         if(neural == null){
             return;

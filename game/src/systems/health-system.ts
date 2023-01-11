@@ -4,11 +4,12 @@ import { Game } from '../engine/game';
 import { HealthComponent } from '../components/health-component';
 import { GameEvent } from '../engine/events/game-event';
 import { EventType } from '../engine/events/EventType';
+import { SystemArgs } from '../engine/system/system-args';
 export class HealthSystem extends EntitySystem{
     constructor(game:Game){
         super(game)
     }
-    apply(entity:Entity){
+    apply(args:SystemArgs){
 
     }
     applyEvents(entity:Entity){

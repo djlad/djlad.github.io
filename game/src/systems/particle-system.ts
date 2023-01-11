@@ -4,6 +4,7 @@ import { Game } from "../engine/game";
 import { EntitySystem } from "../engine/system/system";
 import {ParticleComponent} from "../components/particle-componet";
 import { PositionComponent } from "../components/position-component";
+import { SystemArgs } from "../engine/system/system-args";
 
 export class ParticleSystem extends EntitySystem{
     constructor(game:Game){
@@ -38,7 +39,8 @@ export class ParticleSystem extends EntitySystem{
         }
     }
 
-    apply(entity: Entity, eventManager: EventManager): void {
+    apply(args:SystemArgs): void {
+        const entity = args.entity;
         let particles = <ParticleComponent> entity.getComponent("particles", true);
         let position = <PositionComponent> entity.getComponent("position", true);
         if (position == null || particles == null) return;

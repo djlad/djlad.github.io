@@ -8,6 +8,7 @@ import { GameEvent } from '../engine/events/game-event';
 import { EventType } from '../engine/events/EventType';
 import { PrimitiveComponent } from '../components/primitive-component';
 import { ParticlesEntity } from '../entities/particles/particles-entity';
+import { SystemArgs } from '../engine/system/system-args';
 
 export class ProjectileSystem extends EntitySystem {
 
@@ -15,7 +16,8 @@ export class ProjectileSystem extends EntitySystem {
         super(game);
     }
 
-    apply(entity:Entity){
+    apply(args:SystemArgs){
+        const entity = args.entity;
         var position:PositionComponent = <PositionComponent> entity.getComponent("position", true);
         var projectileComponent:ProjectileComponent = <ProjectileComponent>entity.getComponent("projectile", true);
         //console.log(projectileComponent)

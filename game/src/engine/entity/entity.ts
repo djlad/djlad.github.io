@@ -1,6 +1,7 @@
 import { ComponentFactory } from '../component/component-factory';
 import { Component } from '../component/component';
 import { GameEvent } from '../events/game-event';
+import { EntityUpdateArgs } from './entity-update-args';
 
 export abstract class Entity {
     constructor(componentFactory:ComponentFactory){
@@ -44,9 +45,9 @@ export abstract class Entity {
         }
     }
 
-    update(){
+    update(args:EntityUpdateArgs){
         for(var i:number=0;i<this.components.length;i++){
-            this.components[i].update(this);
+            this.components[i].update(this, args);
         }
     }
 

@@ -6,6 +6,8 @@ import { Renderer } from './renderers/render';
 import { HtmlRenderer } from './renderers/implementations/html/html-renderer';
 import { SpriteManager } from './renderers/sprite-manager';
 import { PositionComponent } from '../components/position-component';
+import { SystemArgs } from './system/system-args';
+import { EntityUpdateArgs } from './entity/entity-update-args';
 
 export class Game {
     constructor(entityFactory:EntityFactory, renderer:Renderer, eventManager:EventManager){
@@ -37,16 +39,25 @@ export class Game {
     spriteManager:SpriteManager;
     performance: number;
     frameTime: number;
-    targetFps: number = 45;
+    targetFps: number = 40;
     counter: number = 0;
-    update(){
+    lastTime = performance.now();
+    frameTracker:number = 0;
+    update(delta:number, framesPassed:number){
         // this.renderer.cbox();
         this.performance = performance.now();
         this.eventManager.update();
         for(var i=0;i<this.entities.length;i++){
-            this.entities[i].update();
+            const args = new EntityUpdateArgs();
+            args.delta = delta;
+            args.fullFramePassed = framesPassed;
+            this.entities[i].update(args);
             for(var systemi=0;systemi<this.systems.length;systemi++){
-                this.systems[systemi].apply(this.entities[i], this.eventManager);
+                const args = new SystemArgs();
+                args.entity = this.entities[i];
+                args.eventManager = this.eventManager;
+                args.fullFramesPassed = framesPassed;
+                this.systems[systemi].apply(args);
             }
         }
 
@@ -73,19 +84,26 @@ export class Game {
         this.renderer.text(Math.floor(this.frameTime).toString(),0,0, 1000);
         this.counter = (this.counter + 1)%100;
     }
-    render(){
-
+    step(delta:number){
+        this.frameTracker += delta;
+        if (this.frameTracker > 1){
+            this.update(delta, Math.floor(this.frameTracker));
+            this.frameTracker = 0;
+        }
+        this.update(delta, 0);
     }
-    step(){
-        this.update();
-        this.render();
+    private loop(time:number){
+        const delta = (time - this.lastTime)/(1000/this.targetFps);
+        this.step(delta);
+        this.lastTime = time;
+        window.requestAnimationFrame((time)=>{this.loop(time)});
     }
     start():number{
         console.log("starting game")
-        this.intervalId = setInterval((function(game){
-            return function(){game.step()}
-        })(this), 1000/this.targetFps);
-        return this.intervalId;
+        window.requestAnimationFrame(()=>{
+            this.loop(this.lastTime);
+        });
+        return 0;
     }
 
     stop(){

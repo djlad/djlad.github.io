@@ -4,13 +4,15 @@ import { Entity } from "../engine/entity/entity";
 import { PlaceItemComponent } from "../components/place-item/place-item-component";
 import { PlaceItemRequest } from "../components/place-item/place-item-request";
 import { PositionComponent } from "../components/position-component";
+import { SystemArgs } from "../engine/system/system-args";
 
 export class PlaceItemSystem extends EntitySystem {
     constructor(game:Game){
         super(game);
     }
 
-    apply(entity:Entity):void {
+    apply(args:SystemArgs):void {
+        const entity = args.entity;
         let placeItem:PlaceItemComponent;
         try{
             placeItem = <PlaceItemComponent>entity.getComponent("placeItem");

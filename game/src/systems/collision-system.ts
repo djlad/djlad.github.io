@@ -6,6 +6,7 @@ import { Game } from '../engine/game';
 import { ProjectileEntity } from '../entities/projectile-entity';
 import { GameEvent } from '../engine/events/game-event';
 import { EventType } from '../engine/events/EventType';
+import { SystemArgs } from '../engine/system/system-args';
 
 export class CollisionSystem extends EntitySystem{
     constructor(game:Game){
@@ -70,7 +71,8 @@ export class CollisionSystem extends EntitySystem{
         delete this.movingEntities[id];
     }
 
-    apply(entity:Entity):void{
+    apply(args:SystemArgs):void{
+        const entity = args.entity;
         if(entity instanceof FirstEntity){
             var collidingEntities:Entity[];
             for(var key in this.colliding){

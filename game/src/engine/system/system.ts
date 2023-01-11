@@ -2,6 +2,7 @@ import { Component } from '../component/component';
 import { Entity } from '../entity/entity';
 import { Game } from '../game';
 import { EventManager } from '../events/event-manager';
+import { SystemArgs } from './system-args';
 
 export class EntitySystem {
     /**
@@ -15,7 +16,7 @@ export class EntitySystem {
     targetComponents:Component[];
     game:Game;
 
-    apply(entity:Entity, eventManager:EventManager):void{
+    apply(args:SystemArgs):void{
         throw "an entity system did not implement apply method.";
     };
     applyEvents(entity:Entity, eventManager:EventManager):void{

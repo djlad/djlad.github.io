@@ -4,6 +4,7 @@ import { Entity } from '../engine/entity/entity';
 import { PositionComponent } from '../components/position-component';
 import { GameEvent } from '../engine/events/game-event';
 import { EventType } from '../engine/events/EventType';
+import { SystemArgs } from '../engine/system/system-args';
 //import * as Synaptic from "synaptic";
 
 export class PositionSystem extends EntitySystem{
@@ -17,7 +18,7 @@ export class PositionSystem extends EntitySystem{
         return new PositionSystem(game);
     }
 
-    apply(entity:Entity) {
+    apply(args:SystemArgs) {
         //console.log(Synaptic)
     }
     applyEvents(entity:Entity){

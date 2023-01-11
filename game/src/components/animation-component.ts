@@ -1,6 +1,8 @@
 import { Component } from '../engine/component/component';
 import { SpriteManager } from '../engine/renderers/sprite-manager';
 import { SpriteAnimation } from '../engine/renderers/sprite-animation';
+import { Entity } from '../engine/entity/entity';
+import { EntityUpdateArgs } from '../engine/entity/entity-update-args';
 export class AnimationComponent extends Component {
     constructor(animationName:string, delay:number, spriteManager:SpriteManager){
         super("animation");
@@ -61,9 +63,11 @@ export class AnimationComponent extends Component {
         this.frameNum = 0
     }
 
-    update():void{
+    update(entity:Entity, args:EntityUpdateArgs):void{
+        const framesPassed = args.fullFramePassed;
+        if (framesPassed == 0)return;
         if(this.currentDelay == 0){
-            this.frameNum++;
+            this.frameNum += framesPassed;
             this.frameNum %= this.spriteNumbers.length;
             this.spriteNum = this.getSpriteNumber();
             this.currentDelay = this.delay;

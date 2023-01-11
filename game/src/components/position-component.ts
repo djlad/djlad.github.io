@@ -1,4 +1,6 @@
 import { Component } from "../engine/component/component";
+import { Entity } from "../engine/entity/entity";
+import { EntityUpdateArgs } from "../engine/entity/entity-update-args";
 
 
 export class PositionComponent extends Component {
@@ -59,9 +61,10 @@ export class PositionComponent extends Component {
 
 
 
-    update():void{
-        this.x += this.vx;
-        this.y += this.vy;
+    update(entity:Entity, args:EntityUpdateArgs):void{
+        const delta = args.delta;
+        this.x += this.vx * delta;
+        this.y += this.vy * delta;
         this.moved = !(this.vx == 0 && this.vy == 0);
     }
 

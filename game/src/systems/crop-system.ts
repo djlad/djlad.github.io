@@ -10,12 +10,14 @@ import { InventoryComponent } from '../components/inventory-component/inventory-
 import { GameEvent } from '../engine/events/game-event';
 import { EventType } from '../engine/events/EventType';
 import { CropHarvesterComponent } from '../components/crop-harvester-component';
+import { SystemArgs } from '../engine/system/system-args';
 
 export class CropSystem extends EntitySystem {
     constructor(game:Game){
         super(game);
     }
-    apply(entity:Entity):void{
+    apply(args:SystemArgs):void{
+        const entity = args.entity;
         var a:AnimationComponent = <AnimationComponent>entity.getComponent("animation", true);
         var c:CropComponent = <CropComponent>entity.getComponent("crop", true);
         var p:PositionComponent = <PositionComponent>entity.getComponent("position", true);

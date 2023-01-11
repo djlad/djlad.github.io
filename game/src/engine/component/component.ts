@@ -1,4 +1,5 @@
 import { Entity } from "../entity/entity";
+import { EntityUpdateArgs } from "../entity/entity-update-args";
 import { Game } from "../game";
 
 export abstract class Component {
@@ -6,7 +7,7 @@ export abstract class Component {
         this.componentName = componentName;
     }
     componentName:string;
-    abstract update(entity:Entity):void;
+    abstract update(entity:Entity, args:EntityUpdateArgs):void;
     static create(){
         throw "Component must implement static create function";
     };

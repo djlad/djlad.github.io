@@ -10,6 +10,7 @@ import { EventType } from "../engine/events/EventType";
 import { GameEvent } from "../engine/events/game-event";
 import { Game } from "../engine/game";
 import { EntitySystem } from "../engine/system/system";
+import { SystemArgs } from "../engine/system/system-args";
 import { ClickableEntity } from "../entities/clickable-entity";
 
 export class MapBuilderSystem extends EntitySystem{
@@ -28,7 +29,8 @@ export class MapBuilderSystem extends EntitySystem{
             this.createPalleteEntities();
         });
     }
-    apply(entity: Entity, eventManager: EventManager): void {
+    apply(args:SystemArgs): void {
+        const entity = args.entity;
         let tileComponent = <TileComponent>entity.getComponent("tile", true);
         if (tileComponent == null) return;
         if (!this.openBuilder)return;

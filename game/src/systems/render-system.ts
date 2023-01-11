@@ -14,6 +14,7 @@ import { TextPlacement } from '../components/text-component/text-placement';
 import { PrimitiveComponent } from '../components/primitive-component';
 import { TileComponent } from '../components/tile-component/tile-component';
 import { Tile } from '../components/tile-component/tile';
+import { SystemArgs } from '../engine/system/system-args';
 
 export class RenderSystem extends EntitySystem{
     /**
@@ -30,7 +31,8 @@ export class RenderSystem extends EntitySystem{
         return new RenderSystem(hr, game);
     }
 
-    apply(entity:Entity){
+    apply(args:SystemArgs){
+        const entity = args.entity;
         if (entity instanceof FirstEntity){
             let player:Entity = this.game.getById(1);
             this.centerCameraOn(player);

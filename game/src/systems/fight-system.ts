@@ -5,6 +5,7 @@ import { FightComponent } from '../components/fight-component';
 import { PositionComponent } from '../components/position-component';
 import { GameEvent } from '../engine/events/game-event';
 import { EventType } from '../engine/events/EventType';
+import { SystemArgs } from '../engine/system/system-args';
 
 export class FightSystem extends EntitySystem {
     constructor(game:Game){
@@ -35,7 +36,8 @@ export class FightSystem extends EntitySystem {
         return hypotenuse;
     }
 
-    apply(entity:Entity):void{
+    apply(args:SystemArgs):void{
+        const entity = args.entity;
         var fight:FightComponent = <FightComponent>entity.getComponent("fight", true);
         if(fight == null)return;
         var position:PositionComponent = <PositionComponent>entity.getComponent("position");

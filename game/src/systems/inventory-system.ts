@@ -6,6 +6,7 @@ import { InventoryItemEntity } from "../entities/inventory-item-entity";
 import { PositionComponent } from "../components/position-component";
 import { TextComponent } from "../components/text-component/text-component";
 import { InventoryItem } from "../components/inventory-component/inventory-item";
+import { SystemArgs } from "../engine/system/system-args";
 
 export class InventorySystem extends EntitySystem {
     constructor(game:Game){
@@ -15,7 +16,8 @@ export class InventorySystem extends EntitySystem {
         return new InventorySystem(game);
     }
 
-    apply(entity:Entity):void{
+    apply(args:SystemArgs):void{
+        const entity = args.entity;
         let inventory:InventoryComponent = <InventoryComponent>entity.getComponent("inventory", true);
         let entityPosition:PositionComponent = <PositionComponent>entity.getComponent("position", true);
         if(inventory == null)return;
