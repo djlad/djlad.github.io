@@ -4,6 +4,7 @@ import { Renderer } from "../../render";
 import { RenderOptions } from "../../render-options";
 import { SpriteAnimation } from "../../sprite-animation";
 import { HtmlCanvas } from "./html-canvas";
+import { Sprite } from "../../sprite";
 
 export class HtmlRenderer implements Renderer {
     canvas:HTMLCanvasElement;

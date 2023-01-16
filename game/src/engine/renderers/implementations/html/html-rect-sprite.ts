@@ -1,3 +1,4 @@
+import { Sprite } from "../../sprite";
 import { HtmlCanvas } from "./html-canvas";
 
 export class HtmlRectSprite implements Sprite {
