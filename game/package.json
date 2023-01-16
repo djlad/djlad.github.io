@@ -5,11 +5,12 @@
   "main": "index.js",
   "dependencies": {
     "@types/synaptic": "^1.0.3",
+    "esbuild": "0.16.17",
+    "phaser": "^3.55.2",
     "synaptic": "^1.1.4",
     "systemjs": "^2.1.2",
     "typescript": "^3.7.2"
   },
-  "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -22,5 +23,13 @@
   "bugs": {
     "url": "https://github.com/djlad/aiwar/issues"
   },
-  "homepage": "https://github.com/djlad/aiwar#readme"
+  "homepage": "https://github.com/djlad/aiwar#readme",
+  "devDependencies": {
+    "glob": "^8.0.3",
+    "gulp": "^4.0.2",
+    "gulp-cli": "^2.3.0",
+    "gulp-file-include": "^2.3.0",
+    "gulp-template-html": "^0.2.2",
+    "gulp-typescript": "^6.0.0-alpha.1"
+  }
 }
