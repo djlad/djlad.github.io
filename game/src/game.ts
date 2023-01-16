@@ -25,6 +25,7 @@ import { ParticleEntity } from './entities/particles/particle-entity';
 import { ParticleComponent } from './components/particle-componet';
 import { MapBuilderSystem } from './systems/map-builder-system';
 import { ClickSystem } from './systems/click-system';
+import { PhaserGame } from './engine/phaser-integration/phaser-game';
 
 declare var synaptic:any;
 export declare var g:Game;
@@ -46,13 +47,15 @@ function createGame():Game{
     game.addSystem(MapBuilderSystem.create(game));
     game.addSystem(ClickSystem.create(game));
 
+    const phaserGame = new PhaserGame();
+    phaserGame.start();
     buildSprites(game)
     buildEntities(game);
     buildComponents(game);
     return game;
 }
 
-export function startGame(){
+function startGame(){
     let game:Game = createGame();
     game.entityFactory.componentFactory.createComponent("animation");
     game.addEntity("first");
@@ -121,6 +124,8 @@ export function startGame(){
     let intervalId:number = game.start();
     return game;
 }
-// (function(){
-// startGame();
-// })();
+if (typeof window !== 'undefined')
+{
+    //@ts-ignore
+    window.game = startGame();
+}
