@@ -13,10 +13,8 @@ export class PlaceItemSystem extends EntitySystem {
 
     apply(args:SystemArgs):void {
         const entity = args.entity;
-        let placeItem:PlaceItemComponent;
-        try{
-            placeItem = <PlaceItemComponent>entity.getComponent("placeItem");
-        } catch {return}
+        let placeItem:PlaceItemComponent = <PlaceItemComponent>entity.getComponent("placeItem", true);
+        if (placeItem == null)return;
         let requests:PlaceItemRequest[] = placeItem.placeItemRequests
         for(let i:number=0;i<requests.length;i++){
             let placeItemRequest:PlaceItemRequest = requests[i];
