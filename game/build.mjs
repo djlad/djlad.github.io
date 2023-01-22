@@ -1,21 +1,31 @@
 import glob from 'glob';
 import * as esbuild from 'esbuild';
-import {readFileSync} from 'fs';
+import {readFileSync, write, writeFile, writeFileSync} from 'fs';
+import * as imageSize from 'image-size';
+import externalGlobalPlugin from "esbuild-plugin-external-global";
+
 
 const packageJson = JSON.parse(readFileSync("package.json"));
 const dependencies = packageJson.dependencies;
 const peerDependencies = [];
 
 var getDirectories = async function (src, callback) {
-    return glob(src + "/**/*.ts", callback);
+    return glob(src + "/**/*", callback);
 };
 
-getDirectories("src", (er, dirs)=>{
-    const phaser = 'node_modules/phaser/dist/phaser.js';
-    dirs.push(phaser);
-    build(dirs);
-});
-function build(dirs){
+getDirectories("sprites", (err, files)=>{
+    const result = {};
+    files.forEach(file=> {
+        const nameParts = file.split(".");
+        const extension = nameParts[nameParts.length-1];
+        if (!imageSize.types.includes(extension))return;
+        result[file] = imageSize.imageSize(file);
+    });
+    const imageMetaDataFilePath = "./src/metadata.ts";
+    writeFileSync(imageMetaDataFilePath, "export const metadata:any = " + JSON.stringify(result));
+})
+build();
+function build(){
     esbuild.build(
     {
         entryPoints: ["src/game.ts"],
@@ -30,13 +40,13 @@ function build(dirs){
         format:'iife',
         platform: "browser",
         define: {
-            // "module":"global.module",
-            // "exports":"global.exports"
         },
         external: [
-            // "node_modules/phaser/dist/phaser.js"
-            // "node_modules/phaser/src/phaser.js"
-            // "phaser.js"
+        ],
+        plugins:[
+            externalGlobalPlugin.externalGlobalPlugin({
+                'Phaser': 'window.Phaser',
+              })
         ]
     }).catch((e)=>{
         console.log(e);
