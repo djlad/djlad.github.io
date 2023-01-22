@@ -45,7 +45,7 @@ function build(){
         ],
         plugins:[
             externalGlobalPlugin.externalGlobalPlugin({
-                'Phaser': 'window.Phaser',
+                'phaser': 'window.Phaser',
               })
         ]
     }).catch((e)=>{
