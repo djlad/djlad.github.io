@@ -9,6 +9,10 @@ export class PhaserGame {
             width:window.innerWidth,
             height:window.innerHeight,
             scene: MainScene,
+            fps: {
+                target:60,
+                forceSetTimeOut: true
+            },
             physics: {
                 default:"arcade",
                 arcade: {

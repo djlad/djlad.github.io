@@ -53,190 +53,13 @@
     //};
   };
 
-  // src/engine/events/EventType.ts
-  var EventType = /* @__PURE__ */ ((EventType2) => {
-    EventType2[EventType2["wDown"] = 0] = "wDown";
-    EventType2[EventType2["aDown"] = 1] = "aDown";
-    EventType2[EventType2["sDown"] = 2] = "sDown";
-    EventType2[EventType2["dDown"] = 3] = "dDown";
-    EventType2[EventType2["wUp"] = 4] = "wUp";
-    EventType2[EventType2["aUp"] = 5] = "aUp";
-    EventType2[EventType2["sUp"] = 6] = "sUp";
-    EventType2[EventType2["dUp"] = 7] = "dUp";
-    EventType2[EventType2["spaceDown"] = 8] = "spaceDown";
-    EventType2[EventType2["spaceUp"] = 9] = "spaceUp";
-    EventType2[EventType2["iUp"] = 10] = "iUp";
-    EventType2[EventType2["iDown"] = 11] = "iDown";
-    EventType2[EventType2["pDown"] = 12] = "pDown";
-    EventType2[EventType2["pUp"] = 13] = "pUp";
-    EventType2[EventType2["fDown"] = 14] = "fDown";
-    EventType2[EventType2["fUp"] = 15] = "fUp";
-    EventType2[EventType2["jUp"] = 16] = "jUp";
-    EventType2[EventType2["kUp"] = 17] = "kUp";
-    EventType2[EventType2["lUp"] = 18] = "lUp";
-    EventType2[EventType2["hUp"] = 19] = "hUp";
-    EventType2[EventType2["semicolonUp"] = 20] = "semicolonUp";
-    EventType2[EventType2["tildUp"] = 21] = "tildUp";
-    EventType2[EventType2["jDown"] = 22] = "jDown";
-    EventType2[EventType2["kDown"] = 23] = "kDown";
-    EventType2[EventType2["lDown"] = 24] = "lDown";
-    EventType2[EventType2["hDown"] = 25] = "hDown";
-    EventType2[EventType2["semicolonDown"] = 26] = "semicolonDown";
-    EventType2[EventType2["tildDown"] = 27] = "tildDown";
-    EventType2[EventType2["mouseUp"] = 28] = "mouseUp";
-    EventType2[EventType2["mouseDown"] = 29] = "mouseDown";
-    EventType2[EventType2["collision"] = 30] = "collision";
-    EventType2[EventType2["fireProjectile"] = 31] = "fireProjectile";
-    EventType2[EventType2["inflictDamage"] = 32] = "inflictDamage";
-    EventType2[EventType2["changeVelocity"] = 33] = "changeVelocity";
-    EventType2[EventType2["giveItem"] = 34] = "giveItem";
-    EventType2[EventType2["dash"] = 35] = "dash";
-    return EventType2;
-  })(EventType || {});
-
-  // src/engine/events/game-event.ts
-  var GameEvent = class {
-    constructor(eventName, eventData, componentTarget = null) {
-      this.eventName = eventName;
-      this.eventData = eventData;
-      this.eventDescription = EventType[eventName];
-    }
-    static create(eventName, eventData = null) {
-      var ge = new GameEvent(eventName, eventData);
-      return ge;
-    }
-  };
-
-  // src/systems/wasd-system.ts
-  var WasdSystem = class extends EntitySystem {
-    constructor(game) {
-      super(game);
-    }
-    static create(game) {
-      var wasd = new WasdSystem(game);
-      return wasd;
-    }
-    apply() {
-    }
-    applyEvents(entity, eventManager) {
-      var events = eventManager.events;
-      var event;
-      var wasdComponent = entity.getComponent("wasd", true);
-      if (wasdComponent == null)
-        return;
-      var position = entity.getComponent("position");
-      var animation = entity.getComponent("animation");
-      var transition = entity.getComponent("transition");
-      var speed = wasdComponent.speed;
-      var sprite = wasdComponent.sprite;
-      var walkSprite = wasdComponent.walkSprite;
-      if (events.length > 0) {
-      }
-      for (var i = 0; i < events.length; i++) {
-        event = events[i];
-        switch (event.eventName) {
-          case 0 /* wDown */:
-            if (wasdComponent.dashing)
-              break;
-            animation.setSprite(walkSprite);
-            position.vy = -speed;
-            break;
-          case 4 /* wUp */:
-            if (wasdComponent.dashing)
-              break;
-            animation.setSprite(sprite);
-            position.vy = 0;
-            break;
-          case 1 /* aDown */:
-            if (wasdComponent.dashing)
-              break;
-            position.faceRight = false;
-            animation.setSprite(walkSprite);
-            position.vx = -speed;
-            break;
-          case 5 /* aUp */:
-            if (wasdComponent.dashing)
-              break;
-            animation.setSprite(sprite);
-            position.vx = 0;
-            break;
-          case 2 /* sDown */:
-            if (wasdComponent.dashing)
-              break;
-            animation.setSprite(walkSprite);
-            position.vy = speed;
-            break;
-          case 6 /* sUp */:
-            if (wasdComponent.dashing)
-              break;
-            animation.setSprite(sprite);
-            position.vy = 0;
-            break;
-          case 3 /* dDown */:
-            if (wasdComponent.dashing)
-              break;
-            position.faceRight = true;
-            animation.setSprite(walkSprite);
-            position.vx = speed;
-            break;
-          case 7 /* dUp */:
-            if (wasdComponent.dashing)
-              break;
-            animation.setSprite(sprite);
-            position.vx = 0;
-            break;
-          case 9 /* spaceUp */:
-            this.dash(wasdComponent, position, animation, transition);
-            break;
-          case 9 /* spaceUp */:
-            break;
-          case 15 /* fUp */:
-            let cropHarvester;
-            cropHarvester = entity.getComponent("cropHarvester", true);
-            cropHarvester.startHarvest();
-            break;
-          case 13 /* pUp */:
-            console.log(this.game);
-            break;
-          case 10 /* iUp */:
-            let inventory;
-            inventory = entity.getComponent("inventory", true);
-            inventory.inventoryToString();
-            break;
-          case 16 /* jUp */:
-            var ge = GameEvent.create(31 /* fireProjectile */);
-            entity.emit(ge);
-            break;
-        }
-      }
-      this.updateDashing(entity, wasdComponent, position, animation, transition);
-    }
-    updateDashing(entity, wasdComponent, position, animation, transition) {
-      if (!wasdComponent.dashing)
-        return;
-      if (wasdComponent.dashingTime == Math.floor(wasdComponent.maxDashingTime / 2)) {
-        transition.start(wasdComponent.dashSprite, wasdComponent.dashSpriteNumber, false);
-      }
-      if (wasdComponent.dashingTime == 0) {
-        wasdComponent.dashing = false;
-        position.vx = 0;
-        position.vy = 0;
-        position.h = 0;
-        return;
-      }
-      wasdComponent.dashingTime -= 1;
-      position.vx = Math.sign(position.faceX) * wasdComponent.dashSpeed;
-      position.vy = Math.sign(position.faceY) * wasdComponent.dashSpeed;
-    }
-    dash(wasdComponent, position, animation, transition) {
-      if (wasdComponent.dashing)
-        return;
-      wasdComponent.startDashing();
-      wasdComponent.dashWidth = position.width;
-      wasdComponent.dashHeight = position.height;
-      wasdComponent.dashSprite = animation.animationName;
-      wasdComponent.dashSpriteNumber = animation.getSpriteNumber();
-      transition.start(null, 32);
+  // src/engine/renderers/render-options.ts
+  var RenderOptions = class {
+    constructor() {
+      this.flip = true;
+      this.rotate = 0;
+      //in radians
+      this.applyOffsets = true;
     }
   };
 
@@ -280,67 +103,6 @@
   };
   var Entity = _Entity;
   Entity.id = -1;
-
-  // src/systems/crop-system.ts
-  var CropSystem = class extends EntitySystem {
-    constructor(game) {
-      super(game);
-    }
-    apply(args) {
-      const entity = args.entity;
-      var a = entity.getComponent("animation", true);
-      var c = entity.getComponent("crop", true);
-      var p = entity.getComponent("position", true);
-      if (a == null || c == null) {
-        return;
-      }
-      if (c.timeSinceGrowth == 0 || c.timeSinceGrowth == 1) {
-        a.setSprite(c.growthSprites[c.growthStage]);
-      }
-    }
-    applyEvents(entity) {
-      var c = entity.getComponent("crop", true);
-      if (c == null)
-        return;
-      var event;
-      for (var i = 0; i < entity.targetedEvents.length; i++) {
-        event = entity.targetedEvents[i];
-        this.handleEvent(event, entity);
-      }
-    }
-    static create(game) {
-      return new CropSystem(game);
-    }
-    handleCollision(event, entity) {
-      if (!(event.eventData instanceof Entity)) {
-        return;
-      }
-      let collidedEntity = event.eventData;
-      let cropHarvester;
-      try {
-        cropHarvester = collidedEntity.getComponent("cropHarvester");
-      } catch {
-        return;
-      }
-      if (!cropHarvester.harvesting) {
-        return;
-      }
-      let crop = entity.getComponent("crop");
-      let playerInventory;
-      playerInventory = collidedEntity.getComponent("inventory");
-      if (crop.isGrown()) {
-        playerInventory.addItem(crop.cropName, 1);
-      }
-      this.game.destroy(entity);
-    }
-    handleEvent(event, entity) {
-      switch (event.eventName) {
-        case 30 /* collision */:
-          this.handleCollision(event, entity);
-          break;
-      }
-    }
-  };
 
   // src/engine/component/component.ts
   var Component = class {
@@ -1394,6 +1156,10 @@ ${item.itemName}: ${item.itemQuantity}`;
         width: window.innerWidth,
         height: window.innerHeight,
         scene: MainScene,
+        fps: {
+          target: 60,
+          forceSetTimeOut: true
+        },
         physics: {
           default: "arcade",
           arcade: {},
@@ -1656,6 +1422,254 @@ ${item.itemName}: ${item.itemQuantity}`;
       let cf = createComponentFactory();
       var entity = new FirstEntity(cf);
       return entity;
+    }
+  };
+
+  // src/engine/events/EventType.ts
+  var EventType = /* @__PURE__ */ ((EventType2) => {
+    EventType2[EventType2["wDown"] = 0] = "wDown";
+    EventType2[EventType2["aDown"] = 1] = "aDown";
+    EventType2[EventType2["sDown"] = 2] = "sDown";
+    EventType2[EventType2["dDown"] = 3] = "dDown";
+    EventType2[EventType2["wUp"] = 4] = "wUp";
+    EventType2[EventType2["aUp"] = 5] = "aUp";
+    EventType2[EventType2["sUp"] = 6] = "sUp";
+    EventType2[EventType2["dUp"] = 7] = "dUp";
+    EventType2[EventType2["spaceDown"] = 8] = "spaceDown";
+    EventType2[EventType2["spaceUp"] = 9] = "spaceUp";
+    EventType2[EventType2["iUp"] = 10] = "iUp";
+    EventType2[EventType2["iDown"] = 11] = "iDown";
+    EventType2[EventType2["pDown"] = 12] = "pDown";
+    EventType2[EventType2["pUp"] = 13] = "pUp";
+    EventType2[EventType2["fDown"] = 14] = "fDown";
+    EventType2[EventType2["fUp"] = 15] = "fUp";
+    EventType2[EventType2["jUp"] = 16] = "jUp";
+    EventType2[EventType2["kUp"] = 17] = "kUp";
+    EventType2[EventType2["lUp"] = 18] = "lUp";
+    EventType2[EventType2["hUp"] = 19] = "hUp";
+    EventType2[EventType2["semicolonUp"] = 20] = "semicolonUp";
+    EventType2[EventType2["tildUp"] = 21] = "tildUp";
+    EventType2[EventType2["jDown"] = 22] = "jDown";
+    EventType2[EventType2["kDown"] = 23] = "kDown";
+    EventType2[EventType2["lDown"] = 24] = "lDown";
+    EventType2[EventType2["hDown"] = 25] = "hDown";
+    EventType2[EventType2["semicolonDown"] = 26] = "semicolonDown";
+    EventType2[EventType2["tildDown"] = 27] = "tildDown";
+    EventType2[EventType2["mouseUp"] = 28] = "mouseUp";
+    EventType2[EventType2["mouseDown"] = 29] = "mouseDown";
+    EventType2[EventType2["collision"] = 30] = "collision";
+    EventType2[EventType2["fireProjectile"] = 31] = "fireProjectile";
+    EventType2[EventType2["inflictDamage"] = 32] = "inflictDamage";
+    EventType2[EventType2["changeVelocity"] = 33] = "changeVelocity";
+    EventType2[EventType2["giveItem"] = 34] = "giveItem";
+    EventType2[EventType2["dash"] = 35] = "dash";
+    return EventType2;
+  })(EventType || {});
+
+  // src/engine/events/game-event.ts
+  var GameEvent = class {
+    constructor(eventName, eventData, componentTarget = null) {
+      this.eventName = eventName;
+      this.eventData = eventData;
+      this.eventDescription = EventType[eventName];
+    }
+    static create(eventName, eventData = null) {
+      var ge = new GameEvent(eventName, eventData);
+      return ge;
+    }
+  };
+
+  // src/systems/wasd-system.ts
+  var WasdSystem = class extends EntitySystem {
+    constructor(game) {
+      super(game);
+    }
+    static create(game) {
+      var wasd = new WasdSystem(game);
+      return wasd;
+    }
+    apply() {
+    }
+    applyEvents(entity, eventManager) {
+      var events = eventManager.events;
+      var event;
+      var wasdComponent = entity.getComponent("wasd", true);
+      if (wasdComponent == null)
+        return;
+      var position = entity.getComponent("position");
+      var animation = entity.getComponent("animation");
+      var transition = entity.getComponent("transition");
+      var speed = wasdComponent.speed;
+      var sprite = wasdComponent.sprite;
+      var walkSprite = wasdComponent.walkSprite;
+      if (events.length > 0) {
+      }
+      for (var i = 0; i < events.length; i++) {
+        event = events[i];
+        switch (event.eventName) {
+          case 0 /* wDown */:
+            if (wasdComponent.dashing)
+              break;
+            animation.setSprite(walkSprite);
+            position.vy = -speed;
+            break;
+          case 4 /* wUp */:
+            if (wasdComponent.dashing)
+              break;
+            animation.setSprite(sprite);
+            position.vy = 0;
+            break;
+          case 1 /* aDown */:
+            if (wasdComponent.dashing)
+              break;
+            position.faceRight = false;
+            animation.setSprite(walkSprite);
+            position.vx = -speed;
+            break;
+          case 5 /* aUp */:
+            if (wasdComponent.dashing)
+              break;
+            animation.setSprite(sprite);
+            position.vx = 0;
+            break;
+          case 2 /* sDown */:
+            if (wasdComponent.dashing)
+              break;
+            animation.setSprite(walkSprite);
+            position.vy = speed;
+            break;
+          case 6 /* sUp */:
+            if (wasdComponent.dashing)
+              break;
+            animation.setSprite(sprite);
+            position.vy = 0;
+            break;
+          case 3 /* dDown */:
+            if (wasdComponent.dashing)
+              break;
+            position.faceRight = true;
+            animation.setSprite(walkSprite);
+            position.vx = speed;
+            break;
+          case 7 /* dUp */:
+            if (wasdComponent.dashing)
+              break;
+            animation.setSprite(sprite);
+            position.vx = 0;
+            break;
+          case 9 /* spaceUp */:
+            this.dash(wasdComponent, position, animation, transition);
+            break;
+          case 9 /* spaceUp */:
+            break;
+          case 15 /* fUp */:
+            let cropHarvester;
+            cropHarvester = entity.getComponent("cropHarvester", true);
+            cropHarvester.startHarvest();
+            break;
+          case 13 /* pUp */:
+            console.log(this.game);
+            break;
+          case 10 /* iUp */:
+            let inventory;
+            inventory = entity.getComponent("inventory", true);
+            inventory.inventoryToString();
+            break;
+          case 16 /* jUp */:
+            var ge = GameEvent.create(31 /* fireProjectile */);
+            entity.emit(ge);
+            break;
+        }
+      }
+      this.updateDashing(entity, wasdComponent, position, animation, transition);
+    }
+    updateDashing(entity, wasdComponent, position, animation, transition) {
+      if (!wasdComponent.dashing)
+        return;
+      if (wasdComponent.dashingTime == Math.floor(wasdComponent.maxDashingTime / 2)) {
+        transition.start(wasdComponent.dashSprite, wasdComponent.dashSpriteNumber, false);
+      }
+      if (wasdComponent.dashingTime == 0) {
+        wasdComponent.dashing = false;
+        position.vx = 0;
+        position.vy = 0;
+        position.h = 0;
+        return;
+      }
+      wasdComponent.dashingTime -= 1;
+      position.vx = Math.sign(position.faceX) * wasdComponent.dashSpeed;
+      position.vy = Math.sign(position.faceY) * wasdComponent.dashSpeed;
+    }
+    dash(wasdComponent, position, animation, transition) {
+      if (wasdComponent.dashing)
+        return;
+      wasdComponent.startDashing();
+      wasdComponent.dashWidth = position.width;
+      wasdComponent.dashHeight = position.height;
+      wasdComponent.dashSprite = animation.animationName;
+      wasdComponent.dashSpriteNumber = animation.getSpriteNumber();
+      transition.start(null, 32);
+    }
+  };
+
+  // src/systems/crop-system.ts
+  var CropSystem = class extends EntitySystem {
+    constructor(game) {
+      super(game);
+    }
+    apply(args) {
+      const entity = args.entity;
+      var a = entity.getComponent("animation", true);
+      var c = entity.getComponent("crop", true);
+      var p = entity.getComponent("position", true);
+      if (a == null || c == null) {
+        return;
+      }
+      if (c.timeSinceGrowth == 0 || c.timeSinceGrowth == 1) {
+        a.setSprite(c.growthSprites[c.growthStage]);
+      }
+    }
+    applyEvents(entity) {
+      var c = entity.getComponent("crop", true);
+      if (c == null)
+        return;
+      var event;
+      for (var i = 0; i < entity.targetedEvents.length; i++) {
+        event = entity.targetedEvents[i];
+        this.handleEvent(event, entity);
+      }
+    }
+    static create(game) {
+      return new CropSystem(game);
+    }
+    handleCollision(event, entity) {
+      if (!(event.eventData instanceof Entity)) {
+        return;
+      }
+      let collidedEntity = event.eventData;
+      let cropHarvester;
+      try {
+        cropHarvester = collidedEntity.getComponent("cropHarvester");
+      } catch {
+        return;
+      }
+      if (!cropHarvester.harvesting) {
+        return;
+      }
+      let crop = entity.getComponent("crop");
+      let playerInventory;
+      playerInventory = collidedEntity.getComponent("inventory");
+      if (crop.isGrown()) {
+        playerInventory.addItem(crop.cropName, 1);
+      }
+      this.game.destroy(entity);
+    }
+    handleEvent(event, entity) {
+      switch (event.eventName) {
+        case 30 /* collision */:
+          this.handleCollision(event, entity);
+          break;
+      }
     }
   };
 
@@ -2793,16 +2807,6 @@ ${item.itemName}: ${item.itemQuantity}`;
     }
     static create(game) {
       return new ClickSystem(game);
-    }
-  };
-
-  // src/engine/renderers/render-options.ts
-  var RenderOptions = class {
-    constructor() {
-      this.flip = true;
-      this.rotate = 0;
-      //in radians
-      this.applyOffsets = true;
     }
   };
 
