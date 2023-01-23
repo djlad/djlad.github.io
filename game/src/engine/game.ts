@@ -8,17 +8,25 @@ import { SpriteManager } from './renderers/sprite-manager';
 import { PositionComponent } from '../components/position-component';
 import { SystemArgs } from './system/system-args';
 import { EntityUpdateArgs } from './entity/entity-update-args';
+import { PhaserGame } from './phaser-integration/phaser-game';
+import { ISpriteLoader } from './renderers/isprite-loader';
 
 export class Game {
-    constructor(entityFactory:EntityFactory, renderer:Renderer, eventManager:EventManager){
+    constructor(entityFactory:EntityFactory, renderer:Renderer, eventManager:EventManager, spriteManager:ISpriteLoader){
         this.entityFactory = entityFactory;
         this.renderer = renderer;
         this.eventManager = eventManager;
-        this.spriteManager = this.renderer.spriteManager;
+        this.spriteManager = spriteManager;
     }
 
     static create():Game{
-        var game = new Game(EntityFactory.create(), HtmlRenderer.create(), EventManager.create());
+        const renderer = HtmlRenderer.create();
+        var game = new Game(EntityFactory.create(), renderer, EventManager.create(), renderer.spriteManager);
+        return game;
+    }
+    
+    static createCustom(spriteManager:ISpriteLoader):Game{
+        var game = new Game(EntityFactory.create(), HtmlRenderer.create(), EventManager.create(), spriteManager);
         return game;
     }
 
@@ -36,13 +44,14 @@ export class Game {
     renderer:Renderer;
     eventManager:EventManager;
     intervalId:number;
-    spriteManager:SpriteManager;
+    spriteManager:ISpriteLoader;
     performance: number;
     frameTime: number;
-    targetFps: number = 40;
+    targetFps: number = 60;
     counter: number = 0;
     lastTime = performance.now();
     frameTracker:number = 0;
+    phaserGame:PhaserGame;
     update(delta:number, framesPassed:number){
         // this.renderer.cbox();
         this.performance = performance.now();
@@ -85,12 +94,14 @@ export class Game {
         this.counter = (this.counter + 1)%100;
     }
     step(delta:number){
+        delta = delta/(1000/this.targetFps);
         this.frameTracker += delta;
         if (this.frameTracker > 1){
             this.update(delta, Math.floor(this.frameTracker));
             this.frameTracker = 0;
+        } else {
+            this.update(delta, 0);
         }
-        this.update(delta, 0);
     }
     private loop(time:number){
         const delta = (time - this.lastTime)/(1000/this.targetFps);

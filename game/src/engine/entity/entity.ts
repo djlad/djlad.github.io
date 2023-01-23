@@ -21,7 +21,7 @@ export abstract class Entity {
     addComponent(componentName:string):Component{
         var component:Component = this.componentFactory.createComponent(componentName);
         this.componentNameToComponent[component.componentName] = component;
-        // this.components.push(component);
+        this.components.push(component);
         return component;
     }
 

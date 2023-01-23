@@ -26,6 +26,8 @@ import { ParticleComponent } from './components/particle-componet';
 import { MapBuilderSystem } from './systems/map-builder-system';
 import { ClickSystem } from './systems/click-system';
 import { PhaserGame } from './engine/phaser-integration/phaser-game';
+import { createPhaserGame } from './game-builders';
+import { PhaserPositionComponent } from './components/phaser-components/phaser-position-component';
 
 declare var synaptic:any;
 export declare var g:Game;
@@ -47,8 +49,6 @@ function createGame():Game{
     game.addSystem(MapBuilderSystem.create(game));
     game.addSystem(ClickSystem.create(game));
 
-    const phaserGame = new PhaserGame();
-    phaserGame.start();
     buildSprites(game)
     buildEntities(game);
     buildComponents(game);
@@ -56,15 +56,23 @@ function createGame():Game{
 }
 
 function startGame(){
-    let game:Game = createGame();
+    // let game:Game = createGame();
+    let game:Game = createPhaserGame();
     game.entityFactory.componentFactory.createComponent("animation");
     game.addEntity("first");
-    makePlayer();
-    //ac.setSprite("onion");
+    const player = makePlayer();
+    const phaserGame = PhaserGame.createSingleton();
+    phaserGame.mainScene.addCreator(()=>{
+        const playerPosition = <PhaserPositionComponent>player.getComponent("position");
+        const playerPhaserObj = playerPosition.phaserObject;
+        game.phaserGame = phaserGame;
+        game.phaserGame.mainScene.cameras.main.startFollow(playerPhaserObj);
+    })
 
     var villager = game.addEntity("villager");
     var component = <PositionComponent>villager.getComponent("position");
     let ac = <AnimationComponent>villager.getComponent("animation");
+    ac.setSprite("blond");
     component.x = 150;
     component.y = 300;
     component.vx = 0;
@@ -88,9 +96,9 @@ function startGame(){
     
 
     placeField(350,300, "wheat", 50, 5)
-    /*placeField(650,300, "corn", 50)
+    placeField(650,300, "corn", 50)
     placeField(350,600, "turnip", 50)
-    placeField(650,600, "onion", 50)*/
+    placeField(650,600, "onion", 50)
     // setTimeout(makePlayer, 1000);
     function placeField(x:number,y:number, cropName:string, d:number=50, width:number=5){
         var crop:CropEntity;
@@ -121,7 +129,8 @@ function startGame(){
         pc.y = 380;
         return player;
     }
-    let intervalId:number = game.start();
+    // let intervalId:number = game.start();
+    phaserGame.start();
     return game;
 }
 if (typeof window !== 'undefined')

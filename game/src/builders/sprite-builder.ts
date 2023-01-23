@@ -4,9 +4,10 @@
 
 import { SpriteManager } from "../engine/renderers/sprite-manager";
 import { Game } from "../engine/game";
+import { ISpriteLoader } from "../engine/renderers/isprite-loader";
 
-export function populateSpriteManager(spriteManager:SpriteManager):SpriteManager{
-    var sm:SpriteManager = spriteManager;
+export function populateSpriteManager(spriteManager:ISpriteLoader):ISpriteLoader{
+    var sm:ISpriteLoader = spriteManager;
     sm.loadSprite("blondDress", "blond.png", 4, 8);
     sm.loadSprite("nothing", "blond.png", 100, 100);
     sm.addAnimation("nothing", "nothing", [0], 10);

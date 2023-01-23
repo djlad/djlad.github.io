@@ -17,11 +17,15 @@ import { PrimitiveComponent } from '../components/primitive-component';
 import { TransitionComponent } from '../components/transitions/transition-component';
 import { TileComponent } from '../components/tile-component/tile-component';
 import { ClickableComponent } from '../components/clickable-component';
+import { PhaserPositionComponent } from '../components/phaser-components/phaser-position-component';
+import { PhaserAnimationComponent } from '../components/phaser-components/phaser-animation-component';
 
 export function createComponentFactory():ComponentFactory{
     var cf:ComponentFactory = new ComponentFactory();
-    cf.registerComponent(AnimationComponent);
-    cf.registerComponent(PositionComponent);
+    // cf.registerComponent(AnimationComponent);
+    cf.registerComponent(PhaserAnimationComponent);
+    cf.registerComponent(PhaserPositionComponent);
+    // cf.registerComponent(PositionComponent);
     cf.registerComponent(WasdComponent);
     cf.registerComponent(CropComponent);
     cf.registerComponent(ProjectileComponent);

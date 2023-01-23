@@ -12,6 +12,9 @@ export class HtmlCanvas
     {
         if (canvas != null) return HtmlCanvas.canvas;
         var canvas:HTMLCanvasElement = <HTMLCanvasElement>document.getElementById("canvas");
+        if (canvas === null){
+            canvas = document.createElement("canvas");
+        }
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
         canvas.style.margin = "0";
