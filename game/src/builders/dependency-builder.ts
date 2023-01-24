@@ -10,7 +10,7 @@ export function buildPhaserDependencies(){
     deps.renderer = HtmlRenderer.create();
     deps.spriteManager = PhaserSpriteManager.create();
     deps.eventManager = EventManager.create();
-    deps.componentFactory = ComponentFactory.create();
+    deps.componentFactory = ComponentFactory.create(deps);
     deps.entityFactory = EntityFactory.create(deps);
     return deps;
 }

@@ -14,7 +14,6 @@ export class PhaserAnimationComponent extends Component {
     animationNameUpdated: boolean = false;
     fakeImageData: ImageData = new ImageData(1,1);
     constructor(animationName:string, delay:number, spriteManager:ISpriteLoader){
-        console.log("added phaser anim component");
         super("animation");
         this.phaserGame = PhaserGame.createSingleton();
     }

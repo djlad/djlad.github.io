@@ -1,3 +1,4 @@
+import { GameDependencies } from "../dependencies/game-dependencies";
 import { Component } from "./component";
 
 export class ComponentFactory {
@@ -20,7 +21,7 @@ export class ComponentFactory {
         return this.componentTypes[componentName].create();
     }
 
-    static create():ComponentFactory{
+    static create(gameDependencies:GameDependencies):ComponentFactory{
         var cf:ComponentFactory = new ComponentFactory();
         /* cf.registerComponent(AnimationComponent);
         cf.registerComponent(PositionComponent);

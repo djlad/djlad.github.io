@@ -755,7 +755,7 @@ ${item.itemName}: ${item.itemQuantity}`;
       }
       return this.componentTypes[componentName].create();
     }
-    static create() {
+    static create(gameDependencies) {
       var cf = new ComponentFactory();
       return cf;
     }
@@ -1349,7 +1349,6 @@ ${item.itemName}: ${item.itemQuantity}`;
   // src/components/phaser-components/phaser-animation-component.ts
   var PhaserAnimationComponent = class extends Component {
     constructor(animationName, delay, spriteManager) {
-      console.log("added phaser anim component");
       super("animation");
       this.animationNameUpdated = false;
       this.fakeImageData = new ImageData(1, 1);
@@ -2174,10 +2173,10 @@ ${item.itemName}: ${item.itemQuantity}`;
     static create() {
       const renderer = HtmlRenderer.create();
       const deps = new GameDependencies();
-      deps.componentFactory = ComponentFactory.create();
-      deps.entityFactory = EntityFactory.create(deps);
       deps.renderer = renderer;
       deps.eventManager = EventManager.create();
+      deps.componentFactory = ComponentFactory.create(deps);
+      deps.entityFactory = EntityFactory.create(deps);
       var game = new Game2(deps.entityFactory, deps.renderer, EventManager.create(), deps);
       return game;
     }
@@ -2884,7 +2883,7 @@ ${item.itemName}: ${item.itemQuantity}`;
     deps.renderer = HtmlRenderer.create();
     deps.spriteManager = PhaserSpriteManager.create();
     deps.eventManager = EventManager.create();
-    deps.componentFactory = ComponentFactory.create();
+    deps.componentFactory = ComponentFactory.create(deps);
     deps.entityFactory = EntityFactory.create(deps);
     return deps;
   }

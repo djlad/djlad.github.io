@@ -2,6 +2,7 @@ import { Component } from "../../engine/component/component";
 import { IPositionComponent } from "../../engine/component/components/position/iposition-component";
 import { Entity } from "../../engine/entity/entity";
 import { EntityUpdateArgs } from "../../engine/entity/entity-update-args";
+import { Game } from "../../engine/game";
 import { PhaserGame } from "../../engine/phaser-integration/phaser-game";
 
 

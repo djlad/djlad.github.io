@@ -26,10 +26,10 @@ export class Game {
     static create():Game{
         const renderer = HtmlRenderer.create();
         const deps = new GameDependencies();
-        deps.componentFactory = ComponentFactory.create();
-        deps.entityFactory = EntityFactory.create(deps);
         deps.renderer = renderer;
         deps.eventManager = EventManager.create();
+        deps.componentFactory = ComponentFactory.create(deps);
+        deps.entityFactory = EntityFactory.create(deps);
         var game = new Game(deps.entityFactory, deps.renderer, EventManager.create(), deps);
         return game;
     }
