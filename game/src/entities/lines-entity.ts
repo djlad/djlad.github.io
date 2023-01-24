@@ -1,5 +1,4 @@
 import { createComponentFactory } from "../builders/build-components";
-import { AnimationComponent } from "../components/animation-component";
 import { CropComponent } from "../components/crop-component";
 import { PositionComponent } from "../engine/component/components/position/position-component";
 import { ComponentFactory } from "../engine/component/component-factory";

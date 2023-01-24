@@ -1,7 +1,6 @@
 import { Entity } from '../engine/entity/entity';
 import { PositionComponent } from '../engine/component/components/position/position-component';
 import { WasdComponent } from '../components/wasd-component';
-import { AnimationComponent } from '../components/animation-component';
 import { ComponentFactory } from '../engine/component/component-factory';
 import { createComponentFactory } from '../builders/build-components';
 import { InventoryComponent } from '../components/inventory-component/inventory-component';
@@ -9,6 +8,7 @@ import { PlaceItemComponent } from '../components/place-item/place-item-componen
 import { GameEvent } from '../engine/events/game-event';
 import { CropHarvesterComponent } from '../components/crop-harvester-component';
 import { ParticleComponent } from '../components/particle-componet';
+import { AnimationComponent } from '../engine/component/components/animation/animation-component';
 
 export class PlayerEntity extends Entity{
     constructor(componentFactory:ComponentFactory){
