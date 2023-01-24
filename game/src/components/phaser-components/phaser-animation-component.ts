@@ -7,11 +7,13 @@ import { SpriteManager } from "../../engine/renderers/sprite-manager";
 import { PhaserSpriteManager } from "../../engine/phaser-integration/phaser-sprite-manager";
 import { ISpriteLoader } from "../../engine/renderers/isprite-loader";
 import { PhaserGame } from "../../engine/phaser-integration/phaser-game";
+import { IAnimationComponent } from "../../engine/component/components/animation/ianimation-component";
 
-export class PhaserAnimationComponent extends Component {
-    phaserGame: PhaserGame;
+export class PhaserAnimationComponent extends Component implements IAnimationComponent{
     animationName: string;
+    spriteName: string;
     animationNameUpdated: boolean = false;
+    private phaserGame: PhaserGame;
     fakeImageData: ImageData = new ImageData(1,1);
     constructor(animationName:string, delay:number, spriteManager:ISpriteLoader){
         super("animation");
