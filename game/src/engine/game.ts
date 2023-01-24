@@ -5,28 +5,37 @@ import { EventManager } from './events/event-manager';
 import { Renderer } from './renderers/render';
 import { HtmlRenderer } from './renderers/implementations/html/html-renderer';
 import { SpriteManager } from './renderers/sprite-manager';
-import { PositionComponent } from '../components/position-component';
+import { PositionComponent } from './component/components/position/position-component';
 import { SystemArgs } from './system/system-args';
 import { EntityUpdateArgs } from './entity/entity-update-args';
 import { PhaserGame } from './phaser-integration/phaser-game';
 import { ISpriteLoader } from './renderers/isprite-loader';
+import { GameDependencies } from './dependencies/game-dependencies';
+import { ComponentFactory } from './component/component-factory';
 
 export class Game {
-    constructor(entityFactory:EntityFactory, renderer:Renderer, eventManager:EventManager, spriteManager:ISpriteLoader){
+    spriteManager: any;
+    constructor(entityFactory:EntityFactory, renderer:Renderer, eventManager:EventManager, gameDependencies:GameDependencies){
         this.entityFactory = entityFactory;
         this.renderer = renderer;
         this.eventManager = eventManager;
-        this.spriteManager = spriteManager;
+        this.gameDependencies = gameDependencies;
+        this.spriteManager = gameDependencies.spriteManager;
     }
 
     static create():Game{
         const renderer = HtmlRenderer.create();
-        var game = new Game(EntityFactory.create(), renderer, EventManager.create(), renderer.spriteManager);
+        const deps = new GameDependencies();
+        deps.componentFactory = ComponentFactory.create();
+        deps.entityFactory = EntityFactory.create(deps);
+        deps.renderer = renderer;
+        deps.eventManager = EventManager.create();
+        var game = new Game(deps.entityFactory, deps.renderer, EventManager.create(), deps);
         return game;
     }
     
-    static createCustom(spriteManager:ISpriteLoader):Game{
-        var game = new Game(EntityFactory.create(), HtmlRenderer.create(), EventManager.create(), spriteManager);
+    static createCustom(dependencies:GameDependencies):Game{
+        var game = new Game(dependencies.entityFactory, dependencies.renderer, dependencies.eventManager, dependencies);
         return game;
     }
 
@@ -44,7 +53,7 @@ export class Game {
     renderer:Renderer;
     eventManager:EventManager;
     intervalId:number;
-    spriteManager:ISpriteLoader;
+    gameDependencies: GameDependencies;
     performance: number;
     frameTime: number;
     targetFps: number = 60;

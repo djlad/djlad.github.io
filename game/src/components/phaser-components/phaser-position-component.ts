@@ -1,10 +1,11 @@
 import { Component } from "../../engine/component/component";
+import { IPositionComponent } from "../../engine/component/components/position/iposition-component";
 import { Entity } from "../../engine/entity/entity";
 import { EntityUpdateArgs } from "../../engine/entity/entity-update-args";
 import { PhaserGame } from "../../engine/phaser-integration/phaser-game";
 
 
-export class PhaserPositionComponent extends Component {
+export class PhaserPositionComponent extends Component implements IPositionComponent{
     private phaserGame: PhaserGame;
     // public phaserObject: Phaser.Physics.Matter.Sprite
     public phaserObject: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;

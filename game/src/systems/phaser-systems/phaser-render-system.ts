@@ -1,6 +1,6 @@
 import { Game } from "../../engine/game";
 import { AnimationComponent } from "../../components/animation-component";
-import { PositionComponent } from "../../components/position-component";
+import { PositionComponent } from "../../engine/component/components/position/position-component";
 import { PrimitiveComponent } from "../../components/primitive-component";
 import { TextComponent } from "../../components/text-component/text-component";
 import { TextPlacement } from "../../components/text-component/text-placement";

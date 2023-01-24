@@ -1,7 +1,7 @@
 import { EntitySystem } from '../engine/system/system';
 import { AnimationComponent } from '../components/animation-component';
 import { Entity } from '../engine/entity/entity';
-import { PositionComponent } from '../components/position-component';
+import { PositionComponent } from '../engine/component/components/position/position-component';
 import { Game } from '../engine/game';
 import { Renderer } from '../engine/renderers/render';
 import { HtmlRenderer } from '../engine/renderers/implementations/html/html-renderer';

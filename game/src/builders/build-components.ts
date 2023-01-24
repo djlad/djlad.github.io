@@ -1,4 +1,4 @@
-import { PositionComponent } from '../components/position-component';
+import { PositionComponent } from '../engine/component/components/position/position-component';
 import { AnimationComponent } from '../components/animation-component';
 import { WasdComponent } from '../components/wasd-component';
 import { CropComponent } from '../components/crop-component';

@@ -1,6 +1,6 @@
 import { Entity } from '../engine/entity/entity';
 import { AnimationComponent } from '../components/animation-component';
-import { PositionComponent } from '../components/position-component';
+import { PositionComponent } from '../engine/component/components/position/position-component';
 import { ComponentFactory } from '../engine/component/component-factory';
 import { createComponentFactory } from '../builders/build-components';
 import { GameEvent } from '../engine/events/game-event';

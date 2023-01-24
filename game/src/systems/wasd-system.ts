@@ -1,7 +1,7 @@
 import { EntitySystem } from '../engine/system/system';
 import { Entity } from '../engine/entity/entity';
 import { WasdComponent } from '../components/wasd-component';
-import { PositionComponent } from '../components/position-component';
+import { PositionComponent } from '../engine/component/components/position/position-component';
 import { AnimationComponent } from '../components/animation-component';
 import { Game } from '../engine/game';
 import { InventoryComponent } from '../components/inventory-component/inventory-component';

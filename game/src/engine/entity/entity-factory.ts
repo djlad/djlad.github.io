@@ -1,10 +1,15 @@
 import { Entity } from './entity';
 import { ComponentFactory } from '../component/component-factory';
+import { Component } from '../component/component';
+import { GameDependencies } from '../dependencies/game-dependencies';
 
 export class EntityFactory {
-    constructor(componentFactory:ComponentFactory){
-        this.componentFactory = componentFactory;
+    constructor(gameDependencies:GameDependencies){
+        gameDependencies.checkDependency(gameDependencies.componentFactory);
+        this.componentFactory = gameDependencies.componentFactory;
+        this.dependencies = gameDependencies;
     }
+    dependencies: GameDependencies;
     entityTypes:{[key:string]:any}={};
     componentFactory:ComponentFactory;
 
@@ -22,12 +27,11 @@ export class EntityFactory {
 
     create(entityName:string){
         let entityClass = this.entityTypes[entityName];
-        return this.entityTypes[entityName].create();
+        return this.entityTypes[entityName].create(this.dependencies);
     }
 
-    static create():EntityFactory{
-        let componentFactory:ComponentFactory = ComponentFactory.create();
-        let ef:EntityFactory = new EntityFactory(componentFactory);
+    static create(gameDependencies:GameDependencies):EntityFactory{
+        let ef:EntityFactory = new EntityFactory(gameDependencies);
         return ef;
     }
 }

@@ -1,7 +1,7 @@
 import { EntitySystem } from '../engine/system/system';
 import { Game } from '../engine/game';
 import { Entity } from '../engine/entity/entity';
-import { PositionComponent } from '../components/position-component';
+import { PositionComponent } from '../engine/component/components/position/position-component';
 import { ProjectileComponent } from '../components/projectile-component';
 import { ProjectileEntity } from '../entities/projectile-entity';
 import { GameEvent } from '../engine/events/game-event';

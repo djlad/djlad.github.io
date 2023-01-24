@@ -22,7 +22,7 @@ import { HealthComponent } from "./components/health-component";
 import { InventoryComponent } from "./components/inventory-component/inventory-component";
 import { NeuralFightComponent } from "./components/neural-fight-component";
 import { ParticleComponent } from "./components/particle-componet";
-import { PositionComponent } from "./components/position-component";
+import { PositionComponent } from "./engine/component/components/position/position-component";
 import { PrimitiveComponent } from "./components/primitive-component";
 import { ProjectileComponent } from "./components/projectile-component";
 import { TileComponent } from "./components/tile-component/tile-component";
@@ -32,6 +32,8 @@ import { PhaserPositionComponent } from "./components/phaser-components/phaser-p
 import { PhaserSpriteManager } from "./engine/phaser-integration/phaser-sprite-manager";
 import { PhaserAnimationComponent } from "./components/phaser-components/phaser-animation-component";
 import { PhaserRenderSystem } from "./systems/phaser-systems/phaser-render-system";
+import * as Pixi from "pixi.js";
+import { buildPhaserDependencies } from "./builders/dependency-builder";
 function sharedComponents(game:Game){
     game.registerComponent(WasdComponent);
     game.registerComponent(CropComponent);
@@ -64,7 +66,8 @@ function buildPhaserComponents(game:Game){
 export function createPhaserGame():Game{
     console.log("creating phaser game");
     const phaserSpriteManager = PhaserSpriteManager.singeltonCreate();
-    let game:Game = Game.createCustom(phaserSpriteManager);
+    const deps = buildPhaserDependencies();
+    let game:Game = Game.createCustom(deps);
     game.addSystem(WasdSystem.create(game));
     game.addSystem(CropSystem.create(game));
     // game.addSystem(CollisionSystem.create(game));

@@ -1,7 +1,7 @@
 import { EntitySystem } from '../engine/system/system';
 import { Game } from '../engine/game';
 import { Entity } from '../engine/entity/entity';
-import { PositionComponent } from '../components/position-component';
+import { PositionComponent } from '../engine/component/components/position/position-component';
 import { GameEvent } from '../engine/events/game-event';
 import { EventType } from '../engine/events/EventType';
 import { SystemArgs } from '../engine/system/system-args';

@@ -1,6 +1,6 @@
 import { AnimationComponent } from "../components/animation-component";
 import { ClickableComponent } from "../components/clickable-component";
-import { PositionComponent } from "../components/position-component";
+import { PositionComponent } from "../engine/component/components/position/position-component";
 import { SpriteId } from "../components/tile-component/sprite-id";
 import { Tile } from "../components/tile-component/tile";
 import { TileComponent } from "../components/tile-component/tile-component";

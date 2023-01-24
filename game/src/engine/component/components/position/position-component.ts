@@ -1,9 +1,10 @@
-import { Component } from "../engine/component/component";
-import { Entity } from "../engine/entity/entity";
-import { EntityUpdateArgs } from "../engine/entity/entity-update-args";
+import { Component } from "../../component";
+import { Entity } from "../../../entity/entity";
+import { EntityUpdateArgs } from "../../../entity/entity-update-args";
+import { IPositionComponent } from "./iposition-component";
 
 
-export class PositionComponent extends Component {
+export class PositionComponent extends Component implements IPositionComponent {
     constructor(){
         super("position");
     }

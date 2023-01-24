@@ -1,5 +1,5 @@
 import { Entity } from '../engine/entity/entity';
-import { PositionComponent } from '../components/position-component';
+import { PositionComponent } from '../engine/component/components/position/position-component';
 import { AnimationComponent } from '../components/animation-component';
 import { FightComponent } from '../components/fight-component';
 import { HealthComponent } from '../components/health-component';

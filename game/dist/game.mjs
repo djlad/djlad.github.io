@@ -109,7 +109,7 @@
     constructor(componentName) {
       this.componentName = componentName;
     }
-    static create() {
+    static create(game) {
       throw "Component must implement static create function";
     }
     static createWithGame(game) {
@@ -1879,9 +1879,11 @@ ${item.itemName}: ${item.itemQuantity}`;
 
   // src/engine/entity/entity-factory.ts
   var EntityFactory = class {
-    constructor(componentFactory) {
+    constructor(gameDependencies) {
       this.entityTypes = {};
-      this.componentFactory = componentFactory;
+      gameDependencies.checkDependency(gameDependencies.componentFactory);
+      this.componentFactory = gameDependencies.componentFactory;
+      this.dependencies = gameDependencies;
     }
     registerEntity(componentName, EntityClass) {
       if (EntityClass.prototype instanceof Entity) {
@@ -1895,11 +1897,10 @@ ${item.itemName}: ${item.itemQuantity}`;
     }
     create(entityName) {
       let entityClass = this.entityTypes[entityName];
-      return this.entityTypes[entityName].create();
+      return this.entityTypes[entityName].create(this.dependencies);
     }
-    static create() {
-      let componentFactory = ComponentFactory.create();
-      let ef = new EntityFactory(componentFactory);
+    static create(gameDependencies) {
+      let ef = new EntityFactory(gameDependencies);
       return ef;
     }
   };
@@ -2138,9 +2139,26 @@ ${item.itemName}: ${item.itemQuantity}`;
   var EntityUpdateArgs = class {
   };
 
+  // src/engine/dependencies/game-dependencies.ts
+  var GameDependencies = class {
+    constructor() {
+      this.componentFactory = null;
+      this.entityFactory = null;
+      this.renderer = null;
+      this.eventManager = null;
+      this.spriteManager = null;
+      this.cameras = null;
+    }
+    checkDependency(gameDependency) {
+      if (gameDependency == null) {
+        console.error(`Dependency was requested but it was null`);
+      }
+    }
+  };
+
   // src/engine/game.ts
   var Game2 = class {
-    constructor(entityFactory, renderer, eventManager, spriteManager) {
+    constructor(entityFactory, renderer, eventManager, gameDependencies) {
       this._entities = [];
       this.systems = [];
       this.targetFps = 60;
@@ -2150,15 +2168,21 @@ ${item.itemName}: ${item.itemQuantity}`;
       this.entityFactory = entityFactory;
       this.renderer = renderer;
       this.eventManager = eventManager;
-      this.spriteManager = spriteManager;
+      this.gameDependencies = gameDependencies;
+      this.spriteManager = gameDependencies.spriteManager;
     }
     static create() {
       const renderer = HtmlRenderer.create();
-      var game = new Game2(EntityFactory.create(), renderer, EventManager.create(), renderer.spriteManager);
+      const deps = new GameDependencies();
+      deps.componentFactory = ComponentFactory.create();
+      deps.entityFactory = EntityFactory.create(deps);
+      deps.renderer = renderer;
+      deps.eventManager = EventManager.create();
+      var game = new Game2(deps.entityFactory, deps.renderer, EventManager.create(), deps);
       return game;
     }
-    static createCustom(spriteManager) {
-      var game = new Game2(EntityFactory.create(), HtmlRenderer.create(), EventManager.create(), spriteManager);
+    static createCustom(dependencies) {
+      var game = new Game2(dependencies.entityFactory, dependencies.renderer, dependencies.eventManager, dependencies);
       return game;
     }
     get entities() {
@@ -2854,6 +2878,17 @@ ${item.itemName}: ${item.itemQuantity}`;
     }
   };
 
+  // src/builders/dependency-builder.ts
+  function buildPhaserDependencies() {
+    const deps = new GameDependencies();
+    deps.renderer = HtmlRenderer.create();
+    deps.spriteManager = PhaserSpriteManager.create();
+    deps.eventManager = EventManager.create();
+    deps.componentFactory = ComponentFactory.create();
+    deps.entityFactory = EntityFactory.create(deps);
+    return deps;
+  }
+
   // src/game-builders.ts
   function sharedComponents(game) {
     game.registerComponent(WasdComponent);
@@ -2878,7 +2913,8 @@ ${item.itemName}: ${item.itemQuantity}`;
   function createPhaserGame() {
     console.log("creating phaser game");
     const phaserSpriteManager = PhaserSpriteManager.singeltonCreate();
-    let game = Game2.createCustom(phaserSpriteManager);
+    const deps = buildPhaserDependencies();
+    let game = Game2.createCustom(deps);
     game.addSystem(WasdSystem.create(game));
     game.addSystem(CropSystem.create(game));
     game.addSystem(ProjectileSystem.create(game));
