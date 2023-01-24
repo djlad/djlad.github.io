@@ -1,5 +1,4 @@
 import { PositionComponent } from './engine/component/components/position/position-component';
-import { AnimationComponent } from './components/animation-component';
 import { CropEntity } from './entities/crop-entity';
 import { CropComponent } from './components/crop-component';
 import { RenderSystem } from './systems/render-system';
@@ -28,6 +27,7 @@ import { ClickSystem } from './systems/click-system';
 import { PhaserGame } from './engine/phaser-integration/phaser-game';
 import { createPhaserGame } from './game-builders';
 import { PhaserPositionComponent } from './components/phaser-components/phaser-position-component';
+import { AnimationComponent } from './engine/component/components/animation/animation-component';
 
 declare var synaptic:any;
 export declare var g:Game;

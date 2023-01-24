@@ -116,298 +116,6 @@
     }
   };
 
-  // src/engine/renderers/sprite-animation.ts
-  var SpriteAnimation = class {
-    constructor(animationName, spriteName, spriteNumbers, delay) {
-      this.spriteNumbers = spriteNumbers;
-      this.animationName = animationName;
-      this.spriteName = spriteName;
-      this.delay = delay;
-    }
-    static create(animationName, spriteName, spriteNumbers, delay = 1) {
-      var sa = new SpriteAnimation(
-        animationName,
-        spriteName,
-        spriteNumbers,
-        delay
-      );
-      return sa;
-    }
-  };
-
-  // src/engine/renderers/implementations/html/html-canvas.ts
-  var _HtmlCanvas = class {
-    constructor(canvas) {
-      this.canvas = canvas;
-      this.ctx = this.canvas.getContext("2d");
-    }
-    static createSingleton() {
-      if (canvas != null)
-        return _HtmlCanvas.canvas;
-      var canvas = document.getElementById("canvas");
-      if (canvas === null) {
-        canvas = document.createElement("canvas");
-      }
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      canvas.style.margin = "0";
-      canvas.style.padding = "0";
-      canvas.style.overflow = "hidden";
-      canvas.style.position = "fixed";
-      canvas.style.top = "0px";
-      canvas.style.left = "0px";
-      _HtmlCanvas.canvas = new _HtmlCanvas(canvas);
-      return _HtmlCanvas.canvas;
-    }
-  };
-  var HtmlCanvas = _HtmlCanvas;
-  HtmlCanvas.canvas = null;
-
-  // src/engine/renderers/implementations/html/html-rect-sprite.ts
-  var _HtmlRectSprite = class {
-    constructor(spriteImg, widthImgs, heightImgs, offsetx = 0, offsety = 0, frameWidth = 0, frameHeight = 0) {
-      this.frameWidth = 1;
-      this.frameHeight = 1;
-      this.loaded = false;
-      this.sprite = spriteImg;
-      this.widthImgs = widthImgs;
-      this.heightImgs = heightImgs;
-      this.offsetx = offsetx;
-      this.offsety = offsety;
-      this.frameWidth = frameWidth;
-      this.frameHeight = frameHeight;
-      this.canvas = HtmlCanvas.createSingleton();
-      this.ctx = HtmlCanvas.createSingleton().ctx;
-    }
-    getRGBs(width, height, spriteNumber) {
-      let fc = this.frameCoords(spriteNumber);
-      let canvas = document.createElement("canvas");
-      let context = canvas.getContext("2d");
-      if (width == null || height == null) {
-        canvas.width = this.frameWidth;
-        canvas.height = this.frameHeight;
-      } else {
-        canvas.width = width;
-        canvas.height = height;
-      }
-      context.clearRect(0, 0, canvas.width, canvas.height);
-      context.drawImage(
-        this.sprite,
-        fc[0],
-        fc[1],
-        this.frameWidth,
-        this.frameHeight,
-        0,
-        0,
-        canvas.width,
-        canvas.height
-      );
-      let pixelData = context.getImageData(0, 0, canvas.width, canvas.height);
-      return pixelData;
-    }
-    drawImage(spriteNumber, x, y, width, height) {
-      let fc = this.frameCoords(spriteNumber);
-      this.ctx.drawImage(
-        this.sprite,
-        fc[0],
-        fc[1],
-        this.frameWidth,
-        this.frameHeight,
-        x,
-        y,
-        width,
-        height
-      );
-    }
-    setFrameDimensions(sprite) {
-      return function() {
-        sprite.frameWidth = sprite.sprite.width / sprite.widthImgs;
-        sprite.frameHeight = sprite.sprite.height / sprite.heightImgs;
-        sprite.loaded = true;
-      };
-    }
-    frameCoords(spriteNum) {
-      var frameWidth = this.frameWidth;
-      var frameHeight = this.frameHeight;
-      const widthImgs = Math.floor(this.sprite.width / frameWidth);
-      var framex = spriteNum % widthImgs * frameWidth;
-      var framey = Math.floor(spriteNum / widthImgs) * frameHeight;
-      framex += this.offsetx;
-      framey += this.offsety;
-      return [framex, framey];
-    }
-    static create(fileName, widthImgs, heightImgs, offsetx = 0, offsety = 0) {
-      var spriteImg = new Image();
-      spriteImg.src = this.spriteDir + fileName;
-      const newSprite = new _HtmlRectSprite(spriteImg, widthImgs, heightImgs, offsetx, offsety);
-      spriteImg.onload = newSprite.setFrameDimensions(newSprite);
-      return newSprite;
-    }
-    static createWithDimensions(fileName, frameWidth, frameHeight, offsetx = 0, offsety = 0) {
-      var spriteImg = new Image();
-      spriteImg.src = this.spriteDir + fileName;
-      const newSprite = new _HtmlRectSprite(spriteImg, 0, 0, offsetx, offsety, frameWidth, frameHeight);
-      return newSprite;
-    }
-  };
-  var HtmlRectSprite = _HtmlRectSprite;
-  HtmlRectSprite.spriteDir = "../sprites/";
-
-  // src/engine/renderers/implementations/html/html-sprite.ts
-  var HtmlSprite = class {
-    constructor(fileName) {
-      this.spriteDir = "../sprites/";
-      this.frameCoordsCalculated = [];
-      var spriteImg = new Image();
-      spriteImg.src = this.spriteDir + fileName;
-      this.sprite = spriteImg;
-      spriteImg.onload = this.setFrameDimensions(this);
-      this.ctx = HtmlCanvas.createSingleton().ctx;
-    }
-    getRGBs(spriteNumber) {
-      throw new Error("Method not implemented.");
-    }
-    drawImage(spriteNumber, x, y, width, height) {
-      let fc = this.frameCoords(spriteNumber);
-    }
-    setFrameDimensions(sprite) {
-      return function() {
-        let canvas = document.createElement("canvas");
-        let context = canvas.getContext("2d");
-        canvas.width = sprite.sprite.width;
-        canvas.height = sprite.sprite.height;
-        context.drawImage(sprite.sprite, 0, 0);
-        let pixelData = context.getImageData(0, 0, sprite.sprite.width, sprite.sprite.height);
-        let averages = [];
-        for (let i = 0; i < pixelData.data.length; i += 4) {
-          let average = (pixelData.data[i] + pixelData.data[i + 1] + pixelData.data[i + 2] + pixelData.data[i + 3]) / 3;
-          averages.push(average);
-        }
-        let frames = sprite.findFrames(averages, pixelData.width, pixelData.height);
-        frames.forEach((f) => {
-          f.sort();
-          let highestY = Math.floor(f[0] / pixelData.width);
-          let lowestY = Math.floor(f[f.length - 1] / pixelData.width);
-          let height = lowestY - highestY;
-        });
-      };
-    }
-    findFrames(averagedPixelData, width, height) {
-      let stack = [];
-      let claimed = /* @__PURE__ */ new Set();
-      let results = [];
-      for (let i = 0; i < averagedPixelData.length; i++) {
-        if (claimed.has(i))
-          continue;
-        let average = averagedPixelData[i];
-        if (average <= 0)
-          continue;
-        stack.push(i);
-        let nextResult = [i];
-        while (stack.length > 0) {
-          if (stack.length > 6e4)
-            break;
-          let pixelIndex = stack.pop();
-          let average2 = averagedPixelData[pixelIndex];
-          if (pixelIndex >= averagedPixelData.length)
-            continue;
-          if (pixelIndex < 0)
-            continue;
-          if (average2 <= 0)
-            continue;
-          if (claimed.has(pixelIndex))
-            continue;
-          claimed.add(pixelIndex);
-          nextResult.push(pixelIndex);
-          stack.push(pixelIndex + 1);
-          stack.push(pixelIndex - 1);
-          stack.push(pixelIndex + width);
-          stack.push(pixelIndex - width);
-        }
-        results.push(nextResult);
-      }
-      return results;
-    }
-    frameCoords(spriteNum) {
-      return this.frameCoordsCalculated[spriteNum];
-    }
-    static create(fileName) {
-      return new HtmlSprite(fileName);
-    }
-  };
-
-  // src/engine/renderers/sprite-manager.ts
-  var _SpriteManager = class {
-    constructor(spriteDir = "../sprites/") {
-      this.sprites = {};
-      //sprite name to sprite
-      this.animations = {};
-      //animation name to animation
-      this.RGBs = {};
-    }
-    createSprite(fileName, widthImgs, heightImgs, offsetx, offsety) {
-      return HtmlRectSprite.create(fileName, widthImgs, heightImgs, offsetx, offsety);
-    }
-    addSprite(spriteName, sprite) {
-      this.sprites[spriteName] = sprite;
-    }
-    getSprite(spriteName) {
-      if (!(spriteName in this.sprites)) {
-        throw "sprite " + spriteName + " does not exist";
-      }
-      return this.sprites[spriteName];
-    }
-    loadSprite(spriteName, fileName, widthImgs, heightImgs, offsetx = 0, offsety = 0) {
-      var sprite = this.createSprite(fileName, widthImgs, heightImgs, offsetx, offsety);
-      this.addSprite(spriteName, sprite);
-    }
-    loadSpriteWithDimensions(spriteName, fileName, frameWidth, frameHeight, offsetx = 0, offsety = 0) {
-      const sprite = HtmlRectSprite.createWithDimensions(fileName, frameWidth, frameHeight, offsetx, offsety);
-      this.addSprite(spriteName, sprite);
-    }
-    loadSpriteOverlapping(spriteName, fileName) {
-      let sprite = HtmlSprite.create(fileName);
-    }
-    addAnimation(spriteName, animationName, spriteNumbers, delay = 1) {
-      var sa = SpriteAnimation.create(animationName, spriteName, spriteNumbers, delay);
-      if (!(spriteName in this.sprites)) {
-        throw "error adding animation " + animationName + ". spriteName " + spriteName + "doesn't exist. sprites must be added through addSprite method first";
-      }
-      this.animations[animationName] = sa;
-    }
-    getAnimation(animationName) {
-      if (animationName in this.animations) {
-        return this.animations[animationName];
-      } else {
-        return null;
-      }
-    }
-    getRGBs(animationName = null, spriteNumber = 0, width = null, height = null) {
-      let key = animationName + spriteNumber;
-      if (key in this.RGBs)
-        return this.RGBs[key];
-      let animation = this.animations[animationName];
-      let name = animation.spriteName;
-      let sprite = this.sprites[name];
-      if (!sprite.loaded) {
-        return sprite.getRGBs(width, height, spriteNumber);
-      }
-      this.RGBs[key] = sprite.getRGBs(width, height, spriteNumber);
-      return this.RGBs[key];
-    }
-    static create() {
-      return new _SpriteManager();
-    }
-    static singeltonCreate() {
-      if (_SpriteManager.spriteManager != null)
-        return _SpriteManager.spriteManager;
-      _SpriteManager.spriteManager = new _SpriteManager();
-      return _SpriteManager.spriteManager;
-    }
-  };
-  var SpriteManager = _SpriteManager;
-  SpriteManager.spriteManager = null;
-
   // src/components/wasd-component.ts
   var WasdComponent = class extends Component {
     constructor() {
@@ -1282,6 +990,25 @@ ${item.itemName}: ${item.itemQuantity}`;
     }
   };
 
+  // src/engine/renderers/sprite-animation.ts
+  var SpriteAnimation = class {
+    constructor(animationName, spriteName, spriteNumbers, delay) {
+      this.spriteNumbers = spriteNumbers;
+      this.animationName = animationName;
+      this.spriteName = spriteName;
+      this.delay = delay;
+    }
+    static create(animationName, spriteName, spriteNumbers, delay = 1) {
+      var sa = new SpriteAnimation(
+        animationName,
+        spriteName,
+        spriteNumbers,
+        delay
+      );
+      return sa;
+    }
+  };
+
   // src/metadata.ts
   var metadata = { "sprites/arm.png": { "height": 32, "width": 32, "type": "png" }, "sprites/BearSprites.webp": { "height": 384, "width": 384, "type": "webp" }, "sprites/blond.png": { "height": 259, "width": 64, "type": "png" }, "sprites/blondWalk.png": { "height": 336, "width": 317, "type": "png" }, "sprites/crops.png": { "height": 256, "width": 384, "type": "png" }, "sprites/deer/deer female calciumtrice.png": { "height": 160, "width": 160, "type": "png" }, "sprites/deer/deer male calciumtrice.png": { "height": 160, "width": 160, "type": "png" }, "sprites/fantasysprites.png": { "height": 512, "width": 384, "type": "png" }, "sprites/fantasysprites/CompSpriteC.png": { "height": 166, "width": 96, "type": "png" }, "sprites/fantasysprites/DwarfSprites.png": { "height": 256, "width": 384, "type": "png" }, "sprites/fantasysprites/DwarfSprites2.png": { "height": 256, "width": 384, "type": "png" }, "sprites/fantasysprites/EnemySpriteSheet1.png": { "height": 256, "width": 384, "type": "png" }, "sprites/fantasysprites/FDwarfSheet.png": { "height": 256, "width": 384, "type": "png" }, "sprites/fantasysprites/PeopleSpriteSheet2.png": { "height": 256, "width": 384, "type": "png" }, "sprites/fantasysprites/PeopleSpriteSheet3.png": { "height": 256, "width": 384, "type": "png" }, "sprites/fantasysprites/SpriteCompD.png": { "height": 188, "width": 96, "type": "png" }, "sprites/fireball.png": { "height": 512, "width": 512, "type": "png" }, "sprites/greg.png": { "height": 96, "width": 64, "type": "png" }, "sprites/greyactions.png": { "height": 96, "width": 64, "type": "png" }, "sprites/scrops.png": { "height": 672, "width": 391, "type": "png" }, "sprites/sword-7Soul1.png": { "height": 192, "width": 256, "type": "png" }, "sprites/tilesets/submission_daneeklu/character/grab_sheet.png": { "height": 256, "width": 384, "type": "png" }, "sprites/tilesets/submission_daneeklu/character/sword_sheet_128.png": { "height": 504, "width": 768, "type": "png" }, "sprites/tilesets/submission_daneeklu/magic/magic_firelion_big.png": { "height": 512, "width": 512, "type": "png" }, "sprites/tilesets/submission_daneeklu/magic/magic_firelion_sheet.png": { "height": 256, "width": 256, "type": "png" }, "sprites/tilesets/submission_daneeklu/magic/magic_iceshield_sheet.png": { "height": 512, "width": 512, "type": "png" }, "sprites/tilesets/submission_daneeklu/magic/magic_snakebite_sheet.png": { "height": 512, "width": 512, "type": "png" }, "sprites/tilesets/submission_daneeklu/magic/magic_torrentacle.png": { "height": 512, "width": 512, "type": "png" }, "sprites/tilesets/submission_daneeklu/magic/turtleshell_front.png": { "height": 512, "width": 512, "type": "png" }, "sprites/tilesets/submission_daneeklu/magic/turtleshell_side.png": { "height": 512, "width": 512, "type": "png" }, "sprites/tilesets/submission_daneeklu/magics_preview.gif": { "height": 128, "width": 128, "type": "gif" }, "sprites/tilesets/submission_daneeklu/tileset_preview.png": { "height": 576, "width": 768, "type": "png" }, "sprites/tilesets/submission_daneeklu/tilesets/farming_fishing.png": { "height": 640, "width": 640, "type": "png" }, "sprites/tilesets/submission_daneeklu/tilesets/fence_alt.png": { "height": 192, "width": 96, "type": "png" }, "sprites/tilesets/submission_daneeklu/tilesets/fence.png": { "height": 192, "width": 96, "type": "png" }, "sprites/tilesets/submission_daneeklu/tilesets/grass.png": { "height": 192, "width": 96, "type": "png" }, "sprites/tilesets/submission_daneeklu/tilesets/grassalt.png": { "height": 192, "width": 96, "type": "png" }, "sprites/tilesets/submission_daneeklu/tilesets/hole.png": { "height": 192, "width": 96, "type": "png" }, "sprites/tilesets/submission_daneeklu/tilesets/plants.png": { "height": 384, "width": 288, "type": "png" }, "sprites/tilesets/submission_daneeklu/tilesets/plowed_soil.png": { "height": 192, "width": 96, "type": "png" }, "sprites/tilesets/submission_daneeklu/tilesets/reed.png": { "height": 320, "width": 96, "type": "png" }, "sprites/tilesets/submission_daneeklu/tilesets/sand.png": { "height": 192, "width": 96, "type": "png" }, "sprites/tilesets/submission_daneeklu/tilesets/sandwater.png": { "height": 192, "width": 96, "type": "png" }, "sprites/tilesets/submission_daneeklu/tilesets/tallgrass.png": { "height": 192, "width": 96, "type": "png" }, "sprites/tilesets/submission_daneeklu/tilesets/wheat.png": { "height": 192, "width": 96, "type": "png" }, "sprites/tilesets/submission_daneeklu/tilesets/youngwheat.png": { "height": 192, "width": 96, "type": "png" }, "sprites/tilesets/submission_daneeklu/ui_preview.png": { "height": 192, "width": 224, "type": "png" }, "sprites/tilesets/submission_daneeklu/ui/scrollsandblocks.png": { "height": 320, "width": 544, "type": "png" }, "sprites/victoriansprites.png": { "height": 384, "width": 384, "type": "png" } };
 
@@ -1377,6 +1104,279 @@ ${item.itemName}: ${item.itemQuantity}`;
       return ac;
     }
   };
+
+  // src/engine/renderers/implementations/html/html-canvas.ts
+  var _HtmlCanvas = class {
+    constructor(canvas) {
+      this.canvas = canvas;
+      this.ctx = this.canvas.getContext("2d");
+    }
+    static createSingleton() {
+      if (canvas != null)
+        return _HtmlCanvas.canvas;
+      var canvas = document.getElementById("canvas");
+      if (canvas === null) {
+        canvas = document.createElement("canvas");
+      }
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      canvas.style.margin = "0";
+      canvas.style.padding = "0";
+      canvas.style.overflow = "hidden";
+      canvas.style.position = "fixed";
+      canvas.style.top = "0px";
+      canvas.style.left = "0px";
+      _HtmlCanvas.canvas = new _HtmlCanvas(canvas);
+      return _HtmlCanvas.canvas;
+    }
+  };
+  var HtmlCanvas = _HtmlCanvas;
+  HtmlCanvas.canvas = null;
+
+  // src/engine/renderers/implementations/html/html-rect-sprite.ts
+  var _HtmlRectSprite = class {
+    constructor(spriteImg, widthImgs, heightImgs, offsetx = 0, offsety = 0, frameWidth = 0, frameHeight = 0) {
+      this.frameWidth = 1;
+      this.frameHeight = 1;
+      this.loaded = false;
+      this.sprite = spriteImg;
+      this.widthImgs = widthImgs;
+      this.heightImgs = heightImgs;
+      this.offsetx = offsetx;
+      this.offsety = offsety;
+      this.frameWidth = frameWidth;
+      this.frameHeight = frameHeight;
+      this.canvas = HtmlCanvas.createSingleton();
+      this.ctx = HtmlCanvas.createSingleton().ctx;
+    }
+    getRGBs(width, height, spriteNumber) {
+      let fc = this.frameCoords(spriteNumber);
+      let canvas = document.createElement("canvas");
+      let context = canvas.getContext("2d");
+      if (width == null || height == null) {
+        canvas.width = this.frameWidth;
+        canvas.height = this.frameHeight;
+      } else {
+        canvas.width = width;
+        canvas.height = height;
+      }
+      context.clearRect(0, 0, canvas.width, canvas.height);
+      context.drawImage(
+        this.sprite,
+        fc[0],
+        fc[1],
+        this.frameWidth,
+        this.frameHeight,
+        0,
+        0,
+        canvas.width,
+        canvas.height
+      );
+      let pixelData = context.getImageData(0, 0, canvas.width, canvas.height);
+      return pixelData;
+    }
+    drawImage(spriteNumber, x, y, width, height) {
+      let fc = this.frameCoords(spriteNumber);
+      this.ctx.drawImage(
+        this.sprite,
+        fc[0],
+        fc[1],
+        this.frameWidth,
+        this.frameHeight,
+        x,
+        y,
+        width,
+        height
+      );
+    }
+    setFrameDimensions(sprite) {
+      return function() {
+        sprite.frameWidth = sprite.sprite.width / sprite.widthImgs;
+        sprite.frameHeight = sprite.sprite.height / sprite.heightImgs;
+        sprite.loaded = true;
+      };
+    }
+    frameCoords(spriteNum) {
+      var frameWidth = this.frameWidth;
+      var frameHeight = this.frameHeight;
+      const widthImgs = Math.floor(this.sprite.width / frameWidth);
+      var framex = spriteNum % widthImgs * frameWidth;
+      var framey = Math.floor(spriteNum / widthImgs) * frameHeight;
+      framex += this.offsetx;
+      framey += this.offsety;
+      return [framex, framey];
+    }
+    static create(fileName, widthImgs, heightImgs, offsetx = 0, offsety = 0) {
+      var spriteImg = new Image();
+      spriteImg.src = this.spriteDir + fileName;
+      const newSprite = new _HtmlRectSprite(spriteImg, widthImgs, heightImgs, offsetx, offsety);
+      spriteImg.onload = newSprite.setFrameDimensions(newSprite);
+      return newSprite;
+    }
+    static createWithDimensions(fileName, frameWidth, frameHeight, offsetx = 0, offsety = 0) {
+      var spriteImg = new Image();
+      spriteImg.src = this.spriteDir + fileName;
+      const newSprite = new _HtmlRectSprite(spriteImg, 0, 0, offsetx, offsety, frameWidth, frameHeight);
+      return newSprite;
+    }
+  };
+  var HtmlRectSprite = _HtmlRectSprite;
+  HtmlRectSprite.spriteDir = "../sprites/";
+
+  // src/engine/renderers/implementations/html/html-sprite.ts
+  var HtmlSprite = class {
+    constructor(fileName) {
+      this.spriteDir = "../sprites/";
+      this.frameCoordsCalculated = [];
+      var spriteImg = new Image();
+      spriteImg.src = this.spriteDir + fileName;
+      this.sprite = spriteImg;
+      spriteImg.onload = this.setFrameDimensions(this);
+      this.ctx = HtmlCanvas.createSingleton().ctx;
+    }
+    getRGBs(spriteNumber) {
+      throw new Error("Method not implemented.");
+    }
+    drawImage(spriteNumber, x, y, width, height) {
+      let fc = this.frameCoords(spriteNumber);
+    }
+    setFrameDimensions(sprite) {
+      return function() {
+        let canvas = document.createElement("canvas");
+        let context = canvas.getContext("2d");
+        canvas.width = sprite.sprite.width;
+        canvas.height = sprite.sprite.height;
+        context.drawImage(sprite.sprite, 0, 0);
+        let pixelData = context.getImageData(0, 0, sprite.sprite.width, sprite.sprite.height);
+        let averages = [];
+        for (let i = 0; i < pixelData.data.length; i += 4) {
+          let average = (pixelData.data[i] + pixelData.data[i + 1] + pixelData.data[i + 2] + pixelData.data[i + 3]) / 3;
+          averages.push(average);
+        }
+        let frames = sprite.findFrames(averages, pixelData.width, pixelData.height);
+        frames.forEach((f) => {
+          f.sort();
+          let highestY = Math.floor(f[0] / pixelData.width);
+          let lowestY = Math.floor(f[f.length - 1] / pixelData.width);
+          let height = lowestY - highestY;
+        });
+      };
+    }
+    findFrames(averagedPixelData, width, height) {
+      let stack = [];
+      let claimed = /* @__PURE__ */ new Set();
+      let results = [];
+      for (let i = 0; i < averagedPixelData.length; i++) {
+        if (claimed.has(i))
+          continue;
+        let average = averagedPixelData[i];
+        if (average <= 0)
+          continue;
+        stack.push(i);
+        let nextResult = [i];
+        while (stack.length > 0) {
+          if (stack.length > 6e4)
+            break;
+          let pixelIndex = stack.pop();
+          let average2 = averagedPixelData[pixelIndex];
+          if (pixelIndex >= averagedPixelData.length)
+            continue;
+          if (pixelIndex < 0)
+            continue;
+          if (average2 <= 0)
+            continue;
+          if (claimed.has(pixelIndex))
+            continue;
+          claimed.add(pixelIndex);
+          nextResult.push(pixelIndex);
+          stack.push(pixelIndex + 1);
+          stack.push(pixelIndex - 1);
+          stack.push(pixelIndex + width);
+          stack.push(pixelIndex - width);
+        }
+        results.push(nextResult);
+      }
+      return results;
+    }
+    frameCoords(spriteNum) {
+      return this.frameCoordsCalculated[spriteNum];
+    }
+    static create(fileName) {
+      return new HtmlSprite(fileName);
+    }
+  };
+
+  // src/engine/renderers/sprite-manager.ts
+  var _SpriteManager = class {
+    constructor(spriteDir = "../sprites/") {
+      this.sprites = {};
+      //sprite name to sprite
+      this.animations = {};
+      //animation name to animation
+      this.RGBs = {};
+    }
+    createSprite(fileName, widthImgs, heightImgs, offsetx, offsety) {
+      return HtmlRectSprite.create(fileName, widthImgs, heightImgs, offsetx, offsety);
+    }
+    addSprite(spriteName, sprite) {
+      this.sprites[spriteName] = sprite;
+    }
+    getSprite(spriteName) {
+      if (!(spriteName in this.sprites)) {
+        throw "sprite " + spriteName + " does not exist";
+      }
+      return this.sprites[spriteName];
+    }
+    loadSprite(spriteName, fileName, widthImgs, heightImgs, offsetx = 0, offsety = 0) {
+      var sprite = this.createSprite(fileName, widthImgs, heightImgs, offsetx, offsety);
+      this.addSprite(spriteName, sprite);
+    }
+    loadSpriteWithDimensions(spriteName, fileName, frameWidth, frameHeight, offsetx = 0, offsety = 0) {
+      const sprite = HtmlRectSprite.createWithDimensions(fileName, frameWidth, frameHeight, offsetx, offsety);
+      this.addSprite(spriteName, sprite);
+    }
+    loadSpriteOverlapping(spriteName, fileName) {
+      let sprite = HtmlSprite.create(fileName);
+    }
+    addAnimation(spriteName, animationName, spriteNumbers, delay = 1) {
+      var sa = SpriteAnimation.create(animationName, spriteName, spriteNumbers, delay);
+      if (!(spriteName in this.sprites)) {
+        throw "error adding animation " + animationName + ". spriteName " + spriteName + "doesn't exist. sprites must be added through addSprite method first";
+      }
+      this.animations[animationName] = sa;
+    }
+    getAnimation(animationName) {
+      if (animationName in this.animations) {
+        return this.animations[animationName];
+      } else {
+        return null;
+      }
+    }
+    getRGBs(animationName = null, spriteNumber = 0, width = null, height = null) {
+      let key = animationName + spriteNumber;
+      if (key in this.RGBs)
+        return this.RGBs[key];
+      let animation = this.animations[animationName];
+      let name = animation.spriteName;
+      let sprite = this.sprites[name];
+      if (!sprite.loaded) {
+        return sprite.getRGBs(width, height, spriteNumber);
+      }
+      this.RGBs[key] = sprite.getRGBs(width, height, spriteNumber);
+      return this.RGBs[key];
+    }
+    static create() {
+      return new _SpriteManager();
+    }
+    static singeltonCreate() {
+      if (_SpriteManager.spriteManager != null)
+        return _SpriteManager.spriteManager;
+      _SpriteManager.spriteManager = new _SpriteManager();
+      return _SpriteManager.spriteManager;
+    }
+  };
+  var SpriteManager = _SpriteManager;
+  SpriteManager.spriteManager = null;
 
   // src/builders/build-components.ts
   function createComponentFactory() {

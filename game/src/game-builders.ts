@@ -14,7 +14,6 @@ import { PositionSystem } from "./systems/position-system";
 import { ProjectileSystem } from "./systems/projectile-system";
 import { WasdSystem } from "./systems/wasd-system";
 import { Game } from './engine/game';
-import { AnimationComponent } from "./components/animation-component";
 import { ClickableComponent } from "./components/clickable-component";
 import { CropComponent } from "./components/crop-component";
 import { FightComponent } from "./components/fight-component";
@@ -34,6 +33,7 @@ import { PhaserAnimationComponent } from "./components/phaser-components/phaser-
 import { PhaserRenderSystem } from "./systems/phaser-systems/phaser-render-system";
 import * as Pixi from "pixi.js";
 import { buildPhaserDependencies } from "./builders/dependency-builder";
+import { AnimationComponent } from "./engine/component/components/animation/animation-component";
 function sharedComponents(game:Game){
     game.registerComponent(WasdComponent);
     game.registerComponent(CropComponent);
