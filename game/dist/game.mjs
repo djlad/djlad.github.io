@@ -2191,7 +2191,6 @@ ${item.itemName}: ${item.itemQuantity}`;
       this._entities = entities;
     }
     update(delta, framesPassed) {
-      this.performance = performance.now();
       this.eventManager.update();
       for (var i = 0; i < this.entities.length; i++) {
         const args = new EntityUpdateArgs();
@@ -2221,14 +2220,11 @@ ${item.itemName}: ${item.itemQuantity}`;
         return pa.y - pb.y;
       });
       this.cleanDestroyedEntities();
-      if (this.counter % 10 == 0) {
-        this.frameTime = 100 * (performance.now() - this.performance) / (1e3 / this.targetFps);
-      } else
-        performance.now();
       this.renderer.text(Math.floor(this.frameTime).toString(), 0, 0, 1e3);
       this.counter = (this.counter + 1) % 100;
     }
     step(delta) {
+      this.performance = performance.now();
       delta = delta / (1e3 / this.targetFps);
       this.frameTracker += delta;
       if (this.frameTracker > 1) {
@@ -2237,6 +2233,7 @@ ${item.itemName}: ${item.itemQuantity}`;
       } else {
         this.update(delta, 0);
       }
+      this.frameTime = performance.now() - this.performance;
     }
     loop(time) {
       const delta = (time - this.lastTime) / (1e3 / this.targetFps);

@@ -63,7 +63,6 @@ export class Game {
     phaserGame:PhaserGame;
     update(delta:number, framesPassed:number){
         // this.renderer.cbox();
-        this.performance = performance.now();
         this.eventManager.update();
         for(var i=0;i<this.entities.length;i++){
             const args = new EntityUpdateArgs();
@@ -96,13 +95,11 @@ export class Game {
             return pa.y - pb.y;
         });
         this.cleanDestroyedEntities();
-        if (this.counter%10==0){
-            this.frameTime = 100*(performance.now() - this.performance)/(1000/this.targetFps)
-        }else performance.now();
         this.renderer.text(Math.floor(this.frameTime).toString(),0,0, 1000);
         this.counter = (this.counter + 1)%100;
     }
     step(delta:number){
+        this.performance = performance.now();
         delta = delta/(1000/this.targetFps);
         this.frameTracker += delta;
         if (this.frameTracker > 1){
@@ -111,6 +108,7 @@ export class Game {
         } else {
             this.update(delta, 0);
         }
+        this.frameTime = performance.now() - this.performance;
     }
     private loop(time:number){
         const delta = (time - this.lastTime)/(1000/this.targetFps);
