@@ -1,5 +1,4 @@
 import { PositionComponent } from '../engine/component/components/position/position-component';
-import { AnimationComponent } from '../components/animation-component';
 import { WasdComponent } from '../components/wasd-component';
 import { CropComponent } from '../components/crop-component';
 import { ProjectileComponent } from '../components/projectile-component';
@@ -19,6 +18,7 @@ import { TileComponent } from '../components/tile-component/tile-component';
 import { ClickableComponent } from '../components/clickable-component';
 import { PhaserPositionComponent } from '../components/phaser-components/phaser-position-component';
 import { PhaserAnimationComponent } from '../components/phaser-components/phaser-animation-component';
+import { AnimationComponent } from '../engine/component/components/animation/animation-component';
 
 export function createComponentFactory():ComponentFactory{
     var cf:ComponentFactory = new ComponentFactory();
