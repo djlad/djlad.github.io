@@ -16,9 +16,9 @@ import { PrimitiveComponent } from '../components/primitive-component';
 import { TransitionComponent } from '../components/transitions/transition-component';
 import { TileComponent } from '../components/tile-component/tile-component';
 import { ClickableComponent } from '../components/clickable-component';
-import { PhaserPositionComponent } from '../components/phaser-components/phaser-position-component';
-import { PhaserAnimationComponent } from '../components/phaser-components/phaser-animation-component';
 import { AnimationComponent } from '../engine/component/components/animation/animation-component';
+import { PhaserAnimationComponent } from '../engine/phaser-integration/phaser-components/phaser-animation-component';
+import { PhaserPositionComponent } from '../engine/phaser-integration/phaser-components/phaser-position-component';
 
 export function createComponentFactory():ComponentFactory{
     var cf:ComponentFactory = new ComponentFactory();

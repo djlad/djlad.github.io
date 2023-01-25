@@ -1,13 +1,10 @@
-import { Game } from "../../engine/game";
-import { Component } from "../../engine/component/component";
-import { Entity } from "../../engine/entity/entity";
-import { EntityUpdateArgs } from "../../engine/entity/entity-update-args";
-import { SpriteAnimation } from "../../engine/renderers/sprite-animation";
-import { SpriteManager } from "../../engine/renderers/sprite-manager";
-import { PhaserSpriteManager } from "../../engine/phaser-integration/phaser-sprite-manager";
-import { ISpriteLoader } from "../../engine/renderers/isprite-loader";
-import { PhaserGame } from "../../engine/phaser-integration/phaser-game";
-import { IAnimationComponent } from "../../engine/component/components/animation/ianimation-component";
+import { Component } from "../../component/component";
+import { IAnimationComponent } from "../../component/components/animation/ianimation-component";
+import { Entity } from "../../entity/entity";
+import { EntityUpdateArgs } from "../../entity/entity-update-args";
+import { ISpriteLoader } from "../../renderers/isprite-loader";
+import { PhaserGame } from "../phaser-game";
+import { PhaserSpriteManager } from "../phaser-sprite-manager";
 
 export class PhaserAnimationComponent extends Component implements IAnimationComponent{
     animationName: string;

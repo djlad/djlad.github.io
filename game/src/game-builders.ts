@@ -27,15 +27,15 @@ import { ProjectileComponent } from "./components/projectile-component";
 import { TileComponent } from "./components/tile-component/tile-component";
 import { TransitionComponent } from "./components/transitions/transition-component";
 import { WasdComponent } from "./components/wasd-component";
-import { PhaserPositionComponent } from "./components/phaser-components/phaser-position-component";
 import { PhaserSpriteManager } from "./engine/phaser-integration/phaser-sprite-manager";
-import { PhaserAnimationComponent } from "./components/phaser-components/phaser-animation-component";
-import { PhaserRenderSystem } from "./systems/phaser-systems/phaser-render-system";
+import { PhaserRenderSystem } from "./engine/phaser-integration/phaser-systems/phaser-render-system";
 import { buildPhaserDependencies } from "./builders/phaser-dependency-builder";
 import { AnimationComponent } from "./engine/component/components/animation/animation-component";
 import { PlaceItemComponent } from "./components/place-item/place-item-component";
 import { CropHarvesterComponent } from "./components/crop-harvester-component";
 import { TextComponent } from "./components/text-component/text-component";
+import { PhaserAnimationComponent } from "./engine/phaser-integration/phaser-components/phaser-animation-component";
+import { PhaserPositionComponent } from "./engine/phaser-integration/phaser-components/phaser-position-component";
 function sharedComponents(game:Game){
     game.registerComponent(WasdComponent);
     game.registerComponent(CropComponent);

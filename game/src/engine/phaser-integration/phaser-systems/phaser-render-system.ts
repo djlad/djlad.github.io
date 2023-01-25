@@ -1,18 +1,18 @@
-import { Game } from "../../engine/game";
-import { AnimationComponent } from "../../components/animation-component";
-import { PositionComponent } from "../../engine/component/components/position/position-component";
-import { PrimitiveComponent } from "../../components/primitive-component";
-import { TextComponent } from "../../components/text-component/text-component";
-import { TextPlacement } from "../../components/text-component/text-placement";
-import { TileComponent } from "../../components/tile-component/tile-component";
-import { Entity } from "../../engine/entity/entity";
-import { Renderer } from "../../engine/renderers/render";
-import { RenderOptions } from "../../engine/renderers/render-options";
-import { EntitySystem } from "../../engine/system/system";
-import { SystemArgs } from "../../engine/system/system-args";
-import { FirstEntity } from "../../entities/first-entity";
-import { PhaserPositionComponent } from "../../components/phaser-components/phaser-position-component";
-import { PhaserAnimationComponent } from "../../components/phaser-components/phaser-animation-component";
+import { Game } from "../../game";
+import { AnimationComponent } from "../../../components/animation-component";
+import { PositionComponent } from "../../component/components/position/position-component";
+import { PrimitiveComponent } from "../../../components/primitive-component";
+import { TextComponent } from "../../../components/text-component/text-component";
+import { TextPlacement } from "../../../components/text-component/text-placement";
+import { TileComponent } from "../../../components/tile-component/tile-component";
+import { Entity } from "../../entity/entity";
+import { Renderer } from "../../renderers/render";
+import { RenderOptions } from "../../renderers/render-options";
+import { EntitySystem } from "../../system/system";
+import { SystemArgs } from "../../system/system-args";
+import { FirstEntity } from "../../../entities/first-entity";
+import { PhaserAnimationComponent } from "../phaser-components/phaser-animation-component";
+import { PhaserPositionComponent } from "../phaser-components/phaser-position-component";
 
 export class PhaserRenderSystem extends EntitySystem{
     /**

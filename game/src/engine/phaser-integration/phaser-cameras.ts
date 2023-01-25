@@ -1,7 +1,7 @@
-import { PhaserPositionComponent } from "../../components/phaser-components/phaser-position-component";
 import { IPositionComponent } from "../component/components/position/iposition-component";
 import { GameDependencies } from "../dependencies/game-dependencies";
 import { ICameras } from "../dependencies/icameras";
+import { PhaserPositionComponent } from "./phaser-components/phaser-position-component";
 import { PhaserGame } from "./phaser-game";
 import { PhaserGameDependencies } from "./phaser-game-dependencies";
 

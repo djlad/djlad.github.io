@@ -26,7 +26,6 @@ import { MapBuilderSystem } from './systems/map-builder-system';
 import { ClickSystem } from './systems/click-system';
 import { PhaserGame } from './engine/phaser-integration/phaser-game';
 import { createPhaserGame } from './game-builders';
-import { PhaserPositionComponent } from './components/phaser-components/phaser-position-component';
 import { AnimationComponent } from './engine/component/components/animation/animation-component';
 import { Entity } from './engine/entity/entity';
 
