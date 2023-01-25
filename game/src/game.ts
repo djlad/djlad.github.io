@@ -56,18 +56,13 @@ function createGame():Game{
 }
 
 function startGame(){
-    // let game:Game = createGame();
-    let game:Game = createPhaserGame();
+    let game:Game = createGame();
+    // let game:Game = createPhaserGame();
     game.entityFactory.componentFactory.createComponent("animation");
     game.addEntity("first");
     const player = makePlayer();
-    const phaserGame = PhaserGame.createSingleton();
-    phaserGame.mainScene.addCreator(()=>{
-        const playerPosition = <PhaserPositionComponent>player.getComponent("position");
-        const playerPhaserObj = playerPosition.phaserObject;
-        game.phaserGame = phaserGame;
-        game.phaserGame.mainScene.cameras.main.startFollow(playerPhaserObj);
-    })
+    const playerPosition = <PositionComponent>player.getComponent("position");
+    game.gameDependencies.cameras.setMainCamera(playerPosition);
 
     var villager = game.addEntity("villager");
     var component = <PositionComponent>villager.getComponent("position");
@@ -129,8 +124,7 @@ function startGame(){
         pc.y = 380;
         return player;
     }
-    // let intervalId:number = game.start();
-    phaserGame.start();
+    game.start();
     return game;
 }
 if (typeof window !== 'undefined')

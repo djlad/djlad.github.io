@@ -1,5 +1,4 @@
 import { EntitySystem } from '../engine/system/system';
-import { AnimationComponent } from '../components/animation-component';
 import { Entity } from '../engine/entity/entity';
 import { PositionComponent } from '../engine/component/components/position/position-component';
 import { Game } from '../engine/game';
@@ -15,14 +14,19 @@ import { PrimitiveComponent } from '../components/primitive-component';
 import { TileComponent } from '../components/tile-component/tile-component';
 import { Tile } from '../components/tile-component/tile';
 import { SystemArgs } from '../engine/system/system-args';
+import { ICameras } from '../engine/dependencies/icameras';
+import { IPositionComponent } from '../engine/component/components/position/iposition-component';
+import { AnimationComponent } from '../engine/component/components/animation/animation-component';
 
 export class RenderSystem extends EntitySystem{
+    private camera: ICameras;
     /**
      * used for drawing animation components
      */
     constructor(renderer:Renderer, game:Game){
         super(game);
         this.renderer = renderer;
+        this.camera = game.gameDependencies.cameras;
     }
     renderer:Renderer;
 
@@ -34,8 +38,7 @@ export class RenderSystem extends EntitySystem{
     apply(args:SystemArgs){
         const entity = args.entity;
         if (entity instanceof FirstEntity){
-            let player:Entity = this.game.getById(1);
-            this.centerCameraOn(player);
+            this.centerCameraOn(this.camera.center);
             this.renderer.cbox();
             this.renderTileSet(entity);
         }
@@ -97,8 +100,7 @@ export class RenderSystem extends EntitySystem{
         this.renderer.circle(Math.round(position.x), Math.round(position.y + position.h), 4);
     }
 
-    centerCameraOn(entity:Entity){
-            let position:PositionComponent = <PositionComponent>entity.getComponent("position");
+    centerCameraOn(position:IPositionComponent){
             this.renderer.setOffset([position.x + position.vx, position.y + position.vy]);
     }
 

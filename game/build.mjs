@@ -24,32 +24,47 @@ getDirectories("sprites", (err, files)=>{
     const imageMetaDataFilePath = "./src/metadata.ts";
     writeFileSync(imageMetaDataFilePath, "export const metadata:any = " + JSON.stringify(result));
 })
-build();
-function build(){
-    esbuild.build(
-    {
-        entryPoints: ["src/game.ts"],
-        bundle: true,
-        // outdir: "./dist",
-        outfile: "./dist/game.mjs",
-        watch: true,
-        // external: Object.keys(dependencies??[]).concat(Object.keys(peerDependencies??[])),
-        sourcemap: true,
-        target: ["chrome107"],
-        logLevel: 'info',
-        format:'iife',
-        platform: "browser",
-        define: {
-        },
-        external: [
-        ],
-        plugins:[
-            externalGlobalPlugin.externalGlobalPlugin({
-                'phaser': 'window.Phaser',
-              })
-        ]
-    }).catch((e)=>{
+
+const config = {
+    entryPoints: ["src/game.ts"],
+    bundle: true,
+    // outdir: "./dist",
+    outfile: "./dist/game.mjs",
+    watch: true,
+    // external: Object.keys(dependencies??[]).concat(Object.keys(peerDependencies??[])),
+    sourcemap: true,
+    target: ["chrome107"],
+    logLevel: 'info',
+    format:'iife',
+    platform: "browser",
+    define: {
+    },
+    external: [
+    ],
+    plugins:[
+        externalGlobalPlugin.externalGlobalPlugin({
+            'phaser': 'window.Phaser',
+          })
+    ]
+};
+
+function build(config){
+    esbuild.build(config).catch((e)=>{
         console.log(e);
         return process.exit(1);
     });
 }
+
+function watch(config){
+    config.watch = false;
+    esbuild.serve({
+        servedir:".",
+        port:8001
+    }, config).catch((e)=>{
+        console.log(e);
+        return process.exit(1);
+    });;
+}
+
+// build(config);
+watch(config);

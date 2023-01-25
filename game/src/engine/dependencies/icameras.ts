@@ -1,5 +1,6 @@
-import { PositionComponent } from "../component/components/position/position-component";
+import { IPositionComponent } from "../component/components/position/iposition-component";
 
 export interface ICameras {
-    // setMainCamera(positionComponent: PositionComponent):void;
+    center:IPositionComponent;
+    setMainCamera(positionComponent: IPositionComponent):void;
 }

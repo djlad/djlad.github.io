@@ -22,8 +22,8 @@ export class AnimationComponent extends Component implements IAnimationComponent
     private spriteNum:number=0;
     private spriteManager:SpriteManager;
     private currentDelay:number;
-    private filter: ImageData;
-    private isFiltered:boolean = false;
+    filter: ImageData;
+    isFiltered:boolean = false;
 
     getSpriteNumber(){
         var frameNum = this.frameNum;

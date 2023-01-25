@@ -31,8 +31,7 @@ import { PhaserPositionComponent } from "./components/phaser-components/phaser-p
 import { PhaserSpriteManager } from "./engine/phaser-integration/phaser-sprite-manager";
 import { PhaserAnimationComponent } from "./components/phaser-components/phaser-animation-component";
 import { PhaserRenderSystem } from "./systems/phaser-systems/phaser-render-system";
-import * as Pixi from "pixi.js";
-import { buildPhaserDependencies } from "./builders/dependency-builder";
+import { buildPhaserDependencies } from "./builders/phaser-dependency-builder";
 import { AnimationComponent } from "./engine/component/components/animation/animation-component";
 function sharedComponents(game:Game){
     game.registerComponent(WasdComponent);
@@ -89,13 +88,9 @@ export function createPhaserGame():Game{
     const phaserGame = PhaserGame.createSingleton();
     phaserGame.mainScene.addCreator((scene)=>{
         phaserGame.setUpdater((delta)=>{
-            const frameStart = performance.now();
             game.step(delta);
-            const stepTime = (performance.now() - frameStart)
-            if (stepTime > 2){
-                // console.log(`stepTime: ${stepTime}`);
-            }
         });
-    })
+    });
+    game.addStarter(()=>{phaserGame.start()});
     return game;
 }

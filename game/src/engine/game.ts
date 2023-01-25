@@ -12,6 +12,7 @@ import { PhaserGame } from './phaser-integration/phaser-game';
 import { ISpriteLoader } from './renderers/isprite-loader';
 import { GameDependencies } from './dependencies/game-dependencies';
 import { ComponentFactory } from './component/component-factory';
+import { GenericCameras } from './dependencies/generic-cameras';
 
 export class Game {
     spriteManager: any;
@@ -30,6 +31,8 @@ export class Game {
         deps.eventManager = EventManager.create();
         deps.componentFactory = ComponentFactory.create(deps);
         deps.entityFactory = EntityFactory.create(deps);
+        deps.spriteManager = deps.renderer.spriteManager;
+        deps.cameras = GenericCameras.create();
         var game = new Game(deps.entityFactory, deps.renderer, EventManager.create(), deps);
         return game;
     }
@@ -38,7 +41,7 @@ export class Game {
         var game = new Game(dependencies.entityFactory, dependencies.renderer, dependencies.eventManager, dependencies);
         return game;
     }
-
+    private starters:((games:Game)=>void)[] = [];
     private _entities:Entity[] = [];
     get entities():Entity[]{
         return this._entities;
@@ -117,7 +120,14 @@ export class Game {
         window.requestAnimationFrame((time)=>{this.loop(time)});
     }
     start():number{
-        console.log("starting game")
+        if (this.starters.length > 0){
+            console.log("starting game custom");
+            this.starters.forEach((starter)=>{
+                starter(this);
+            });
+            return;
+        }
+        console.log("starting game loop with requestAnimationFrame");
         window.requestAnimationFrame(()=>{
             this.loop(this.lastTime);
         });
@@ -126,6 +136,10 @@ export class Game {
 
     stop(){
         clearInterval(this.intervalId);
+    }
+
+    addStarter(starterFunc:()=>void){
+        this.starters.push(starterFunc);
     }
 
     addEntity(entityName:string){
