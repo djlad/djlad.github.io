@@ -8,15 +8,16 @@ import { ComponentFactory } from '../engine/component/component-factory';
 import { createComponentFactory } from '../builders/build-components';
 import { GameEvent } from '../engine/events/game-event';
 import { AnimationComponent } from '../engine/component/components/animation/animation-component';
+import { EntityRegistration } from '../engine/entity/entity-registration';
+import { GameDependencies } from '../engine/dependencies/game-dependencies';
 
-export class VillagerEntity extends Entity{
-    constructor(cf:ComponentFactory){
-        super(cf);
-        var animation:AnimationComponent = <AnimationComponent>this.addComponent("animation");
-        var position:PositionComponent = <PositionComponent>this.addComponent("position");
-        var fight:FightComponent = <FightComponent>this.addComponent("fight");
-        var health:HealthComponent = <HealthComponent>this.addComponent("health");
-        var neural:NeuralFightComponent = <NeuralFightComponent>this.addComponent("neural");
+export class VillagerEntity implements EntityRegistration{
+    create(gameDependcies: GameDependencies, entity: Entity){
+        var animation:AnimationComponent = <AnimationComponent>entity.addComponent("animation");
+        var position:PositionComponent = <PositionComponent>entity.addComponent("position");
+        var fight:FightComponent = <FightComponent>entity.addComponent("fight");
+        var health:HealthComponent = <HealthComponent>entity.addComponent("health");
+        var neural:NeuralFightComponent = <NeuralFightComponent>entity.addComponent("neural");
         
         position.width = 70;
         /*animation.setSprite("brownpuffgirl");
@@ -25,14 +26,6 @@ export class VillagerEntity extends Entity{
         let multiplier = 2.5;
         position.height *= multiplier * 1.1;
         position.width *= multiplier;*/
-    }
-
-    handleEvents(events:{[key:string]:GameEvent}){
-    }
-
-    static create():VillagerEntity{
-        let cf:ComponentFactory = createComponentFactory();
-        var entity = new VillagerEntity(cf);
         return entity;
     }
 }

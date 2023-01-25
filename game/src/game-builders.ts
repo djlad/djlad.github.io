@@ -33,6 +33,9 @@ import { PhaserAnimationComponent } from "./components/phaser-components/phaser-
 import { PhaserRenderSystem } from "./systems/phaser-systems/phaser-render-system";
 import { buildPhaserDependencies } from "./builders/phaser-dependency-builder";
 import { AnimationComponent } from "./engine/component/components/animation/animation-component";
+import { PlaceItemComponent } from "./components/place-item/place-item-component";
+import { CropHarvesterComponent } from "./components/crop-harvester-component";
+import { TextComponent } from "./components/text-component/text-component";
 function sharedComponents(game:Game){
     game.registerComponent(WasdComponent);
     game.registerComponent(CropComponent);
@@ -46,6 +49,9 @@ function sharedComponents(game:Game){
     game.registerComponent(TransitionComponent);
     game.registerComponent(TileComponent);
     game.registerComponent(ClickableComponent);
+    game.registerComponent(PlaceItemComponent);
+    game.registerComponent(CropHarvesterComponent);
+    game.registerComponent(TextComponent);
 
 }
 function buildComponents(game:Game){

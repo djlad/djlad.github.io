@@ -13,6 +13,7 @@ import { ISpriteLoader } from './renderers/isprite-loader';
 import { GameDependencies } from './dependencies/game-dependencies';
 import { ComponentFactory } from './component/component-factory';
 import { GenericCameras } from './dependencies/generic-cameras';
+import { EntityRegistration } from './entity/entity-registration';
 
 export class Game {
     spriteManager: any;
@@ -180,7 +181,7 @@ export class Game {
         this.systems.push(system);
     }
 
-    registerEntity(entityName:string, EntityClass:any):void{
+    registerEntity(entityName:string, EntityClass:EntityRegistration):void{
         this.entityFactory.registerEntity(entityName, EntityClass);
     }
 

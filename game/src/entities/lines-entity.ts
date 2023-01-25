@@ -5,18 +5,12 @@ import { ComponentFactory } from "../engine/component/component-factory";
 import { Entity } from "../engine/entity/entity";
 import { GameEvent } from "../engine/events/game-event";
 import { CropEntity } from "./crop-entity";
+import { EntityRegistration } from "../engine/entity/entity-registration";
+import { GameDependencies } from "../engine/dependencies/game-dependencies";
 
-export class LinesEntity extends Entity{
-    constructor(cf:ComponentFactory){
-        super(cf);
-        var position:PositionComponent = <PositionComponent>this.addComponent("position");
-    }
-
-    handleEvents(events:{[key:string]:GameEvent}){
-    }
-    
-    static create(){
-        let cf:ComponentFactory = createComponentFactory();
-        return new CropEntity(cf);
+export class LinesEntity implements EntityRegistration{
+    create(gameDependencies: GameDependencies, entity: Entity): Entity {
+        var position:PositionComponent = <PositionComponent>entity.addComponent("position");
+        return entity;
     }
 }

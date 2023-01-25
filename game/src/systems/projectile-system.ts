@@ -31,7 +31,7 @@ export class ProjectileSystem extends EntitySystem {
     }
 
     fireProjectile(entity:Entity, vx:number=null, vy:number=null){
-        let projectile:ProjectileEntity = <ProjectileEntity>this.game.addEntity("projectile");
+        let projectile = this.game.addEntity("projectile");
         let projectileComponent:ProjectileComponent = <ProjectileComponent>projectile.getComponent("projectile");
         let projPosition:PositionComponent = <PositionComponent>projectile.getComponent("position");
         

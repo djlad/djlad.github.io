@@ -2,6 +2,7 @@ import { Entity } from './entity';
 import { ComponentFactory } from '../component/component-factory';
 import { Component } from '../component/component';
 import { GameDependencies } from '../dependencies/game-dependencies';
+import { EntityRegistration } from './entity-registration';
 
 export class EntityFactory {
     constructor(gameDependencies:GameDependencies){
@@ -10,15 +11,11 @@ export class EntityFactory {
         this.dependencies = gameDependencies;
     }
     dependencies: GameDependencies;
-    entityTypes:{[key:string]:any}={};
+    entityTypes:{[key:string]:EntityRegistration}={};
     componentFactory:ComponentFactory;
 
-    registerEntity(componentName:string, EntityClass:any){
-        if (EntityClass.prototype instanceof Entity){
-            this.entityTypes[componentName] = EntityClass;
-        } else {
-            console.log("EntityClass must extend class Entity");
-        }
+    registerEntity(componentName:string, EntityClass:EntityRegistration){
+        this.entityTypes[componentName] = EntityClass;
     }
 
     registerComponent(componentClass:any){
@@ -27,7 +24,8 @@ export class EntityFactory {
 
     create(entityName:string){
         let entityClass = this.entityTypes[entityName];
-        return this.entityTypes[entityName].create(this.dependencies);
+        const entity = Entity.create(this.dependencies);
+        return this.entityTypes[entityName].create(this.dependencies, entity);
     }
 
     static create(gameDependencies:GameDependencies):EntityFactory{

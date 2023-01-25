@@ -46,7 +46,7 @@ export class RenderSystem extends EntitySystem{
         this.renderText(entity);
         this.renderPrimitive(entity);
     }
-    renderTileSet(entity: FirstEntity) {
+    renderTileSet(entity: Entity) {
         let tileComp = <TileComponent>entity.getComponent("tile");
         let tiles = tileComp.tiles;
         let options:RenderOptions = new RenderOptions();

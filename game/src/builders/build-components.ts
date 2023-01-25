@@ -22,10 +22,10 @@ import { AnimationComponent } from '../engine/component/components/animation/ani
 
 export function createComponentFactory():ComponentFactory{
     var cf:ComponentFactory = new ComponentFactory();
-    cf.registerComponent(AnimationComponent);
-    // cf.registerComponent(PhaserAnimationComponent);
-    // cf.registerComponent(PhaserPositionComponent);
-    cf.registerComponent(PositionComponent);
+    // cf.registerComponent(AnimationComponent);
+    cf.registerComponent(PhaserAnimationComponent);
+    cf.registerComponent(PhaserPositionComponent);
+    // cf.registerComponent(PositionComponent);
     cf.registerComponent(WasdComponent);
     cf.registerComponent(CropComponent);
     cf.registerComponent(ProjectileComponent);
@@ -59,4 +59,5 @@ export function buildComponents(game:Game):void{
     game.registerComponent(TransitionComponent);
     game.registerComponent(TileComponent);
     game.registerComponent(ClickableComponent);
+    game.registerComponent(PlaceItemComponent);
 }

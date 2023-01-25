@@ -2,8 +2,9 @@ import { ComponentFactory } from '../component/component-factory';
 import { Component } from '../component/component';
 import { GameEvent } from '../events/game-event';
 import { EntityUpdateArgs } from './entity-update-args';
+import { GameDependencies } from '../dependencies/game-dependencies';
 
-export abstract class Entity {
+export class Entity {
     constructor(componentFactory:ComponentFactory){
         this.componentFactory = componentFactory;
         Entity.id++
@@ -43,13 +44,11 @@ export abstract class Entity {
         }
     }
 
-    abstract handleEvents(events:{[key:string]:GameEvent}):void;
-    
-    static create():Entity{
-        //var cf:ComponentFactory = ComponentFactory.create();
-        //var entity:Entity = new this(cf);
-        //return entity;
-        return null;
+    handleEvents(events:{[key:string]:GameEvent}):void {};
+    public static create(gameDependcies:GameDependencies){
+        gameDependcies.checkDependency(gameDependcies.componentFactory);
+        const cf = gameDependcies.componentFactory;
+        return new Entity(cf);
     }
 }
 

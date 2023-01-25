@@ -8,24 +8,17 @@ import { ComponentFactory } from '../engine/component/component-factory';
 import { createComponentFactory } from '../builders/build-components';
 import { GameEvent } from '../engine/events/game-event';
 import { AnimationComponent } from '../engine/component/components/animation/animation-component';
+import { EntityRegistration } from '../engine/entity/entity-registration';
+import { GameDependencies } from '../engine/dependencies/game-dependencies';
 
-export class DeerEntity extends Entity{
-    constructor(cf:ComponentFactory){
-        super(cf);
-        var animation:AnimationComponent = <AnimationComponent>this.addComponent("animation");
-        var position:PositionComponent = <PositionComponent>this.addComponent("position");
+export class DeerEntity implements EntityRegistration{
+    create(gameDependencies: GameDependencies, entity: Entity): Entity {
+        var animation:AnimationComponent = <AnimationComponent>entity.addComponent("animation");
+        var position:PositionComponent = <PositionComponent>entity.addComponent("position");
         animation.setSprite("deer");
         
         position.width = 110;
         position.height = 110;
-    }
-
-    handleEvents(events:{[key:string]:GameEvent}){
-    }
-
-    static create():DeerEntity{
-        let cf:ComponentFactory = createComponentFactory();
-        var entity = new DeerEntity(cf);
         return entity;
     }
 }

@@ -13,15 +13,15 @@ import { UIPanelEntity } from "../entities/ui-panel-entity";
 
 
 export function buildEntities(game:Game):void{
-    game.registerEntity("player", PlayerEntity);
-    game.registerEntity("villager", VillagerEntity);
-    game.registerEntity("crop", CropEntity);
-    game.registerEntity("first", FirstEntity);
-    game.registerEntity("projectile", ProjectileEntity);
-    game.registerEntity("inventoryItem", InventoryItemEntity);
-    game.registerEntity("particle", ParticleEntity);
-    game.registerEntity("particles", ParticlesEntity);
-    game.registerEntity("click", ClickableEntity);
-    game.registerEntity("deer", DeerEntity);
-    game.registerEntity("uipanel", UIPanelEntity);
+    game.registerEntity("player", new PlayerEntity());
+    game.registerEntity("villager", new VillagerEntity());
+    game.registerEntity("crop", new CropEntity());
+    game.registerEntity("first", new FirstEntity());
+    game.registerEntity("projectile", new ProjectileEntity());
+    game.registerEntity("inventoryItem", new InventoryItemEntity());
+    game.registerEntity("particle", new ParticleEntity());
+    game.registerEntity("particles", new ParticlesEntity());
+    game.registerEntity("click", new ClickableEntity());
+    game.registerEntity("deer", new DeerEntity());
+    game.registerEntity("uipanel", new UIPanelEntity());
 }

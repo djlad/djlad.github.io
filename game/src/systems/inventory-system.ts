@@ -31,7 +31,7 @@ export class InventorySystem extends EntitySystem {
         }
         let itemSlots:InventoryItem[] = inventory.getItems();
         for(let i:number=0;i<inventory.inventoryItemEntities.length;i++){
-            let inventoryItem:InventoryItemEntity;
+            let inventoryItem:Entity;
             let itemPosition:PositionComponent;
             inventoryItem = inventory.inventoryItemEntities[i];
             itemPosition = <PositionComponent>inventoryItem.getComponent("position");

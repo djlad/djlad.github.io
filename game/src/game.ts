@@ -28,6 +28,7 @@ import { PhaserGame } from './engine/phaser-integration/phaser-game';
 import { createPhaserGame } from './game-builders';
 import { PhaserPositionComponent } from './components/phaser-components/phaser-position-component';
 import { AnimationComponent } from './engine/component/components/animation/animation-component';
+import { Entity } from './engine/entity/entity';
 
 declare var synaptic:any;
 export declare var g:Game;
@@ -56,8 +57,8 @@ function createGame():Game{
 }
 
 function startGame(){
-    let game:Game = createGame();
-    // let game:Game = createPhaserGame();
+    // let game:Game = createGame();
+    let game:Game = createPhaserGame();
     game.entityFactory.componentFactory.createComponent("animation");
     game.addEntity("first");
     const player = makePlayer();
@@ -82,7 +83,7 @@ function startGame(){
     deerPos.x = 500;
     deerPos.y = 100;
 
-    let particle: ParticleEntity = <ParticleEntity> game.addEntity("particles");
+    let particle: Entity = game.addEntity("particles");
     let particleC = <ParticleComponent>particle.getComponent("particles");
     particleC.targetParticles = 4;
     let pPos = <PositionComponent>particle.getComponent("position");
@@ -96,7 +97,7 @@ function startGame(){
     placeField(650,600, "onion", 50)
     // setTimeout(makePlayer, 1000);
     function placeField(x:number,y:number, cropName:string, d:number=50, width:number=5){
-        var crop:CropEntity;
+        var crop:Entity;
         var cc:CropComponent;
 
         for(var i:number=0;i<width;i++){

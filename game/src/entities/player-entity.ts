@@ -9,20 +9,21 @@ import { GameEvent } from '../engine/events/game-event';
 import { CropHarvesterComponent } from '../components/crop-harvester-component';
 import { ParticleComponent } from '../components/particle-componet';
 import { AnimationComponent } from '../engine/component/components/animation/animation-component';
+import { GameDependencies } from '../engine/dependencies/game-dependencies';
+import { EntityRegistration } from '../engine/entity/entity-registration';
 
-export class PlayerEntity extends Entity{
-    constructor(componentFactory:ComponentFactory){
-        super(componentFactory);
-        var animation:AnimationComponent = <AnimationComponent>this.addComponent("animation");
-        var position:PositionComponent = <PositionComponent>this.addComponent("position");
-        var wasd:WasdComponent = <WasdComponent>this.addComponent("wasd");
-        var inventory:InventoryComponent = <InventoryComponent>this.addComponent("inventory");
-        let placeItem:PlaceItemComponent = <PlaceItemComponent>this.addComponent("placeItem");
+export class PlayerEntity implements EntityRegistration{
+    create(gameDependencies: GameDependencies, entity: Entity): Entity {
+        var animation:AnimationComponent = <AnimationComponent>entity.addComponent("animation");
+        var position:PositionComponent = <PositionComponent>entity.addComponent("position");
+        var wasd:WasdComponent = <WasdComponent>entity.addComponent("wasd");
+        var inventory:InventoryComponent = <InventoryComponent>entity.addComponent("inventory");
+        let placeItem:PlaceItemComponent = <PlaceItemComponent>entity.addComponent("placeItem");
         let cropHarvester:CropHarvesterComponent;
-        cropHarvester = <CropHarvesterComponent>this.addComponent("cropHarvester");
-        let particles = <ParticleComponent>this.addComponent("particles");
+        cropHarvester = <CropHarvesterComponent>entity.addComponent("cropHarvester");
+        let particles = <ParticleComponent>entity.addComponent("particles");
         particles.targetParticles = 0;
-        this.addComponent("transition");
+        entity.addComponent("transition");
         
         var sprite:string = "grey";
         // var sprite:string = "greythrow";
@@ -44,14 +45,6 @@ export class PlayerEntity extends Entity{
         let multi = 2.4
         position.width *= multi
         position.height *= multi
-    }
-
-    handleEvents(events:{[key:string]:GameEvent}){
-    }
-
-    static create():PlayerEntity{
-        let cf:ComponentFactory = createComponentFactory();
-        var entity = new PlayerEntity(cf);
         return entity;
     }
 }

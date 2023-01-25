@@ -25,7 +25,7 @@ export class InventoryComponent extends Component {
     private itemSlots:InventoryItem[] = [];
     private selectedItemSlot:number=0;
     private itemRegistry:InventoryItemRegistry;
-    inventoryItemEntities:InventoryItemEntity[] = [];//inventory item entities that appear on screen
+    inventoryItemEntities:Entity[] = [];//inventory item entities that appear on screen
 
     hashInventoryToString():void{
         let inventoryString:string = "Inventory:";
@@ -101,7 +101,7 @@ export class InventoryComponent extends Component {
     }
     update(entity:Entity):void{
         for(let i:number=0;i<this.inventoryItemEntities.length;i++){
-            let inventoryItemEntity:InventoryItemEntity = this.inventoryItemEntities[i];
+            let inventoryItemEntity = this.inventoryItemEntities[i];
             let spriteComponent:AnimationComponent;
             spriteComponent = <AnimationComponent>inventoryItemEntity.getComponent("animation");
             let item:InventoryItem = this.itemSlots[i];
