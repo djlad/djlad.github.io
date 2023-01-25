@@ -25,15 +25,17 @@ import { ParticleComponent } from './components/particle-componet';
 import { MapBuilderSystem } from './systems/map-builder-system';
 import { ClickSystem } from './systems/click-system';
 import { PhaserGame } from './engine/phaser-integration/phaser-game';
-import { createPhaserGame } from './game-builders';
+import { createPhaserGameGeneric } from './game-builders';
 import { AnimationComponent } from './engine/component/components/animation/animation-component';
 import { Entity } from './engine/entity/entity';
 
 declare var synaptic:any;
 export declare var g:Game;
 
-function createGame():Game{
-    let game:Game = Game.create()
+function createGame(game:Game=null):Game{
+    if (game == null){
+        game = Game.create()
+    }
     game.addSystem(WasdSystem.create(game));
     game.addSystem(CropSystem.create(game));
     game.addSystem(CollisionSystem.create(game));
@@ -56,8 +58,8 @@ function createGame():Game{
 }
 
 function startGame(){
-    // let game:Game = createGame();
-    let game:Game = createPhaserGame();
+    let game:Game = createGame();
+    // let game:Game = createPhaserGameGeneric();
     game.entityFactory.componentFactory.createComponent("animation");
     game.addEntity("first");
     const player = makePlayer();

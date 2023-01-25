@@ -29,13 +29,14 @@ import { TransitionComponent } from "./components/transitions/transition-compone
 import { WasdComponent } from "./components/wasd-component";
 import { PhaserSpriteManager } from "./engine/phaser-integration/phaser-sprite-manager";
 import { PhaserRenderSystem } from "./engine/phaser-integration/phaser-systems/phaser-render-system";
-import { buildPhaserDependencies } from "./builders/phaser-dependency-builder";
+import { buildPhaserDependencies } from "./engine/phaser-integration/phaser-dependency-builder";
 import { AnimationComponent } from "./engine/component/components/animation/animation-component";
 import { PlaceItemComponent } from "./components/place-item/place-item-component";
 import { CropHarvesterComponent } from "./components/crop-harvester-component";
 import { TextComponent } from "./components/text-component/text-component";
 import { PhaserAnimationComponent } from "./engine/phaser-integration/phaser-components/phaser-animation-component";
 import { PhaserPositionComponent } from "./engine/phaser-integration/phaser-components/phaser-position-component";
+import { createPhaserGame } from "./engine/phaser-integration/phaser-builder";
 function sharedComponents(game:Game){
     game.registerComponent(WasdComponent);
     game.registerComponent(CropComponent);
@@ -61,18 +62,11 @@ function buildComponents(game:Game){
     sharedComponents(game);
 }
 
-function buildPhaserComponents(game:Game){
-    console.log("building phaser game components");
-    game.registerComponent(PhaserAnimationComponent);
-    game.registerComponent(PhaserPositionComponent);
-    sharedComponents(game);
-}
-
-export function createPhaserGame():Game{
+export function createPhaserGameGeneric():Game{
     console.log("creating phaser game");
-    const phaserSpriteManager = PhaserSpriteManager.singeltonCreate();
-    const deps = buildPhaserDependencies();
-    let game:Game = Game.createCustom(deps);
+    // const deps = buildPhaserDependencies();
+    // let game:Game = Game.createCustom(deps);
+    let game:Game = createPhaserGame();
     game.addSystem(WasdSystem.create(game));
     game.addSystem(CropSystem.create(game));
     // game.addSystem(CollisionSystem.create(game));
@@ -90,13 +84,6 @@ export function createPhaserGame():Game{
 
     buildSprites(game);
     buildEntities(game);
-    buildPhaserComponents(game);
-    const phaserGame = PhaserGame.createSingleton();
-    phaserGame.mainScene.addCreator((scene)=>{
-        phaserGame.setUpdater((delta)=>{
-            game.step(delta);
-        });
-    });
-    game.addStarter(()=>{phaserGame.start()});
+    sharedComponents(game);
     return game;
 }

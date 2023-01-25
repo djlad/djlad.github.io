@@ -60,4 +60,6 @@ export function buildComponents(game:Game):void{
     game.registerComponent(TileComponent);
     game.registerComponent(ClickableComponent);
     game.registerComponent(PlaceItemComponent);
+    game.registerComponent(CropHarvesterComponent);
+    game.registerComponent(TextComponent);
 }

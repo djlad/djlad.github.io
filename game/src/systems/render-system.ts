@@ -37,7 +37,7 @@ export class RenderSystem extends EntitySystem{
 
     apply(args:SystemArgs){
         const entity = args.entity;
-        if (entity instanceof FirstEntity){
+        if (entity.id == 0){
             this.centerCameraOn(this.camera.center);
             this.renderer.cbox();
             this.renderTileSet(entity);
