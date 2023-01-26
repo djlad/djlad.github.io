@@ -3,6 +3,7 @@ import { PhaserAnimationComponent } from "./phaser-components/phaser-animation-c
 import { PhaserPositionComponent } from "./phaser-components/phaser-position-component";
 import { buildPhaserDependencies } from "./phaser-dependency-builder";
 import { PhaserGame } from "./phaser-game";
+import { PhaserRenderSystem } from "./phaser-systems/phaser-render-system";
 
 function buildPhaserComponents(game:Game){
     console.log("building phaser game components");
@@ -22,6 +23,7 @@ export function createPhaserGame(game:Game=null){
         });
     });
     buildPhaserComponents(game);
+    game.addSystem(PhaserRenderSystem.create(game));
     game.addStarter(()=>{phaserGame.start()});
     return game;
 }

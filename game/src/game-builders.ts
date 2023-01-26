@@ -1,6 +1,5 @@
 import { buildEntities } from "./builders/entity-builder";
 import { buildSprites } from "./builders/sprite-builder";
-import { PhaserGame } from "./engine/phaser-integration/phaser-game";
 import { ClickSystem } from "./systems/click-system";
 import { CollisionSystem } from "./systems/collision-system";
 import { CropSystem } from "./systems/crop-system";
@@ -27,16 +26,12 @@ import { ProjectileComponent } from "./components/projectile-component";
 import { TileComponent } from "./components/tile-component/tile-component";
 import { TransitionComponent } from "./components/transitions/transition-component";
 import { WasdComponent } from "./components/wasd-component";
-import { PhaserSpriteManager } from "./engine/phaser-integration/phaser-sprite-manager";
-import { PhaserRenderSystem } from "./engine/phaser-integration/phaser-systems/phaser-render-system";
-import { buildPhaserDependencies } from "./engine/phaser-integration/phaser-dependency-builder";
 import { AnimationComponent } from "./engine/component/components/animation/animation-component";
 import { PlaceItemComponent } from "./components/place-item/place-item-component";
 import { CropHarvesterComponent } from "./components/crop-harvester-component";
 import { TextComponent } from "./components/text-component/text-component";
-import { PhaserAnimationComponent } from "./engine/phaser-integration/phaser-components/phaser-animation-component";
-import { PhaserPositionComponent } from "./engine/phaser-integration/phaser-components/phaser-position-component";
 import { createPhaserGame } from "./engine/phaser-integration/phaser-builder";
+import { RenderSystem } from "./systems/render-system";
 function sharedComponents(game:Game){
     game.registerComponent(WasdComponent);
     game.registerComponent(CropComponent);
@@ -55,6 +50,22 @@ function sharedComponents(game:Game){
     game.registerComponent(TextComponent);
 
 }
+
+function sharedSystems(game:Game){
+    game.addSystem(WasdSystem.create(game));
+    game.addSystem(CropSystem.create(game));
+    game.addSystem(CollisionSystem.create(game));
+    game.addSystem(ProjectileSystem.create(game));
+    // game.addSystem(FightSystem.create(game));
+    game.addSystem(HealthSystem.create(game));
+    game.addSystem(NeuralFightSystem.create(game));
+    game.addSystem(PlaceItemSystem.create(game));
+    game.addSystem(InventorySystem.create(game));
+    game.addSystem(ParticleSystem.create(game));
+    game.addSystem(MapBuilderSystem.create(game));
+    game.addSystem(ClickSystem.create(game));
+}
+
 function buildComponents(game:Game){
     console.log("building game components");
     game.registerComponent(AnimationComponent);
@@ -64,26 +75,24 @@ function buildComponents(game:Game){
 
 export function createPhaserGameGeneric():Game{
     console.log("creating phaser game");
-    // const deps = buildPhaserDependencies();
-    // let game:Game = Game.createCustom(deps);
     let game:Game = createPhaserGame();
-    game.addSystem(WasdSystem.create(game));
-    game.addSystem(CropSystem.create(game));
-    // game.addSystem(CollisionSystem.create(game));
-    game.addSystem(ProjectileSystem.create(game));
-    // game.addSystem(FightSystem.create(game));
-    game.addSystem(HealthSystem.create(game));
-    game.addSystem(PositionSystem.create(game));
-    game.addSystem(NeuralFightSystem.create(game));
-    game.addSystem(PlaceItemSystem.create(game));
-    game.addSystem(InventorySystem.create(game));
-    game.addSystem(ParticleSystem.create(game));
-    game.addSystem(PhaserRenderSystem.create(game));
-    game.addSystem(MapBuilderSystem.create(game));
-    game.addSystem(ClickSystem.create(game));
-
+    sharedSystems(game);
     buildSprites(game);
     buildEntities(game);
     sharedComponents(game);
+    return game;
+}
+
+
+export function createGame(game:Game=null):Game{
+    if (game == null){
+        game = Game.create()
+    }
+    game.addSystem(PositionSystem.create(game));
+    game.addSystem(RenderSystem.create(game));
+    sharedSystems(game);
+    buildSprites(game)
+    buildEntities(game);
+    buildComponents(game);
     return game;
 }

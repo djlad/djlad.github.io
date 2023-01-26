@@ -25,37 +25,14 @@ import { ParticleComponent } from './components/particle-componet';
 import { MapBuilderSystem } from './systems/map-builder-system';
 import { ClickSystem } from './systems/click-system';
 import { PhaserGame } from './engine/phaser-integration/phaser-game';
-import { createPhaserGameGeneric } from './game-builders';
+import { createGame, createPhaserGameGeneric } from './game-builders';
 import { AnimationComponent } from './engine/component/components/animation/animation-component';
 import { Entity } from './engine/entity/entity';
+import { createPhaserGame } from './engine/phaser-integration/phaser-builder';
 
 declare var synaptic:any;
 export declare var g:Game;
 
-function createGame(game:Game=null):Game{
-    if (game == null){
-        game = Game.create()
-    }
-    game.addSystem(WasdSystem.create(game));
-    game.addSystem(CropSystem.create(game));
-    game.addSystem(CollisionSystem.create(game));
-    game.addSystem(ProjectileSystem.create(game));
-    // game.addSystem(FightSystem.create(game));
-    game.addSystem(HealthSystem.create(game));
-    game.addSystem(PositionSystem.create(game));
-    game.addSystem(NeuralFightSystem.create(game));
-    game.addSystem(PlaceItemSystem.create(game));
-    game.addSystem(InventorySystem.create(game));
-    game.addSystem(ParticleSystem.create(game));
-    game.addSystem(RenderSystem.create(game));
-    game.addSystem(MapBuilderSystem.create(game));
-    game.addSystem(ClickSystem.create(game));
-
-    buildSprites(game)
-    buildEntities(game);
-    buildComponents(game);
-    return game;
-}
 
 function startGame(){
     let game:Game = createGame();
