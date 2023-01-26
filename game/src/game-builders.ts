@@ -32,6 +32,7 @@ import { CropHarvesterComponent } from "./components/crop-harvester-component";
 import { TextComponent } from "./components/text-component/text-component";
 import { createPhaserGame } from "./engine/phaser-integration/phaser-builder";
 import { RenderSystem } from "./systems/render-system";
+import { pixiGameBuilder } from "./engine/pixi-integration/pixi-builder";
 function sharedComponents(game:Game){
     game.registerComponent(WasdComponent);
     game.registerComponent(CropComponent);
@@ -71,6 +72,11 @@ function buildComponents(game:Game){
     game.registerComponent(AnimationComponent);
     game.registerComponent(PositionComponent);
     sharedComponents(game);
+}
+export function createPixiGame(){
+    const game = pixiGameBuilder();
+    buildSprites(game);
+    return game;
 }
 
 export function createPhaserGameGeneric():Game{

@@ -1,42 +1,21 @@
 import { PositionComponent } from './engine/component/components/position/position-component';
-import { CropEntity } from './entities/crop-entity';
 import { CropComponent } from './components/crop-component';
-import { RenderSystem } from './systems/render-system';
-import { WasdSystem } from './systems/wasd-system';
-import { CropSystem } from './systems/crop-system';
-import { CollisionSystem } from './systems/collision-system';
-import { ProjectileEntity } from './entities/projectile-entity';
-import { ProjectileSystem } from './systems/projectile-system';
-import { FightComponent } from './components/fight-component';
-import { HealthSystem } from './systems/health-system';
-import { PositionSystem } from './systems/position-system';
 
-import { NeuralFightSystem } from './systems/neural-fight-system';
 import { Game } from './engine/game';
-import { buildSprites } from './builders/sprite-builder';
-import { buildEntities } from './builders/entity-builder';
-import { buildComponents } from './builders/build-components';
-import { FightSystem } from './systems/fight-system';
-import { PlaceItemSystem } from './systems/place-item-system';
-import { InventorySystem } from './systems/inventory-system';
-import { ParticleSystem } from './systems/particle-system';
-import { ParticleEntity } from './entities/particles/particle-entity';
 import { ParticleComponent } from './components/particle-componet';
-import { MapBuilderSystem } from './systems/map-builder-system';
-import { ClickSystem } from './systems/click-system';
-import { PhaserGame } from './engine/phaser-integration/phaser-game';
-import { createGame, createPhaserGameGeneric } from './game-builders';
+import { createPixiGame } from './game-builders';
 import { AnimationComponent } from './engine/component/components/animation/animation-component';
 import { Entity } from './engine/entity/entity';
-import { createPhaserGame } from './engine/phaser-integration/phaser-builder';
+import { PixiDependencies } from './engine/pixi-integration/pixi-dependencies';
 
 declare var synaptic:any;
 export declare var g:Game;
 
 
 function startGame(){
-    let game:Game = createGame();
+    // let game:Game = createGame();
     // let game:Game = createPhaserGameGeneric();
+    let game:Game = createPixiGame();
     game.entityFactory.componentFactory.createComponent("animation");
     game.addEntity("first");
     const player = makePlayer();
@@ -109,5 +88,13 @@ function startGame(){
 if (typeof window !== 'undefined')
 {
     //@ts-ignore
-    window.game = startGame();
+    // window.game = startGame();
+    let game = createPixiGame();
+    let g = game.gameDependencies as PixiDependencies;
+    g.pixiGame.start();
+    setTimeout(()=>{
+        const anim = g.pixiGame.getSpriteAnimation("greyWalk");
+        g.pixiGame.container.addChild(anim);
+        anim.play();
+    }, 3000)
 }
