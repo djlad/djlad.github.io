@@ -16,7 +16,9 @@ function startGame(){
     // let game:Game = createGame();
     // let game:Game = createPhaserGameGeneric();
     let game:Game = createPixiGame();
-    game.entityFactory.componentFactory.createComponent("animation");
+    // game.entityFactory.componentFactory.createComponent("animation");
+    setTimeout(()=>{
+
     game.addEntity("first");
     const player = makePlayer();
     const playerPosition = <PositionComponent>player.getComponent("position");
@@ -84,17 +86,23 @@ function startGame(){
     }
     game.start();
     return game;
+    }, 2000);
 }
 if (typeof window !== 'undefined')
 {
     //@ts-ignore
-    // window.game = startGame();
+    window.game = startGame();
+    console.log("hi");
+    /*
     let game = createPixiGame();
     let g = game.gameDependencies as PixiDependencies;
     g.pixiGame.start();
+    g.spriteManager.onLoad(()=>{
+        console.log("hi");
+    });
     setTimeout(()=>{
         const anim = g.pixiGame.getSpriteAnimation("greyWalk");
         g.pixiGame.container.addChild(anim);
         anim.play();
-    }, 3000)
+    }, 4000)*/
 }

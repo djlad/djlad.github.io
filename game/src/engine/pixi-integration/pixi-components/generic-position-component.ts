@@ -10,10 +10,11 @@ import { IEngineSprite } from "../sprite-dependency/iengine-sprite";
 export class GenericPositionComponent extends Component implements IPositionComponent{
     // public phaserObject: Phaser.Physics.Matter.Sprite
     public engineSprite: IEngineSprite;
-    constructor(gameDependencies:GameDependencies){
+    public static componentName="position";
+    constructor(game:GameDependencies){
         super("position");
-        this.engineSprite = gameDependencies.engineCreator.createEngineSprite();
-        this.engineSprite.setSprite("grey");
+        this.engineSprite = game.engineCreator.createEngineSprite();
+        this.engineSprite.setSprite("greyWalk");
         this.engineSprite.width = this.width;
         this.engineSprite.height = this.height;
     }
@@ -62,8 +63,20 @@ export class GenericPositionComponent extends Component implements IPositionComp
     set rotate(radiansToRotate:number){
         this._rotate = radiansToRotate%(2*Math.PI);
     }
-    x:number=0;
-    y:number=0;
+    _x:number=0;
+    get x():number{
+        return this.engineSprite.x;
+    }
+    set x(newX:number){
+        this.engineSprite.x = newX;
+    }
+    _y:number=0;
+    get y(){
+        return this.engineSprite.y;
+    }
+    set y(newY:number){
+        this.engineSprite.y = newY;
+    }
     h: number=0;
     width:number=100;
     height:number=100;
@@ -83,7 +96,7 @@ export class GenericPositionComponent extends Component implements IPositionComp
         this.moved = !(this.vx == 0 && this.vy == 0);
     }
 
-    static create(game:Game):GenericPositionComponent{
-        return new GenericPositionComponent(game.gameDependencies);
+    static create(game:GameDependencies):GenericPositionComponent{
+        return new GenericPositionComponent(game);
     }
 }

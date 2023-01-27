@@ -1,6 +1,4 @@
-import { createComponentFactory } from "../builders/build-components";
 import { PositionComponent } from "../engine/component/components/position/position-component";
-import { ComponentFactory } from "../engine/component/component-factory";
 import { Entity } from "../engine/entity/entity";
 import { GameEvent } from "../engine/events/game-event";
 import { AnimationComponent } from "../engine/component/components/animation/animation-component";

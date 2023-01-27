@@ -8,6 +8,8 @@ export class PixiSpriteManager implements ISpriteLoader {
     constructor(pixiGame:PixiGame){
         this.pixiGame = pixiGame;
     }
+    onLoad(callback?: () => void): void {
+    }
     loadSprite(spriteName: string, fileName: string, widthImgs: number, heightImgs: number, offsetx?: number, offsety?: number): void {
         this.pixiGame.loadSprite(spriteName, fileName, widthImgs, heightImgs, offsetx, offsety);
     }

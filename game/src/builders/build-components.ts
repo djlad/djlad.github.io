@@ -20,29 +20,6 @@ import { AnimationComponent } from '../engine/component/components/animation/ani
 import { PhaserAnimationComponent } from '../engine/phaser-integration/phaser-components/phaser-animation-component';
 import { PhaserPositionComponent } from '../engine/phaser-integration/phaser-components/phaser-position-component';
 
-export function createComponentFactory():ComponentFactory{
-    var cf:ComponentFactory = new ComponentFactory();
-    // cf.registerComponent(AnimationComponent);
-    cf.registerComponent(PhaserAnimationComponent);
-    cf.registerComponent(PhaserPositionComponent);
-    // cf.registerComponent(PositionComponent);
-    cf.registerComponent(WasdComponent);
-    cf.registerComponent(CropComponent);
-    cf.registerComponent(ProjectileComponent);
-    cf.registerComponent(FightComponent);
-    cf.registerComponent(HealthComponent);
-    cf.registerComponent(NeuralFightComponent);
-    cf.registerComponent(InventoryComponent);
-    cf.registerComponent(PlaceItemComponent);
-    cf.registerComponent(CropHarvesterComponent);
-    cf.registerComponent(TextComponent);
-    cf.registerComponent(ParticleComponent);
-    cf.registerComponent(PrimitiveComponent);
-    cf.registerComponent(TransitionComponent);
-    cf.registerComponent(TileComponent);
-    cf.registerComponent(ClickableComponent);
-    return cf;
-}
 
 export function buildComponents(game:Game):void{
     game.registerComponent(AnimationComponent);

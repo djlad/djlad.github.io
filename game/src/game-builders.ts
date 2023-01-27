@@ -33,6 +33,7 @@ import { TextComponent } from "./components/text-component/text-component";
 import { createPhaserGame } from "./engine/phaser-integration/phaser-builder";
 import { RenderSystem } from "./systems/render-system";
 import { pixiGameBuilder } from "./engine/pixi-integration/pixi-builder";
+import { GenericAnimationComponent } from "./engine/pixi-integration/pixi-components/generic-animation-component";
 function sharedComponents(game:Game){
     game.registerComponent(WasdComponent);
     game.registerComponent(CropComponent);
@@ -74,8 +75,12 @@ function buildComponents(game:Game){
     sharedComponents(game);
 }
 export function createPixiGame(){
+    console.log("creating pixi game");
     const game = pixiGameBuilder();
+    sharedSystems(game);
     buildSprites(game);
+    buildEntities(game);
+    sharedComponents(game);
     return game;
 }
 

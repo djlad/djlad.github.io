@@ -1,10 +1,15 @@
 import { ComponentFactory } from "../component/component-factory";
+import { GenericCameras } from "../dependencies/generic-cameras";
 import { EntityFactory } from "../entity/entity-factory";
 import { EventManager } from "../events/event-manager";
 import { Game } from "../game";
+import { GenericAnimationComponent } from "./pixi-components/generic-animation-component";
+import { GenericPositionComponent } from "./pixi-components/generic-position-component";
 import { PixiDependencies } from "./pixi-dependencies";
 import { PixiGame } from "./pixi-game";
 import { PixiSpriteManager } from "./pixi-sprite-manager";
+import { PixieEngineCreator } from "./sprite-dependency/pixie-engine-creator";
+import { GenericRenderSystem } from "./generic-render-system";
 
 export function pixiGameBuilder():Game{
     const deps = new PixiDependencies()
@@ -12,14 +17,24 @@ export function pixiGameBuilder():Game{
     deps.spriteManager = PixiSpriteManager.create(deps);
     // deps.cameras = 
     // deps.renderer = HtmlRenderer.create();
+    deps.renderer = GenericRenderSystem.create();
+    deps.cameras = GenericCameras.create();
+    deps.engineCreator = PixieEngineCreator.create(deps);
     deps.eventManager = EventManager.create();
     deps.componentFactory = ComponentFactory.create(deps);
     deps.entityFactory = EntityFactory.create(deps);
 
     const game = Game.createCustom(deps)
+    game.registerComponent(GenericPositionComponent);
+    game.registerComponent(GenericAnimationComponent);
     game.addStarter(()=>{
-        deps.pixiGame.start();
+        setTimeout(()=>deps.pixiGame.start(), 5000);
     });
-
+    game.addStarter(()=>{
+        deps.pixiGame.app.ticker.add((delta)=>{
+            // console.log(delta);
+            game.step(delta);
+        });
+    });
     return game;
 }

@@ -11,6 +11,9 @@ export class PhaserSpriteManager implements ISpriteLoader{
         this.phaserGame = PhaserGame.createSingleton();
         this.spriteDir = spriteDir;
     }
+    onLoad(callback?: () => void): void {
+        throw new Error("Method not implemented.");
+    }
     private spriteDir: string;
     private phaserGame: PhaserGame;
     private spriteNameToPath:{[index:string]: string} = {};

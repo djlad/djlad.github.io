@@ -139,7 +139,7 @@ export class Game {
         clearInterval(this.intervalId);
     }
 
-    addStarter(starterFunc:()=>void){
+    addStarter(starterFunc:(game:Game)=>void){
         this.starters.push(starterFunc);
     }
 

@@ -1,9 +1,6 @@
 import { Entity } from '../engine/entity/entity';
 import { PositionComponent } from '../engine/component/components/position/position-component';
-import { ComponentFactory } from '../engine/component/component-factory';
-import { createComponentFactory } from '../builders/build-components';
-import { GameEvent } from '../engine/events/game-event';
-import {TileComponent} from '../components/tile-component/tile-component';
+import { TileComponent } from '../components/tile-component/tile-component';
 import { EntityRegistration } from '../engine/entity/entity-registration';
 import { GameDependencies } from '../engine/dependencies/game-dependencies';
 
