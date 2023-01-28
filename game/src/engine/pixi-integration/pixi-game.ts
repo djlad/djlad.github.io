@@ -7,7 +7,8 @@ export class PixiGame {
     private loader: AssetsClass;
     spriteNameToTexture: {[key:string]:Promise<any>} = {};
     spriteNameToAtlas: {[key:string]:ISpritesheetData} = {};
-    animationNameToSpriteSheet: {[key:string]: Spritesheet} = {};
+    animationNameToSpriteSheet: {[key:string]:Spritesheet} = {};
+    spriteNameToSpriteSheet: {[key:string]:Spritesheet} = {};
     animationNameToParsed: {[key:string]:boolean} = {};
     constructor(){
         this.app = new Application({
@@ -16,6 +17,21 @@ export class PixiGame {
         });
         this.loader = Assets;
         document.body.appendChild(this.app.view as any);//I think not taking ICanvas is a bug.
+        const canvas = this.app.renderer.view;
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        //@ts-ignore
+        canvas.style.margin = "0";
+        //@ts-ignore
+        canvas.style.padding = "0";
+        //@ts-ignore
+        canvas.style.overflow = "hidden";
+        //@ts-ignore
+        canvas.style.position = "fixed";
+        //@ts-ignore
+        canvas.style.top = "0px";
+        //@ts-ignore
+        canvas.style.left = "0px";
         this.container = new Container();
         this.app.stage.addChild(this.container);
     }
@@ -76,21 +92,31 @@ export class PixiGame {
         });
         atlas.animations[animationName] = spriteNumbers.map((n)=>n.toString());
         const spriteSheet = new Spritesheet(texture, atlas);
+        //@ts-ignore
+        spriteSheet.spriteName = spriteName;
+        //@ts-ignore
+        spriteSheet.animationname = animationName;
+        this.spriteNameToSpriteSheet[spriteName] = spriteSheet
         this.animationNameToSpriteSheet[animationName] = spriteSheet;
+        // this.spriteNameToSpriteSheet[spriteName] = ()=>new Spritesheet(texture, atlas);
+        // this.animationNameToSpriteSheet[animationName] = ()=>new Spritesheet(texture, atlas);
     }
 
     getSpriteAnimation(animationName:string){
         const spriteSheet = this.animationNameToSpriteSheet[animationName];
-        // console.log(this.animationNameToSpriteSheet);
         // if (spriteSheet == null)return null;
         if (!(animationName in this.animationNameToParsed)){
-            spriteSheet.parse();
+            // console.log("t");
+            // console.log(this.animationNameToParsed);
+            // spriteSheet.parse();
             this.animationNameToParsed[animationName] = true;
         }
-        const animation = new AnimatedSprite(spriteSheet.animations[animationName]);
+        const animationFrames = spriteSheet.animations[animationName];
+        const animation = new AnimatedSprite(animationFrames);
         animation.animationSpeed = 0.1666;
         animation.play();
         this.container.addChild(animation);
+        this.container.sortableChildren = true;
         return animation;
     }
 

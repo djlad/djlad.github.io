@@ -8,7 +8,19 @@ export class PixiSpriteManager implements ISpriteLoader {
     constructor(pixiGame:PixiGame){
         this.pixiGame = pixiGame;
     }
-    onLoad(callback?: () => void): void {
+    async onLoad(callback?: () => void): Promise<any> {
+        const textures = this.pixiGame.spriteNameToTexture;
+        for(let i in textures){
+            const texture = textures[i];
+            await texture;
+        }
+        const spriteSheets = this.pixiGame.animationNameToSpriteSheet;
+        for (let i in spriteSheets){
+            const spriteSheet = spriteSheets[i];
+            spriteSheet.parse();
+        }
+        if (callback == null)return;
+        callback();
     }
     loadSprite(spriteName: string, fileName: string, widthImgs: number, heightImgs: number, offsetx?: number, offsety?: number): void {
         this.pixiGame.loadSprite(spriteName, fileName, widthImgs, heightImgs, offsetx, offsety);

@@ -3,12 +3,21 @@ import { IAnimationComponent } from "../../component/components/animation/ianima
 import { GameDependencies } from "../../dependencies/game-dependencies";
 import { Entity } from "../../entity/entity";
 import { EntityUpdateArgs } from "../../entity/entity-update-args";
+import { Game } from "../../game";
+import { IEngineSprite } from "../sprite-dependency/iengine-sprite";
 
 export class GenericAnimationComponent extends Component implements IAnimationComponent {
-    update(entity: Entity, args: EntityUpdateArgs): void {
-    }
+    engineSprite: IEngineSprite;
     spriteName: string;
     public static fakeImageData: ImageData = new ImageData(1,1);
+    public static componentName:string = "animation"
+    constructor(game:GameDependencies, entityId:string){
+        super("animation");
+        game.checkDependency(game.engineCreator);
+        this.engineSprite = game.engineCreator.createEngineSprite(entityId);
+    }
+    update(entity: Entity, args: EntityUpdateArgs): void {
+    }
     getSpriteNumber(): void {
     }
     getRGBs(animationName?: string, spriteNumber?: number, width?: number, height?: number): ImageData {
@@ -17,10 +26,13 @@ export class GenericAnimationComponent extends Component implements IAnimationCo
     setFilter(pixelData: ImageData): void {
     }
     setSprite(animationName: string): void {
+        if (animationName == this.spriteName)return;
+        this.spriteName = animationName;
+        this.engineSprite.setSprite(animationName);
     }
     setSpriteNumber(spriteName: string, spriteNumber: number): void {
     }
-    public static create(game: GameDependencies): GenericAnimationComponent {
-        return new GenericAnimationComponent("animation");
+    public static create(game: GameDependencies, entityId:string): GenericAnimationComponent {
+        return new GenericAnimationComponent(game, entityId);
     }
 }

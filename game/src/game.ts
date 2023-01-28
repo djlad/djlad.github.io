@@ -17,7 +17,7 @@ function startGame(){
     // let game:Game = createPhaserGameGeneric();
     let game:Game = createPixiGame();
     // game.entityFactory.componentFactory.createComponent("animation");
-    setTimeout(()=>{
+    game.gameDependencies.spriteManager.onLoad(()=>{
 
     game.addEntity("first");
     const player = makePlayer();
@@ -86,7 +86,7 @@ function startGame(){
     }
     game.start();
     return game;
-    }, 2000);
+    });
 }
 if (typeof window !== 'undefined')
 {

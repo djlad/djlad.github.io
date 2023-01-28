@@ -1,5 +1,5 @@
 import { IEngineSprite } from "./iengine-sprite";
 
 export interface IEngineCreator {
-    createEngineSprite():IEngineSprite;
+    createEngineSprite(entityId:string):IEngineSprite;
 }

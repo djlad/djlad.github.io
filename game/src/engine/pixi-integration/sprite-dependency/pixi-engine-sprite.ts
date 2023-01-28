@@ -13,7 +13,6 @@ export class PixieEngineSprite implements IEngineSprite {
         gameDependencies.checkDependency(gameDependencies.pixiGame);
         this.pixieGame = gameDependencies.pixiGame;
         this.sprite = this.pixieGame.getSpriteAnimation("greyWalk");
-        setTimeout(()=>{this.sprite.x + 100}, 4000);
     }
     private _width: number;
     private _height: number;
@@ -99,6 +98,13 @@ export class PixieEngineSprite implements IEngineSprite {
      * @param {boolean} value
      */
 	public set faceRight(value: boolean) {
+        if (value != this._faceRight){
+            if (value){
+                this.sprite.scale.x = Math.abs(this.sprite.scale.x);
+            } else {
+                this.sprite.scale.x = Math.abs(this.sprite.scale.x) * -1;
+            }
+        }
 		this._faceRight = value;
 	}
 
@@ -116,6 +122,7 @@ export class PixieEngineSprite implements IEngineSprite {
      */
 	public set y(value: number) {
         this.sprite.y = value;
+        this.sprite.zIndex = value;
 	}
 
     /**
@@ -135,7 +142,19 @@ export class PixieEngineSprite implements IEngineSprite {
 	}
     private _vy: number;
     setSprite(animationName: string): void {
-
+        // console.log(`setSprite to ${animationName}`)
+        const newSprite = this.pixieGame.getSpriteAnimation(animationName);
+        newSprite.x = this.sprite.x;
+        newSprite.y = this.sprite.y;
+        newSprite.width = this.sprite.width;
+        newSprite.height = this.sprite.height;
+        newSprite.scale.x = this.sprite.scale.x;
+        newSprite.pivot.x = .5;
+        newSprite.pivot.y = .5;
+        newSprite.anchor.x = .5;
+        newSprite.anchor.y = 1;
+        this.pixieGame.container.removeChild(this.sprite);
+        this.sprite = newSprite;
     }
     public static create(gameDependencies:PixiDependencies){
         return new PixieEngineSprite(gameDependencies);

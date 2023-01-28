@@ -20,7 +20,7 @@ export class Entity {
     destroyed:boolean = false;
 
     addComponent(componentName:string):Component{
-        var component:Component = this.componentFactory.createComponent(componentName);
+        var component:Component = this.componentFactory.createComponent(componentName, this.id);
         this.componentNameToComponent[component.componentName] = component;
         this.components.push(component);
         return component;

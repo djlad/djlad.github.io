@@ -11,9 +11,9 @@ export class GenericPositionComponent extends Component implements IPositionComp
     // public phaserObject: Phaser.Physics.Matter.Sprite
     public engineSprite: IEngineSprite;
     public static componentName="position";
-    constructor(game:GameDependencies){
+    constructor(game:GameDependencies, entityId:string){
         super("position");
-        this.engineSprite = game.engineCreator.createEngineSprite();
+        this.engineSprite = game.engineCreator.createEngineSprite(entityId);
         this.engineSprite.setSprite("greyWalk");
         this.engineSprite.width = this.width;
         this.engineSprite.height = this.height;
@@ -96,7 +96,7 @@ export class GenericPositionComponent extends Component implements IPositionComp
         this.moved = !(this.vx == 0 && this.vy == 0);
     }
 
-    static create(game:GameDependencies):GenericPositionComponent{
-        return new GenericPositionComponent(game);
+    static create(game:GameDependencies, entityId:string):GenericPositionComponent{
+        return new GenericPositionComponent(game, entityId);
     }
 }

@@ -17,6 +17,7 @@ import { EntityRegistration } from './entity/entity-registration';
 
 export class Game {
     spriteManager: any;
+    newTime: number;
     constructor(entityFactory:EntityFactory, renderer:Renderer, eventManager:EventManager, gameDependencies:GameDependencies){
         this.entityFactory = entityFactory;
         this.renderer = renderer;
@@ -103,8 +104,10 @@ export class Game {
         this.counter = (this.counter + 1)%100;
     }
     step(delta:number){
+        this.newTime = performance.now();
         this.performance = performance.now();
         delta = delta/(1000/this.targetFps);
+        // console.log(delta);
         this.frameTracker += delta;
         if (this.frameTracker > 1){
             this.update(delta, Math.floor(this.frameTracker));

@@ -20,11 +20,11 @@ export class ComponentFactory {
         this.componentTypes[obj.componentName] = ComponentClass;
     }
 
-    createComponent(componentName:string){
+    createComponent(componentName:string, entityId:number){
         if (!(componentName in this.componentTypes)){
             throw "component "+componentName+" not registered in componentFactory";
         }
-        return this.componentTypes[componentName].create(this.gameDependencies);
+        return this.componentTypes[componentName].create(this.gameDependencies, entityId);
     }
 
     static create(gameDependencies:GameDependencies):ComponentFactory{

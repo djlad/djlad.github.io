@@ -9,7 +9,7 @@ import { PixiDependencies } from "./pixi-dependencies";
 import { PixiGame } from "./pixi-game";
 import { PixiSpriteManager } from "./pixi-sprite-manager";
 import { PixieEngineCreator } from "./sprite-dependency/pixie-engine-creator";
-import { GenericRenderSystem } from "./generic-render-system";
+import { GenericRenderer } from "./generic-render";
 
 export function pixiGameBuilder():Game{
     const deps = new PixiDependencies()
@@ -17,7 +17,7 @@ export function pixiGameBuilder():Game{
     deps.spriteManager = PixiSpriteManager.create(deps);
     // deps.cameras = 
     // deps.renderer = HtmlRenderer.create();
-    deps.renderer = GenericRenderSystem.create();
+    deps.renderer = GenericRenderer.create();
     deps.cameras = GenericCameras.create();
     deps.engineCreator = PixieEngineCreator.create(deps);
     deps.eventManager = EventManager.create();
@@ -32,8 +32,7 @@ export function pixiGameBuilder():Game{
     });
     game.addStarter(()=>{
         deps.pixiGame.app.ticker.add((delta)=>{
-            // console.log(delta);
-            game.step(delta);
+            game.step(delta*15);
         });
     });
     return game;

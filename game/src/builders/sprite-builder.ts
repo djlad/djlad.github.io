@@ -9,8 +9,8 @@ import { ISpriteLoader } from "../engine/renderers/isprite-loader";
 export function populateSpriteManager(spriteManager:ISpriteLoader):ISpriteLoader{
     var sm:ISpriteLoader = spriteManager;
     sm.loadSprite("blondDress", "blond.png", 4, 8);
-    sm.loadSprite("nothing", "blond.png", 100, 100);
-    sm.addAnimation("nothing", "nothing", [0], 10);
+    // sm.loadSprite("nothing", "blond.png", 100, 100);
+    sm.addAnimation("blondDress", "nothing", [18], 10);
     
     sm.loadSprite("blond", "blondWalk.png", 4, 2);
     sm.addAnimation("blond", "blondWalk", [4,5,6,7], 5);
