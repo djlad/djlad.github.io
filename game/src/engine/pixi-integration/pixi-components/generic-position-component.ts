@@ -1,8 +1,12 @@
 import { Component } from "../../component/component";
 import { IPositionComponent } from "../../component/components/position/iposition-component";
 import { GameDependencies } from "../../dependencies/game-dependencies";
+import { GenericCameras } from "../../dependencies/generic-cameras";
+import { ICameras } from "../../dependencies/icameras";
 import { Entity } from "../../entity/entity";
 import { EntityUpdateArgs } from "../../entity/entity-update-args";
+import { EventType } from "../../events/EventType";
+import { EventManager } from "../../events/event-manager";
 import { Game } from "../../game";
 import { IEngineSprite } from "../sprite-dependency/iengine-sprite";
 
@@ -11,12 +15,17 @@ export class GenericPositionComponent extends Component implements IPositionComp
     // public phaserObject: Phaser.Physics.Matter.Sprite
     public engineSprite: IEngineSprite;
     public static componentName="position";
+    events: EventManager;
+    entityId: string;
     constructor(game:GameDependencies, entityId:string){
         super("position");
         this.engineSprite = game.engineCreator.createEngineSprite(entityId);
         this.engineSprite.setSprite("greyWalk");
         this.engineSprite.width = this.width;
         this.engineSprite.height = this.height;
+        game.checkDependency(game.eventManager);
+        this.events = game.eventManager;
+        this.entityId = entityId;
     }
     private speedMultiplier:number=50;
     private _vx:number=0;
@@ -63,20 +72,30 @@ export class GenericPositionComponent extends Component implements IPositionComp
     set rotate(radiansToRotate:number){
         this._rotate = radiansToRotate%(2*Math.PI);
     }
-    _x:number=0;
     get x():number{
-        return this.engineSprite.x;
+        return this._x;
+    }
+    get y():number{
+        return this._y;
     }
     set x(newX:number){
-        this.engineSprite.x = newX;
-    }
-    _y:number=0;
-    get y(){
-        return this.engineSprite.y;
+        this._x = newX;
+        this.events.emit(EventType.entityMoved, {
+            entityId: this.entityId,
+            x: this._x,
+            y: this._y
+        });
     }
     set y(newY:number){
-        this.engineSprite.y = newY;
+        this._y = newY;
+        this.events.emit(EventType.entityMoved, {
+            entityId: this.entityId,
+            x: this._x,
+            y: this._y
+        });
     }
+    _x:number=0;
+    _y:number=0;
     h: number=0;
     width:number=100;
     height:number=100;

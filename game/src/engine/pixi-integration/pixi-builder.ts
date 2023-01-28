@@ -10,6 +10,7 @@ import { PixiGame } from "./pixi-game";
 import { PixiSpriteManager } from "./pixi-sprite-manager";
 import { PixieEngineCreator } from "./sprite-dependency/pixie-engine-creator";
 import { GenericRenderer } from "./generic-render";
+import { GenericRenderSystem } from "./systems/generic-render-system";
 
 export function pixiGameBuilder():Game{
     const deps = new PixiDependencies()
@@ -27,6 +28,7 @@ export function pixiGameBuilder():Game{
     const game = Game.createCustom(deps)
     game.registerComponent(GenericPositionComponent);
     game.registerComponent(GenericAnimationComponent);
+    game.addSystem(GenericRenderSystem.create(game));
     game.addStarter(()=>{
         setTimeout(()=>deps.pixiGame.start(), 5000);
     });
