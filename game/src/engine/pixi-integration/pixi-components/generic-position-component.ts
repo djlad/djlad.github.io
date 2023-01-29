@@ -95,10 +95,10 @@ export class GenericPositionComponent extends Component implements IPositionComp
         });
     }
     get width(){
-        return this.width;
+        return this.engineSprite.width;
     }
     set width(w:number){
-        this.width = w;
+        this._width = w;
         this.engineSprite.width = w;
     }
     get height(){
@@ -106,7 +106,7 @@ export class GenericPositionComponent extends Component implements IPositionComp
     }
     set height(h:number){
         this.engineSprite.height = h;
-        this.height = h;
+        this._height = h;
     }
     _x:number=0;
     _y:number=0;
