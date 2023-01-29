@@ -94,11 +94,25 @@ export class GenericPositionComponent extends Component implements IPositionComp
             y: this._y
         });
     }
+    get width(){
+        return this.width;
+    }
+    set width(w:number){
+        this.width = w;
+        this.engineSprite.width = w;
+    }
+    get height(){
+        return this.engineSprite.height;
+    }
+    set height(h:number){
+        this.engineSprite.height = h;
+        this.height = h;
+    }
     _x:number=0;
     _y:number=0;
     h: number=0;
-    width:number=100;
-    height:number=100;
+    private _width:number=100;
+    private _height:number=100;
     flip:boolean = false;
     faceRight:boolean = true;
     faceX:number=0;

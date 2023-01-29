@@ -4,7 +4,7 @@ import { GenericPositionComponent } from "../pixi-integration/pixi-components/ge
 import { ICameras } from "./icameras";
 
 export class GenericCameras implements ICameras {
-    center: GenericPositionComponent;
+    center: IPositionComponent;
     halfWindowWidth:number = window.innerWidth/2;
     halfWindowHeight:number = window.innerHeight/2;
     transformX(x:number){
@@ -14,7 +14,7 @@ export class GenericCameras implements ICameras {
         return y - (this.center?.y??0) + this.halfWindowHeight;
     }
     setMainCamera(positionComponent: IPositionComponent): void {
-        this.center = <GenericPositionComponent>positionComponent;
+        this.center = positionComponent;
     }
     public static create():GenericCameras{
         return new GenericCameras();

@@ -85,14 +85,14 @@ function startGame(){
         return player;
     }
     game.start();
+    //@ts-ignore
+    window.game = game;
     return game;
     });
 }
 if (typeof window !== 'undefined')
 {
-    //@ts-ignore
-    window.game = startGame();
-    console.log("hi");
+    const game = startGame();
     /*
     let game = createPixiGame();
     let g = game.gameDependencies as PixiDependencies;
