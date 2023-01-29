@@ -5,16 +5,20 @@ import { PositionComponent } from "../../component/components/position/position-
 import { GenericCameras } from "../../dependencies/generic-cameras";
 import { ICameras } from "../../dependencies/icameras";
 import { Entity } from "../../entity/entity";
+import { EntityUpdateArgs } from "../../entity/entity-update-args";
 import { EventType } from "../../events/EventType";
 import { EventManager } from "../../events/event-manager";
 import { Game } from "../../game";
 import { EntitySystem } from "../../system/system";
 import { SystemArgs } from "../../system/system-args";
 import { IEngineCreator } from "../sprite-dependency/iengine-creator";
+import { PixiGame } from "../pixi-game";
+import { TileComponent } from "../../../components/tile-component/tile-component";
 
 export class GenericRenderSystem extends EntitySystem {
     creator: IEngineCreator;
     cameras: GenericCameras;
+    pixieGame: PixiGame;
     constructor(game:Game, entityId:string){
         super(game);
         const deps = this.game.gameDependencies;
@@ -30,7 +34,13 @@ export class GenericRenderSystem extends EntitySystem {
             sprite.x = this.cameras.transformX(newX);
             sprite.y = this.cameras.transformY(newY);
         })
+        this.pixieGame = PixiGame.createSingleton();
     }
+    oncePerLoop = (args:SystemArgs) => {
+        const first = args.entity;
+        const tiles = <TileComponent>first.getComponent("tile");
+        this.pixieGame.renderTiles(tiles);
+    };
     targetComponents:Component[];
 
     apply(args:SystemArgs):void{

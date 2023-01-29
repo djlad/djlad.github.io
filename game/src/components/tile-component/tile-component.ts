@@ -53,7 +53,7 @@ export class TileComponent extends Component{
         let tileY = Math.ceil(y/this.tileWidth);
         return this.tiles.filter((tile)=>tile.tileX == tileX && tile.tileY == tileY)
     }
-    private tileCoordToReal(tileWidth: number, coord: number): number{
-        return coord * tileWidth;        
+    tileCoordToReal(coord:number){
+        return coord * this.tileWidth;        
     }
 }

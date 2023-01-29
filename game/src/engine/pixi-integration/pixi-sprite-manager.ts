@@ -1,3 +1,4 @@
+import { Spritesheet } from "pixi.js";
 import { GameDependencies } from "../dependencies/game-dependencies";
 import { ISpriteLoader } from "../renderers/isprite-loader";
 import { PixiDependencies } from "./pixi-dependencies";
@@ -9,16 +10,7 @@ export class PixiSpriteManager implements ISpriteLoader {
         this.pixiGame = pixiGame;
     }
     async onLoad(callback?: () => void): Promise<any> {
-        const textures = this.pixiGame.spriteNameToTexture;
-        for(let i in textures){
-            const texture = textures[i];
-            await texture;
-        }
-        const spriteSheets = this.pixiGame.animationNameToSpriteSheet;
-        for (let i in spriteSheets){
-            const spriteSheet = spriteSheets[i];
-            spriteSheet.parse();
-        }
+        await this.pixiGame.finishLoading();
         if (callback == null)return;
         callback();
     }

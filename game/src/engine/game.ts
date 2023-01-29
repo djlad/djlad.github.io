@@ -55,6 +55,7 @@ export class Game {
     //entitiesX:Entity[] = [];
     entityFactory:EntityFactory;
     systems:EntitySystem[] = [];
+    systemsWithOncePerTurnUpdate:EntitySystem[] = [];
     renderer:Renderer;
     eventManager:EventManager;
     intervalId:number;
@@ -69,6 +70,13 @@ export class Game {
     update(delta:number, framesPassed:number){
         // this.renderer.cbox();
         this.eventManager.update();
+        for (let i=0;i<this.systemsWithOncePerTurnUpdate.length;i++){
+            const args = new SystemArgs();
+            args.entity = this.entities[0];
+            args.eventManager = this.eventManager;
+            args.fullFramesPassed = framesPassed;
+            this.systemsWithOncePerTurnUpdate[i].oncePerLoop(args);
+        }
         for(var i=0;i<this.entities.length;i++){
             const args = new EntityUpdateArgs();
             args.delta = delta;
@@ -82,7 +90,6 @@ export class Game {
                 this.systems[systemi].apply(args);
             }
         }
-
         var numEvents:number;
         for(var i=0;i<this.entities.length;i++){
             for(var systemi=0;systemi<this.systems.length;systemi++){
@@ -182,6 +189,8 @@ export class Game {
 
     addSystem(system:EntitySystem):void{
         this.systems.push(system);
+        if (system.oncePerLoop == null)return;
+        this.systemsWithOncePerTurnUpdate.push(system);
     }
 
     registerEntity(entityName:string, EntityClass:EntityRegistration):void{
