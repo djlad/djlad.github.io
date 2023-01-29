@@ -8,6 +8,8 @@ import { GameDependencies } from '../engine/dependencies/game-dependencies';
 export class CropEntity implements EntityRegistration{
     create(gameDependencies: GameDependencies, entity: Entity): Entity {
         var position:PositionComponent = <PositionComponent>entity.addComponent("position");
+        position.width = 100;
+        position.height = 100;
         let animation:AnimationComponent = <AnimationComponent>entity.addComponent("animation");
         let crop:CropComponent = <CropComponent>entity.addComponent("crop");
         if(crop.growthSprites.length > 0) {
