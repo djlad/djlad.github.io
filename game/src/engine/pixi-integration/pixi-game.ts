@@ -41,11 +41,9 @@ export class PixiGame {
         const height = this.height;
         const xBound = this.xBound;
         const yBound = this.yBound;
-        let c = 0;
         for (let x=-xBound;x<width+xBound;x+=tiles.tileWidth){
             const dataX = cameras.untransformX(x);
             for (let y=-yBound;y<height+yBound;y+=tiles.tileWidth){
-                c++;
                 const dataY = cameras.untransformY(y);
                 const tilesAtCoord = tiles.coordToTile(dataX, dataY);
                 if (tilesAtCoord.length == 0) continue;
@@ -71,7 +69,6 @@ export class PixiGame {
                 tileSprite.y = cameras.transformY(tiles.tileCoordToReal(tileAtCoord.tileY));
             }
         }
-        console.log(c);
     }
     private removeExisitingSpriteById(spriteKey:string){
         const tileSprite = this.tileSprites[spriteKey];
