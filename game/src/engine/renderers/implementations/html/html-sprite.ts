@@ -1,5 +1,5 @@
 import { HtmlCanvas } from "./html-canvas";
-
+import {Sprite} from "../../sprite";
 export class HtmlSprite implements Sprite {
     constructor(fileName:string){
         var spriteImg:HTMLImageElement = new Image();

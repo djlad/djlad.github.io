@@ -1,9 +1,13 @@
 import { SpriteAnimation } from "./sprite-animation";
 import { HtmlRectSprite } from "./implementations/html/html-rect-sprite";
 import { HtmlSprite } from "./implementations/html/html-sprite";
+import { Sprite } from "./sprite";
+import { ISpriteLoader } from "./isprite-loader";
 
-export class SpriteManager {
+export class SpriteManager implements ISpriteLoader {
     constructor(spriteDir:string="../sprites/"){}
+    onLoad(callback?: () => void): void {
+    }
     sprites:{ [key: string]: Sprite} = {};//sprite name to sprite
     animations:{ [key: string]: SpriteAnimation} = {};//animation name to animation
     RGBs: {[key:string]: ImageData}= {};

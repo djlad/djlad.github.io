@@ -1,8 +1,7 @@
 import { EntitySystem } from '../engine/system/system';
 import { Entity } from '../engine/entity/entity';
 import { WasdComponent } from '../components/wasd-component';
-import { PositionComponent } from '../components/position-component';
-import { AnimationComponent } from '../components/animation-component';
+import { PositionComponent } from '../engine/component/components/position/position-component';
 import { Game } from '../engine/game';
 import { InventoryComponent } from '../components/inventory-component/inventory-component';
 import { EventManager } from '../engine/events/event-manager';
@@ -14,6 +13,7 @@ import { CropHarvesterComponent } from '../components/crop-harvester-component';
 import { CropComponent } from '../components/crop-component';
 import { Component } from '../engine/component/component';
 import { TransitionComponent } from '../components/transitions/transition-component';
+import { AnimationComponent } from '../engine/component/components/animation/animation-component';
 
 export class WasdSystem extends EntitySystem {
     constructor(game:Game){

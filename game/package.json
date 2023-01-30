@@ -9,7 +9,7 @@
     "phaser": "^3.55.2",
     "synaptic": "^1.1.4",
     "systemjs": "^2.1.2",
-    "typescript": "^3.7.2"
+    "typescript": "^4.9.4"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -25,11 +25,14 @@
   },
   "homepage": "https://github.com/djlad/aiwar#readme",
   "devDependencies": {
+    "esbuild-plugin-external-global": "^1.0.1",
     "glob": "^8.0.3",
     "gulp": "^4.0.2",
     "gulp-cli": "^2.3.0",
     "gulp-file-include": "^2.3.0",
     "gulp-template-html": "^0.2.2",
-    "gulp-typescript": "^6.0.0-alpha.1"
+    "gulp-typescript": "^6.0.0-alpha.1",
+    "image-size": "^1.0.2",
+    "pixi.js": "^7.1.1"
   }
 }

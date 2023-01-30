@@ -5,23 +5,45 @@ import { EventManager } from './events/event-manager';
 import { Renderer } from './renderers/render';
 import { HtmlRenderer } from './renderers/implementations/html/html-renderer';
 import { SpriteManager } from './renderers/sprite-manager';
-import { PositionComponent } from '../components/position-component';
+import { PositionComponent } from './component/components/position/position-component';
 import { SystemArgs } from './system/system-args';
 import { EntityUpdateArgs } from './entity/entity-update-args';
+import { PhaserGame } from './phaser-integration/phaser-game';
+import { ISpriteLoader } from './renderers/isprite-loader';
+import { GameDependencies } from './dependencies/game-dependencies';
+import { ComponentFactory } from './component/component-factory';
+import { GenericCameras } from './dependencies/generic-cameras';
+import { EntityRegistration } from './entity/entity-registration';
 
 export class Game {
-    constructor(entityFactory:EntityFactory, renderer:Renderer, eventManager:EventManager){
+    spriteManager: any;
+    newTime: number;
+    constructor(entityFactory:EntityFactory, renderer:Renderer, eventManager:EventManager, gameDependencies:GameDependencies){
         this.entityFactory = entityFactory;
         this.renderer = renderer;
         this.eventManager = eventManager;
-        this.spriteManager = this.renderer.spriteManager;
+        this.gameDependencies = gameDependencies;
+        this.spriteManager = gameDependencies.spriteManager;
     }
 
     static create():Game{
-        var game = new Game(EntityFactory.create(), HtmlRenderer.create(), EventManager.create());
+        const renderer = HtmlRenderer.create();
+        const deps = new GameDependencies();
+        deps.renderer = renderer;
+        deps.eventManager = EventManager.create();
+        deps.componentFactory = ComponentFactory.create(deps);
+        deps.entityFactory = EntityFactory.create(deps);
+        deps.spriteManager = deps.renderer.spriteManager;
+        deps.cameras = GenericCameras.create();
+        var game = new Game(deps.entityFactory, deps.renderer, EventManager.create(), deps);
         return game;
     }
-
+    
+    static createCustom(dependencies:GameDependencies):Game{
+        var game = new Game(dependencies.entityFactory, dependencies.renderer, dependencies.eventManager, dependencies);
+        return game;
+    }
+    private starters:((games:Game)=>void)[] = [];
     private _entities:Entity[] = [];
     get entities():Entity[]{
         return this._entities;
@@ -33,20 +55,28 @@ export class Game {
     //entitiesX:Entity[] = [];
     entityFactory:EntityFactory;
     systems:EntitySystem[] = [];
+    systemsWithOncePerTurnUpdate:EntitySystem[] = [];
     renderer:Renderer;
     eventManager:EventManager;
     intervalId:number;
-    spriteManager:SpriteManager;
+    gameDependencies: GameDependencies;
     performance: number;
     frameTime: number;
-    targetFps: number = 40;
+    targetFps: number = 60;
     counter: number = 0;
     lastTime = performance.now();
     frameTracker:number = 0;
+    phaserGame:PhaserGame;
     update(delta:number, framesPassed:number){
         // this.renderer.cbox();
-        this.performance = performance.now();
         this.eventManager.update();
+        for (let i=0;i<this.systemsWithOncePerTurnUpdate.length;i++){
+            const args = new SystemArgs();
+            args.entity = this.entities[0];
+            args.eventManager = this.eventManager;
+            args.fullFramesPassed = framesPassed;
+            this.systemsWithOncePerTurnUpdate[i].oncePerLoop(args);
+        }
         for(var i=0;i<this.entities.length;i++){
             const args = new EntityUpdateArgs();
             args.delta = delta;
@@ -60,7 +90,6 @@ export class Game {
                 this.systems[systemi].apply(args);
             }
         }
-
         var numEvents:number;
         for(var i=0;i<this.entities.length;i++){
             for(var systemi=0;systemi<this.systems.length;systemi++){
@@ -78,19 +107,22 @@ export class Game {
             return pa.y - pb.y;
         });
         this.cleanDestroyedEntities();
-        if (this.counter%10==0){
-            this.frameTime = 100*(performance.now() - this.performance)/(1000/this.targetFps)
-        }else performance.now();
         this.renderer.text(Math.floor(this.frameTime).toString(),0,0, 1000);
         this.counter = (this.counter + 1)%100;
     }
     step(delta:number){
+        this.newTime = performance.now();
+        this.performance = performance.now();
+        delta = delta/(1000/this.targetFps);
+        // console.log(delta);
         this.frameTracker += delta;
         if (this.frameTracker > 1){
             this.update(delta, Math.floor(this.frameTracker));
             this.frameTracker = 0;
+        } else {
+            this.update(delta, 0);
         }
-        this.update(delta, 0);
+        this.frameTime = performance.now() - this.performance;
     }
     private loop(time:number){
         const delta = (time - this.lastTime)/(1000/this.targetFps);
@@ -99,7 +131,14 @@ export class Game {
         window.requestAnimationFrame((time)=>{this.loop(time)});
     }
     start():number{
-        console.log("starting game")
+        if (this.starters.length > 0){
+            console.log("starting game custom");
+            this.starters.forEach((starter)=>{
+                starter(this);
+            });
+            return;
+        }
+        console.log("starting game loop with requestAnimationFrame");
         window.requestAnimationFrame(()=>{
             this.loop(this.lastTime);
         });
@@ -108,6 +147,10 @@ export class Game {
 
     stop(){
         clearInterval(this.intervalId);
+    }
+
+    addStarter(starterFunc:(game:Game)=>void){
+        this.starters.push(starterFunc);
     }
 
     addEntity(entityName:string){
@@ -146,9 +189,11 @@ export class Game {
 
     addSystem(system:EntitySystem):void{
         this.systems.push(system);
+        if (system.oncePerLoop == null)return;
+        this.systemsWithOncePerTurnUpdate.push(system);
     }
 
-    registerEntity(entityName:string, EntityClass:any):void{
+    registerEntity(entityName:string, EntityClass:EntityRegistration):void{
         this.entityFactory.registerEntity(entityName, EntityClass);
     }
 

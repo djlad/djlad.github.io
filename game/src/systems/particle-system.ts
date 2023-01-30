@@ -3,7 +3,7 @@ import { EventManager } from "../engine/events/event-manager";
 import { Game } from "../engine/game";
 import { EntitySystem } from "../engine/system/system";
 import {ParticleComponent} from "../components/particle-componet";
-import { PositionComponent } from "../components/position-component";
+import { PositionComponent } from "../engine/component/components/position/position-component";
 import { SystemArgs } from "../engine/system/system-args";
 
 export class ParticleSystem extends EntitySystem{

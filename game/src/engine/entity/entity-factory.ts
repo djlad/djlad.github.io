@@ -1,19 +1,21 @@
 import { Entity } from './entity';
 import { ComponentFactory } from '../component/component-factory';
+import { Component } from '../component/component';
+import { GameDependencies } from '../dependencies/game-dependencies';
+import { EntityRegistration } from './entity-registration';
 
 export class EntityFactory {
-    constructor(componentFactory:ComponentFactory){
-        this.componentFactory = componentFactory;
+    constructor(gameDependencies:GameDependencies){
+        gameDependencies.checkDependency(gameDependencies.componentFactory);
+        this.componentFactory = gameDependencies.componentFactory;
+        this.dependencies = gameDependencies;
     }
-    entityTypes:{[key:string]:any}={};
+    dependencies: GameDependencies;
+    entityTypes:{[key:string]:EntityRegistration}={};
     componentFactory:ComponentFactory;
 
-    registerEntity(componentName:string, EntityClass:any){
-        if (EntityClass.prototype instanceof Entity){
-            this.entityTypes[componentName] = EntityClass;
-        } else {
-            console.log("EntityClass must extend class Entity");
-        }
+    registerEntity(componentName:string, EntityClass:EntityRegistration){
+        this.entityTypes[componentName] = EntityClass;
     }
 
     registerComponent(componentClass:any){
@@ -22,12 +24,12 @@ export class EntityFactory {
 
     create(entityName:string){
         let entityClass = this.entityTypes[entityName];
-        return this.entityTypes[entityName].create();
+        const entity = Entity.create(this.dependencies);
+        return this.entityTypes[entityName].create(this.dependencies, entity);
     }
 
-    static create():EntityFactory{
-        let componentFactory:ComponentFactory = ComponentFactory.create();
-        let ef:EntityFactory = new EntityFactory(componentFactory);
+    static create(gameDependencies:GameDependencies):EntityFactory{
+        let ef:EntityFactory = new EntityFactory(gameDependencies);
         return ef;
     }
 }

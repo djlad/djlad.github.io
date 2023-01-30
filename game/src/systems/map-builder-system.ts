@@ -1,6 +1,6 @@
 import { AnimationComponent } from "../components/animation-component";
 import { ClickableComponent } from "../components/clickable-component";
-import { PositionComponent } from "../components/position-component";
+import { PositionComponent } from "../engine/component/components/position/position-component";
 import { SpriteId } from "../components/tile-component/sprite-id";
 import { Tile } from "../components/tile-component/tile";
 import { TileComponent } from "../components/tile-component/tile-component";
@@ -16,7 +16,7 @@ import { ClickableEntity } from "../entities/clickable-entity";
 export class MapBuilderSystem extends EntitySystem{
     private clicks:GameEvent[] = [];
     private openBuilder:boolean = false;
-    private tilePallete:ClickableEntity[] = [];
+    private tilePallete:Entity[] = [];
     private selectedSpriteId: SpriteId = SpriteId.create("soil", 0);
     constructor(game:Game){
         super(game);
@@ -59,7 +59,7 @@ export class MapBuilderSystem extends EntitySystem{
         for(let i=0;i<tileComponent.tileSpriteNames.length-0;i++){
             for(let i2=0;i2<25;i2++){
                 let spriteName = tileComponent.tileSpriteNames[i];
-                let tileButton = <ClickableEntity>this.game.addEntity("click");
+                let tileButton = this.game.addEntity("click");
                 this.tilePallete.push(tileButton);
                 let animation = <AnimationComponent>tileButton.getComponent("animation");
                 let position = <PositionComponent>tileButton.getComponent("position");

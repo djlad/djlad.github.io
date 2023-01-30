@@ -1,6 +1,6 @@
 import { EntitySystem } from '../engine/system/system';
 import { Entity } from '../engine/entity/entity';
-import { PositionComponent } from '../components/position-component';
+import { PositionComponent } from '../engine/component/components/position/position-component';
 import { FirstEntity } from '../entities/first-entity';
 import { Game } from '../engine/game';
 import { ProjectileEntity } from '../entities/projectile-entity';

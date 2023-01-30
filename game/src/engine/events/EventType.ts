@@ -48,5 +48,6 @@ export enum EventType {
 
     giveItem,
 
-    dash
+    dash,
+    entityMoved
 }

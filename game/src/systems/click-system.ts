@@ -1,5 +1,5 @@
 import { ClickableComponent } from "../components/clickable-component";
-import { PositionComponent } from "../components/position-component";
+import { PositionComponent } from "../engine/component/components/position/position-component";
 import { Entity } from "../engine/entity/entity";
 import { EventManager } from "../engine/events/event-manager";
 import { EventType } from "../engine/events/EventType";

@@ -3,7 +3,7 @@ import { Game } from "../engine/game";
 import { Entity } from "../engine/entity/entity";
 import { InventoryComponent } from "../components/inventory-component/inventory-component";
 import { InventoryItemEntity } from "../entities/inventory-item-entity";
-import { PositionComponent } from "../components/position-component";
+import { PositionComponent } from "../engine/component/components/position/position-component";
 import { TextComponent } from "../components/text-component/text-component";
 import { InventoryItem } from "../components/inventory-component/inventory-item";
 import { SystemArgs } from "../engine/system/system-args";
@@ -31,7 +31,7 @@ export class InventorySystem extends EntitySystem {
         }
         let itemSlots:InventoryItem[] = inventory.getItems();
         for(let i:number=0;i<inventory.inventoryItemEntities.length;i++){
-            let inventoryItem:InventoryItemEntity;
+            let inventoryItem:Entity;
             let itemPosition:PositionComponent;
             inventoryItem = inventory.inventoryItemEntities[i];
             itemPosition = <PositionComponent>inventoryItem.getComponent("position");

@@ -3,6 +3,7 @@ import { Entity } from '../entity/entity';
 import { Game } from '../game';
 import { EventManager } from '../events/event-manager';
 import { SystemArgs } from './system-args';
+import { EntityUpdateArgs } from '../entity/entity-update-args';
 
 export class EntitySystem {
     /**
@@ -15,7 +16,7 @@ export class EntitySystem {
     }
     targetComponents:Component[];
     game:Game;
-
+    oncePerLoop:(args:SystemArgs)=>void=null;
     apply(args:SystemArgs):void{
         throw "an entity system did not implement apply method.";
     };

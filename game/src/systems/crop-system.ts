@@ -4,7 +4,7 @@ import { AnimationComponent } from '../components/animation-component';
 import { CropComponent } from '../components/crop-component';
 import { ProjectileEntity } from '../entities/projectile-entity';
 import { PlayerEntity } from '../entities/player-entity';
-import { PositionComponent } from '../components/position-component';
+import { PositionComponent } from '../engine/component/components/position/position-component';
 import { Game } from '../engine/game';
 import { InventoryComponent } from '../components/inventory-component/inventory-component';
 import { GameEvent } from '../engine/events/game-event';

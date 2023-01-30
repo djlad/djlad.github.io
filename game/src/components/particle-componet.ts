@@ -1,7 +1,7 @@
 import { Component } from "../engine/component/component";
 import { Entity } from "../engine/entity/entity";
 import { ParticleEntity } from "../entities/particles/particle-entity";
-import { PositionComponent } from "./position-component";
+import { PositionComponent } from "../engine/component/components/position/position-component";
 
 export class ParticleComponent extends Component{
     constructor(){

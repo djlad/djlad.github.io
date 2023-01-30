@@ -1,70 +1,33 @@
-import { PositionComponent } from './components/position-component';
-import { AnimationComponent } from './components/animation-component';
-import { CropEntity } from './entities/crop-entity';
+import { PositionComponent } from './engine/component/components/position/position-component';
 import { CropComponent } from './components/crop-component';
-import { RenderSystem } from './systems/render-system';
-import { WasdSystem } from './systems/wasd-system';
-import { CropSystem } from './systems/crop-system';
-import { CollisionSystem } from './systems/collision-system';
-import { ProjectileEntity } from './entities/projectile-entity';
-import { ProjectileSystem } from './systems/projectile-system';
-import { FightComponent } from './components/fight-component';
-import { HealthSystem } from './systems/health-system';
-import { PositionSystem } from './systems/position-system';
 
-import { NeuralFightSystem } from './systems/neural-fight-system';
 import { Game } from './engine/game';
-import { buildSprites } from './builders/sprite-builder';
-import { buildEntities } from './builders/entity-builder';
-import { buildComponents } from './builders/build-components';
-import { FightSystem } from './systems/fight-system';
-import { PlaceItemSystem } from './systems/place-item-system';
-import { InventorySystem } from './systems/inventory-system';
-import { ParticleSystem } from './systems/particle-system';
-import { ParticleEntity } from './entities/particles/particle-entity';
 import { ParticleComponent } from './components/particle-componet';
-import { MapBuilderSystem } from './systems/map-builder-system';
-import { ClickSystem } from './systems/click-system';
-import { PhaserGame } from './engine/phaser-integration/phaser-game';
+import { createPixiGame } from './game-builders';
+import { AnimationComponent } from './engine/component/components/animation/animation-component';
+import { Entity } from './engine/entity/entity';
+import { PixiDependencies } from './engine/pixi-integration/pixi-dependencies';
 
 declare var synaptic:any;
 export declare var g:Game;
 
-function createGame():Game{
-    let game:Game = Game.create()
-    game.addSystem(WasdSystem.create(game));
-    game.addSystem(CropSystem.create(game));
-    game.addSystem(CollisionSystem.create(game));
-    game.addSystem(ProjectileSystem.create(game));
-    // game.addSystem(FightSystem.create(game));
-    game.addSystem(HealthSystem.create(game));
-    game.addSystem(PositionSystem.create(game));
-    game.addSystem(NeuralFightSystem.create(game));
-    game.addSystem(PlaceItemSystem.create(game));
-    game.addSystem(InventorySystem.create(game));
-    game.addSystem(ParticleSystem.create(game));
-    game.addSystem(RenderSystem.create(game));
-    game.addSystem(MapBuilderSystem.create(game));
-    game.addSystem(ClickSystem.create(game));
-
-    const phaserGame = new PhaserGame();
-    phaserGame.start();
-    buildSprites(game)
-    buildEntities(game);
-    buildComponents(game);
-    return game;
-}
 
 function startGame(){
-    let game:Game = createGame();
-    game.entityFactory.componentFactory.createComponent("animation");
+    // let game:Game = createGame();
+    // let game:Game = createPhaserGameGeneric();
+    let game:Game = createPixiGame();
+    // game.entityFactory.componentFactory.createComponent("animation");
+    game.gameDependencies.spriteManager.onLoad(()=>{
+
     game.addEntity("first");
-    makePlayer();
-    //ac.setSprite("onion");
+    const player = makePlayer();
+    const playerPosition = <PositionComponent>player.getComponent("position");
+    game.gameDependencies.cameras.setMainCamera(playerPosition);
 
     var villager = game.addEntity("villager");
     var component = <PositionComponent>villager.getComponent("position");
     let ac = <AnimationComponent>villager.getComponent("animation");
+    ac.setSprite("blond");
     component.x = 150;
     component.y = 300;
     component.vx = 0;
@@ -79,7 +42,7 @@ function startGame(){
     deerPos.x = 500;
     deerPos.y = 100;
 
-    let particle: ParticleEntity = <ParticleEntity> game.addEntity("particles");
+    let particle: Entity = game.addEntity("particles");
     let particleC = <ParticleComponent>particle.getComponent("particles");
     particleC.targetParticles = 4;
     let pPos = <PositionComponent>particle.getComponent("position");
@@ -88,12 +51,12 @@ function startGame(){
     
 
     placeField(350,300, "wheat", 50, 5)
-    /*placeField(650,300, "corn", 50)
+    placeField(650,300, "corn", 50)
     placeField(350,600, "turnip", 50)
-    placeField(650,600, "onion", 50)*/
+    placeField(650,600, "onion", 50)
     // setTimeout(makePlayer, 1000);
     function placeField(x:number,y:number, cropName:string, d:number=50, width:number=5){
-        var crop:CropEntity;
+        var crop:Entity;
         var cc:CropComponent;
 
         for(var i:number=0;i<width;i++){
@@ -121,11 +84,25 @@ function startGame(){
         pc.y = 380;
         return player;
     }
-    let intervalId:number = game.start();
+    game.start();
+    //@ts-ignore
+    window.game = game;
     return game;
+    });
 }
 if (typeof window !== 'undefined')
 {
-    //@ts-ignore
-    window.game = startGame();
+    const game = startGame();
+    /*
+    let game = createPixiGame();
+    let g = game.gameDependencies as PixiDependencies;
+    g.pixiGame.start();
+    g.spriteManager.onLoad(()=>{
+        console.log("hi");
+    });
+    setTimeout(()=>{
+        const anim = g.pixiGame.getSpriteAnimation("greyWalk");
+        g.pixiGame.container.addChild(anim);
+        anim.play();
+    }, 4000)*/
 }

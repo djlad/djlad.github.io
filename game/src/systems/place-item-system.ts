@@ -3,7 +3,7 @@ import { Game } from "../engine/game";
 import { Entity } from "../engine/entity/entity";
 import { PlaceItemComponent } from "../components/place-item/place-item-component";
 import { PlaceItemRequest } from "../components/place-item/place-item-request";
-import { PositionComponent } from "../components/position-component";
+import { PositionComponent } from "../engine/component/components/position/position-component";
 import { SystemArgs } from "../engine/system/system-args";
 
 export class PlaceItemSystem extends EntitySystem {
@@ -13,10 +13,8 @@ export class PlaceItemSystem extends EntitySystem {
 
     apply(args:SystemArgs):void {
         const entity = args.entity;
-        let placeItem:PlaceItemComponent;
-        try{
-            placeItem = <PlaceItemComponent>entity.getComponent("placeItem");
-        } catch {return}
+        let placeItem:PlaceItemComponent = <PlaceItemComponent>entity.getComponent("placeItem", true);
+        if (placeItem == null)return;
         let requests:PlaceItemRequest[] = placeItem.placeItemRequests
         for(let i:number=0;i<requests.length;i++){
             let placeItemRequest:PlaceItemRequest = requests[i];
