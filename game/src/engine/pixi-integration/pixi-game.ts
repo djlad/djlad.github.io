@@ -54,7 +54,7 @@ export class PixiGame {
                 const key = this.tileKey(tileAtCoord);
                 let tileSprite = this.tileSprites[key];
                 if (tileSprite == null && this.outViewSprites.length == 0){
-                    tileSprite = new AnimatedSprite([spriteSheet.textures[spriteNum]]);
+                    tileSprite = new Sprite(spriteSheet.textures[spriteNum]);
                     tileSprite.width = tiles.tileWidth + 2;
                     tileSprite.height = tiles.tileWidth + 2;
                     this.tileSprites[key] = tileSprite;
