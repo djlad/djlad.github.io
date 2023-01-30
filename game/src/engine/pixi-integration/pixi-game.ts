@@ -10,18 +10,22 @@ type Dict<T> = {
 type SpriteType = Sprite;
 export class PixiGame {
     tileSprites: {[key:string]:SpriteType} = {};
+    width:number;
+    height:number;
+    xBound:number = 64;//how far left of 0 should we render tiles
+    yBound:number = 64;//how far above 0 should we render tiles
     spriteNameToAnimationName: {[key:string]: string[]} = {};
     outViewSprites: SpriteType[] = [];
     private tileKey(tile:Tile){
         return `${tile.tileX}:${tile.tileY}`
     }
     private getInViewTiles(tiles:TileComponent, cameras:GenericCameras){
-        const width = this.app.view.width;
-        const height = this.app.view.height;
         const inViewTiles:{[key:string]:Tile} = {};
-        for (let x=0;x<width;x+=tiles.tileWidth){
+        const xBound = this.xBound;
+        const yBound = this.yBound;
+        for (let x=-xBound;x<this.width+xBound;x+=tiles.tileWidth){
             const dataX = cameras.untransformX(x);
-            for (let y=0;y<height;y+=tiles.tileWidth){
+            for (let y=-yBound;y<this.height+yBound;y+=tiles.tileWidth){
                 const dataY = cameras.untransformY(y);
                 const tilesAtCoord = tiles.coordToTile(dataX, dataY);
                 if (tilesAtCoord.length == 0) continue;
@@ -33,11 +37,15 @@ export class PixiGame {
         return inViewTiles;
     }
     private arrangeTilesInView(tiles:TileComponent, cameras:GenericCameras, outViewSprites:SpriteType[] = []){
-        const width = this.app.view.width+tiles.tileWidth;
-        const height = this.app.view.height+tiles.tileWidth;
-        for (let x=-tiles.tileWidth;x<width;x+=tiles.tileWidth){
+        const width = this.width;
+        const height = this.height;
+        const xBound = this.xBound;
+        const yBound = this.yBound;
+        let c = 0;
+        for (let x=-xBound;x<width+xBound;x+=tiles.tileWidth){
             const dataX = cameras.untransformX(x);
-            for (let y=-tiles.tileWidth;y<height;y+=tiles.tileWidth){
+            for (let y=-yBound;y<height+yBound;y+=tiles.tileWidth){
+                c++;
                 const dataY = cameras.untransformY(y);
                 const tilesAtCoord = tiles.coordToTile(dataX, dataY);
                 if (tilesAtCoord.length == 0) continue;
@@ -63,6 +71,7 @@ export class PixiGame {
                 tileSprite.y = cameras.transformY(tiles.tileCoordToReal(tileAtCoord.tileY));
             }
         }
+        console.log(c);
     }
     private removeExisitingSpriteById(spriteKey:string){
         const tileSprite = this.tileSprites[spriteKey];
@@ -114,6 +123,8 @@ export class PixiGame {
         canvas.style.left = "0px";
         this.container = new Container();
         this.app.stage.addChild(this.container);
+        this.width = this.app.view.width;
+        this.height = this.app.view.height;
     }
     app: Application;
     container: Container;
