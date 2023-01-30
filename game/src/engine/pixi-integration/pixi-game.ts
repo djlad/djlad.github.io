@@ -2,37 +2,86 @@ import { Application, Sprite, IApplicationOptions, Container, Assets, AssetsClas
 import { metadata } from '../../metadata';
 import { TileComponent } from '../../components/tile-component/tile-component';
 import { Tile } from '../../components/tile-component/tile';
+import { GenericCameras } from '../dependencies/generic-cameras';
 
 type Dict<T> = {
     [key: string]: T;
 }
+type SpriteType = Sprite;
 export class PixiGame {
-    tileSprites: {[key:string]:AnimatedSprite} = {};
+    tileSprites: {[key:string]:SpriteType} = {};
     spriteNameToAnimationName: {[key:string]: string[]} = {};
+    outViewSprites: SpriteType[] = [];
     private tileKey(tile:Tile){
         return `${tile.tileX}:${tile.tileY}`
     }
-    async renderTiles(tiles: TileComponent) {
-        // return;
+    private getInViewTiles(tiles:TileComponent, cameras:GenericCameras){
         const width = this.app.view.width;
         const height = this.app.view.height;
-        tiles.tiles.forEach((tile)=>{
-            const pixiGame = this;
-            tile.spriteIds.forEach((spriteId)=>{
-                // const texture = await this.spriteNameToTexture[spriteId.spriteName];
-                const texture = this.spriteNameToTexture[spriteId.spriteName];
-                const spriteNum = spriteId.spriteNumber;
-                const x = tile.tileX;
-                const y = tile.tileY;
-                const key = this.tileKey(tile);
+        const inViewTiles:{[key:string]:Tile} = {};
+        for (let x=0;x<width;x+=tiles.tileWidth){
+            const dataX = cameras.untransformX(x);
+            for (let y=0;y<height;y+=tiles.tileWidth){
+                const dataY = cameras.untransformY(y);
+                const tilesAtCoord = tiles.coordToTile(dataX, dataY);
+                if (tilesAtCoord.length == 0) continue;
+                const tileAtCoord = tilesAtCoord[0];
+                const key = this.tileKey(tileAtCoord);
+                inViewTiles[key] = tileAtCoord;
+            }
+        }
+        return inViewTiles;
+    }
+    private arrangeTilesInView(tiles:TileComponent, cameras:GenericCameras, outViewSprites:SpriteType[] = []){
+        const width = this.app.view.width+tiles.tileWidth;
+        const height = this.app.view.height+tiles.tileWidth;
+        for (let x=-tiles.tileWidth;x<width;x+=tiles.tileWidth){
+            const dataX = cameras.untransformX(x);
+            for (let y=-tiles.tileWidth;y<height;y+=tiles.tileWidth){
+                const dataY = cameras.untransformY(y);
+                const tilesAtCoord = tiles.coordToTile(dataX, dataY);
+                if (tilesAtCoord.length == 0) continue;
+                const tileAtCoord = tilesAtCoord[0];
+                const spriteName = tileAtCoord.spriteIds[0].spriteName;
+                const spriteNum = tileAtCoord.spriteIds[0].spriteNumber;
+                const spriteSheet = this.spriteNameToSpriteSheet[spriteName];
+                const key = this.tileKey(tileAtCoord);
                 let tileSprite = this.tileSprites[key];
-                if (tileSprite == null){
-                    tileSprite = new AnimatedSprite([texture]);
-                    // this.container.addChild(tileSprite);
+                if (tileSprite == null && this.outViewSprites.length == 0){
+                    tileSprite = new AnimatedSprite([spriteSheet.textures[spriteNum]]);
+                    tileSprite.width = tiles.tileWidth + 2;
+                    tileSprite.height = tiles.tileWidth + 2;
+                    this.tileSprites[key] = tileSprite;
+                    this.container.addChild(tileSprite);
+                }
+                if (tileSprite == null && this.outViewSprites.length > 0){
+                    tileSprite = this.outViewSprites.pop();
+                    tileSprite.texture = spriteSheet.textures[spriteNum];
                     this.tileSprites[key] = tileSprite;
                 }
-            });
-        });
+                tileSprite.x = cameras.transformX(tiles.tileCoordToReal(tileAtCoord.tileX));
+                tileSprite.y = cameras.transformY(tiles.tileCoordToReal(tileAtCoord.tileY));
+            }
+        }
+    }
+    private removeExisitingSpriteById(spriteKey:string){
+        const tileSprite = this.tileSprites[spriteKey];
+        delete this.tileSprites[spriteKey];
+        this.outViewSprites.push(tileSprite);
+        return tileSprite;
+    }
+    private removeOutOfViewSprites(){
+        for(let key in this.tileSprites){
+            const existingSprite = this.tileSprites[key];
+            if (!(key in this.outViewSprites)){
+                const sprite = this.removeExisitingSpriteById(key);
+            }
+        }
+    }
+    async renderTiles(tiles: TileComponent, cameras:GenericCameras) {
+        const inViewTiles = this.getInViewTiles(tiles, cameras);
+        this.removeOutOfViewSprites();
+        this.arrangeTilesInView(tiles, cameras, this.outViewSprites);
     }
     private loader: AssetsClass;
     spriteNameToTexturePromise: {[key:string]:Promise<Texture>} = {};
@@ -139,6 +188,10 @@ export class PixiGame {
         if (!(animationName in this.animationNameToParsed)){
             this.animationNameToParsed[animationName] = true;
         }
+        if (spriteSheet == null || !(animationName in spriteSheet.animations)){
+            // console.log(`Animation not found: ${animationName}`);
+            return;
+        }
         const animationFrames = spriteSheet.animations[animationName];
         const animation = new AnimatedSprite(animationFrames);
         animation.animationSpeed = 0.1666;
@@ -170,9 +223,9 @@ export class PixiGame {
             const texture = this.spriteNameToTexture[spriteName];
             const atlas = this.spriteNameToAtlas[spriteName];
             const spriteSheet = new Spritesheet(texture, atlas);
+            this.spriteNameToSpriteSheet[spriteName] = spriteSheet;
             animationNames.forEach((animationName)=>{
                 this.animationNameToSpriteSheet
-                this.spriteNameToSpriteSheet[spriteName] = spriteSheet
                 this.animationNameToSpriteSheet[animationName] = spriteSheet;
             });
         }

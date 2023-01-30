@@ -39,7 +39,7 @@ export class GenericRenderSystem extends EntitySystem {
     oncePerLoop = (args:SystemArgs) => {
         const first = args.entity;
         const tiles = <TileComponent>first.getComponent("tile");
-        this.pixieGame.renderTiles(tiles);
+        this.pixieGame.renderTiles(tiles, this.cameras);
     };
     targetComponents:Component[];
 
