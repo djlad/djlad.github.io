@@ -31,7 +31,6 @@ export class TileComponent extends Component{
         let xhigh = xlow + 6
         let ylow = 3;
         let yhigh = ylow + 6;
-        // return tc;
         for(let i=0;i<mapWidth*mapWidth;i++){
             let x = i%mapWidth-centerOffset;
             let y = Math.floor(i/mapWidth)-centerOffset;
@@ -66,7 +65,6 @@ export class TileComponent extends Component{
             return [];
         }
         return [tile];
-        // return this.tiles.filter((tile)=>tile.tileX == tileX && tile.tileY == tileY)
     }
     tileCoordToReal(coord:number){
         return coord * this.tileWidth;        
