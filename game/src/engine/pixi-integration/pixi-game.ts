@@ -16,6 +16,7 @@ export class PixiGame {
     yBound:number = 64;//how far above 0 should we render tiles
     spriteNameToAnimationName: {[key:string]: string[]} = {};
     outViewSprites: SpriteType[] = [];
+    ptime: number;
     private tileKey(tile:Tile){
         return `${tile.tileX}:${tile.tileY}`
     }
@@ -23,6 +24,7 @@ export class PixiGame {
         const inViewTiles:{[key:string]:Tile} = {};
         const xBound = this.xBound;
         const yBound = this.yBound;
+        // const t = performance.now();
         for (let x=-xBound;x<this.width+xBound;x+=tiles.tileWidth){
             const dataX = cameras.untransformX(x);
             for (let y=-yBound;y<this.height+yBound;y+=tiles.tileWidth){
@@ -34,6 +36,7 @@ export class PixiGame {
                 inViewTiles[key] = tileAtCoord;
             }
         }
+        // console.log(performance.now() - t);
         return inViewTiles;
     }
     private arrangeTilesInView(tiles:TileComponent, cameras:GenericCameras, outViewSprites:SpriteType[] = []){
@@ -41,10 +44,12 @@ export class PixiGame {
         const height = this.height;
         const xBound = this.xBound;
         const yBound = this.yBound;
+        let dataX;
+        let dataY;
         for (let x=-xBound;x<width+xBound;x+=tiles.tileWidth){
-            const dataX = cameras.untransformX(x);
+            dataX = cameras.untransformX(x);
             for (let y=-yBound;y<height+yBound;y+=tiles.tileWidth){
-                const dataY = cameras.untransformY(y);
+                dataY = cameras.untransformY(y);
                 const tilesAtCoord = tiles.coordToTile(dataX, dataY);
                 if (tilesAtCoord.length == 0) continue;
                 const tileAtCoord = tilesAtCoord[0];
@@ -76,17 +81,17 @@ export class PixiGame {
         this.outViewSprites.push(tileSprite);
         return tileSprite;
     }
-    private removeOutOfViewSprites(){
+    private removeOutOfViewSprites(inViewTiles:{[key:string]:Tile}){
         for(let key in this.tileSprites){
             const existingSprite = this.tileSprites[key];
-            if (!(key in this.outViewSprites)){
+            if (!(key in inViewTiles)){
                 const sprite = this.removeExisitingSpriteById(key);
             }
         }
     }
     async renderTiles(tiles: TileComponent, cameras:GenericCameras) {
         const inViewTiles = this.getInViewTiles(tiles, cameras);
-        this.removeOutOfViewSprites();
+        this.removeOutOfViewSprites(inViewTiles);
         this.arrangeTilesInView(tiles, cameras, this.outViewSprites);
     }
     private loader: AssetsClass;
