@@ -49,7 +49,7 @@ const config = {
 };
 
 function build(config){
-    esbuild.build(config).catch((e)=>{
+    return esbuild.build(config).catch((e)=>{
         console.log(e);
         return process.exit(1);
     });
@@ -57,14 +57,19 @@ function build(config){
 
 function watch(config){
     config.watch = false;
-    esbuild.serve({
+    return esbuild.serve({
         servedir:".",
-        port:8001
+        port:port
     }, config).catch((e)=>{
         console.log(e);
         return process.exit(1);
     });;
 }
 
-// build(config);
-watch(config);
+const port = 8003;
+build(config).then(()=>{
+    console.log(`Built game in ./dist`);
+});
+console.log("Serving dev site at http://127.0.0.1:${port}/dist/cdnindex.html");
+watch(config).then(()=>{
+});
