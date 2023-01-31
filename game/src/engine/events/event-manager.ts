@@ -12,6 +12,7 @@ export class EventManager {
     //events:{[key:string]:GameEvent[]} = {};
     events:GameEvent[] = [];
     callbacks:{[key:string]:((event:GameEvent)=>void)[]} = {};
+    touch:any = {}
 
 
     createKeyListener(){
@@ -31,6 +32,24 @@ export class EventManager {
             console.log("x: " + x + " y: " + y)
             this.emit(EventType.mouseUp, {x,y});
         })
+        window.addEventListener("touchstart", (e)=>{
+            const rect = canvas.getBoundingClientRect()
+            const x = e.touches[0].clientX - rect.left
+            const y = e.touches[0].clientY - rect.top
+            this.emit(EventType.touchStart,{
+                x:x,
+                y:y
+            });
+        });
+        window.addEventListener("touchend", (e)=>{
+            const rect = canvas.getBoundingClientRect()
+            const x = e.touches[0].clientX - rect.left
+            const y = e.touches[0].clientY - rect.top
+            this.emit(EventType.touchEnd,{
+                x:x,
+                y:y
+            });
+        });
         return keys;
     }
 

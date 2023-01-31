@@ -15,18 +15,49 @@ import { Component } from '../engine/component/component';
 import { TransitionComponent } from '../components/transitions/transition-component';
 import { AnimationComponent } from '../engine/component/components/animation/animation-component';
 import { WeaponComponent } from '../components/weapon-component';
+import { SystemArgs } from '../engine/system/system-args';
+import { GenericPositionComponent } from '../engine/pixi-integration/pixi-components/generic-position-component';
 
 export class WasdSystem extends EntitySystem {
     constructor(game:Game){
         super(game);
+        game.eventManager.addListener(EventType.touchStart, (e)=>{
+            this.move = true;
+            this.touchStart.x = e.eventData.x;
+            this.touchStart.y = e.eventData.y
+        });
+        game.eventManager.addListener(EventType.touchEnd, ()=>{
+            this.move = false;
+            this.stop = true;
+        });
     }
+    private move:boolean = false;
+    private stop:boolean = false;
+    private touchStart:{x:number,y:number} = {x:0,y:0};
     static create(game:Game):WasdSystem{
         var wasd:WasdSystem = new WasdSystem(game);
         //eventManager.addListener(EventType.wDown, function(){console.log("w down")});
         return wasd;
     }
 
-    apply(){}
+    apply(args:SystemArgs){
+        const entity = args.entity;
+        const position = <GenericPositionComponent>entity.getComponent("position", true);
+        const wasd = <WasdComponent>entity.getComponent("wasd", true);
+        if (position == null) return;
+        if (wasd == null) return;
+        if (this.move){
+            if (this.touchStart.x > window.innerWidth/2)position.vx = 10;
+            else position.vx = -10;
+            if (this.touchStart.y > window.innerHeight/2)position.vy = 10;
+            else position.vy = -10;
+        }
+        if (this.stop){
+            position.vx = 0;
+            position.vy = 0;
+            this.stop = false;
+        }
+    }
 
     applyEvents(entity:Entity, eventManager:EventManager){
         var events:GameEvent[] = eventManager.events;

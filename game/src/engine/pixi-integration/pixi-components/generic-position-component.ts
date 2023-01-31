@@ -115,7 +115,14 @@ export class GenericPositionComponent extends Component implements IPositionComp
     private _width:number=100;
     private _height:number=100;
     flip:boolean = false;
-    faceRight:boolean = true;
+    _faceRight:boolean = true;
+    get faceRight(){
+        return this._faceRight;
+    }
+    set faceRight(value:boolean){
+        this._faceRight = value;
+        this.engineSprite.faceRight = value;
+    }
     faceX:number=0;
     faceY:number=0;
     moved:boolean=false;

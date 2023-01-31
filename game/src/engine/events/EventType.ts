@@ -13,10 +13,10 @@ export enum EventType {
     spaceDown,
     spaceUp,
 
-    iUp,// show inventory
+    iUp,
     iDown,
 
-    pDown,// console.log game object
+    pDown,
     pUp,
 
     fDown,
@@ -28,7 +28,7 @@ export enum EventType {
     hUp,
     semicolonUp,
     tildUp,
-    
+
     jDown,
     kDown,
     lDown,
@@ -49,5 +49,7 @@ export enum EventType {
     giveItem,
 
     dash,
-    entityMoved
+    entityMoved,
+    touchStart,
+    touchEnd
 }
