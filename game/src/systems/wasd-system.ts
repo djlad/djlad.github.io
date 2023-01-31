@@ -14,6 +14,7 @@ import { CropComponent } from '../components/crop-component';
 import { Component } from '../engine/component/component';
 import { TransitionComponent } from '../components/transitions/transition-component';
 import { AnimationComponent } from '../engine/component/components/animation/animation-component';
+import { WeaponComponent } from '../components/weapon-component';
 
 export class WasdSystem extends EntitySystem {
     constructor(game:Game){
@@ -109,6 +110,12 @@ export class WasdSystem extends EntitySystem {
                 case EventType.pUp:
                     //console.log("p up")
                     console.log(this.game);
+                    const weapon = <WeaponComponent>entity.getComponent("weapon");
+                    if (weapon.rotationSpeed == 0){
+                        weapon.spin();
+                    } else {
+                        weapon.sheatheBack();
+                    }
                 break;
                 case EventType.iUp:
                     let inventory:InventoryComponent;

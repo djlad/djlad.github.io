@@ -19,9 +19,10 @@ export class WeaponComponent extends Component {
     weaponOffsetY: number = -.5;
     game: Game;
     wobble:number=0;
+    rotationSpeed:number = .1;
     holdWeapon(){
-        this.weaponOffsetX = -.05;
-        this.weaponOffsetY = .75
+        this.weaponOffsetX = .1;
+        this.weaponOffsetY = -.45
         this.weaponPosition.rotate = 2;
     }
     sheatheWeapon(){
@@ -31,8 +32,15 @@ export class WeaponComponent extends Component {
     }
     sheatheBack(){
         this.weaponOffsetX = -.6;
-        this.weaponOffsetY = -.8;
+        this.weaponOffsetY = -.75;
         this.weaponPosition.rotate = 3.2;
+        this.rotationSpeed = 0;
+    }
+    spin(){
+        this.weaponOffsetX = 0;
+        this.weaponOffsetY = -.5;
+        this.weaponPosition.rotate = 5;
+        this.rotationSpeed = .1;
     }
     update(entity:Entity, args:EntityUpdateArgs){
         if (this.weaponEntity == null){
@@ -44,8 +52,8 @@ export class WeaponComponent extends Component {
         this.weaponPosition.y = wielderPosition.y + this.weaponOffsetY * wielderPosition.height;
         this.weaponPosition.flip = wielderPosition.flip;
         this.weaponPosition.faceRight = wielderPosition.faceRight;
-        // console.log(this.weaponPosition);
         this.wobble += 0;
+        this.weaponPosition.rotate+=this.rotationSpeed;
     }
     static create(gameDependencies:GameDependencies, entityId:string):WeaponComponent{
         return new WeaponComponent(gameDependencies, entityId);

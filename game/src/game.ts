@@ -25,7 +25,7 @@ function startGame(){
     const player = makePlayer();
     const playerPosition = <PositionComponent>player.getComponent("position");
     const playerSword = <WeaponComponent> player.getComponent("weapon");
-    setTimeout(()=>playerSword.sheatheBack(), 100);
+    setTimeout(()=>playerSword.holdWeapon(), 100);
     game.gameDependencies.cameras.setMainCamera(playerPosition);
 
     var villager = game.addEntity("villager");
