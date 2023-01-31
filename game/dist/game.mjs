@@ -2606,6 +2606,12 @@
             break;
           case 13 /* pUp */:
             console.log(this.game);
+            const weapon = entity.getComponent("weapon");
+            if (weapon.rotationSpeed == 0) {
+              weapon.spin();
+            } else {
+              weapon.sheatheBack();
+            }
             break;
           case 10 /* iUp */:
             let inventory;
@@ -26763,11 +26769,12 @@ ${e}`);
       this.weaponOffsetX = 0;
       this.weaponOffsetY = -0.5;
       this.wobble = 0;
+      this.rotationSpeed = 0.1;
       this.game = gameDependencies.game;
     }
     holdWeapon() {
-      this.weaponOffsetX = -0.05;
-      this.weaponOffsetY = 0.75;
+      this.weaponOffsetX = 0.1;
+      this.weaponOffsetY = -0.45;
       this.weaponPosition.rotate = 2;
     }
     sheatheWeapon() {
@@ -26777,8 +26784,15 @@ ${e}`);
     }
     sheatheBack() {
       this.weaponOffsetX = -0.6;
-      this.weaponOffsetY = -0.8;
+      this.weaponOffsetY = -0.75;
       this.weaponPosition.rotate = 3.2;
+      this.rotationSpeed = 0;
+    }
+    spin() {
+      this.weaponOffsetX = 0;
+      this.weaponOffsetY = -0.5;
+      this.weaponPosition.rotate = 5;
+      this.rotationSpeed = 0.1;
     }
     update(entity, args) {
       if (this.weaponEntity == null) {
@@ -26791,6 +26805,7 @@ ${e}`);
       this.weaponPosition.flip = wielderPosition.flip;
       this.weaponPosition.faceRight = wielderPosition.faceRight;
       this.wobble += 0;
+      this.weaponPosition.rotate += this.rotationSpeed;
     }
     static create(gameDependencies, entityId) {
       return new WeaponComponent(gameDependencies, entityId);
@@ -26847,7 +26862,7 @@ ${e}`);
       const player = makePlayer();
       const playerPosition = player.getComponent("position");
       const playerSword = player.getComponent("weapon");
-      setTimeout(() => playerSword.sheatheBack(), 100);
+      setTimeout(() => playerSword.holdWeapon(), 100);
       game.gameDependencies.cameras.setMainCamera(playerPosition);
       var villager = game.addEntity("villager");
       var component = villager.getComponent("position");
