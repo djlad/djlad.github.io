@@ -114,13 +114,10 @@ export class PixieEngineSprite implements IEngineSprite {
 	public set faceRight(value: boolean) {
         if (value != this._faceRight){
             if (value){
-                console.log("face right?");
                 this.sprite.scale.x = Math.abs(this.sprite.scale.x);
             } else {
-                console.log("face left?");
                 this.sprite.scale.x = Math.abs(this.sprite.scale.x) * -1;
             }
-            console.log(this.sprite.scale.x);
         }
 		this._faceRight = value;
 	}
