@@ -41,6 +41,7 @@ export class Game {
     
     static createCustom(dependencies:GameDependencies):Game{
         var game = new Game(dependencies.entityFactory, dependencies.renderer, dependencies.eventManager, dependencies);
+        dependencies.game = game;
         return game;
     }
     private starters:((games:Game)=>void)[] = [];

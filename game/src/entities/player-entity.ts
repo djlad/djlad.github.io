@@ -21,6 +21,7 @@ export class PlayerEntity implements EntityRegistration{
         let particles = <ParticleComponent>entity.addComponent("particles");
         particles.targetParticles = 0;
         entity.addComponent("transition");
+        entity.addComponent("weapon");
         
         var sprite:string = "grey";
         // var sprite:string = "greythrow";

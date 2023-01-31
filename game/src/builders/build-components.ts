@@ -19,6 +19,7 @@ import { ClickableComponent } from '../components/clickable-component';
 import { AnimationComponent } from '../engine/component/components/animation/animation-component';
 import { PhaserAnimationComponent } from '../engine/phaser-integration/phaser-components/phaser-animation-component';
 import { PhaserPositionComponent } from '../engine/phaser-integration/phaser-components/phaser-position-component';
+import { WeaponComponent } from '../components/weapon-component';
 
 
 export function buildComponents(game:Game):void{
@@ -39,4 +40,5 @@ export function buildComponents(game:Game):void{
     game.registerComponent(PlaceItemComponent);
     game.registerComponent(CropHarvesterComponent);
     game.registerComponent(TextComponent);
+    game.registerComponent(WeaponComponent);
 }

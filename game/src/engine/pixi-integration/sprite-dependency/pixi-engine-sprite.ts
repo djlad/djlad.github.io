@@ -16,7 +16,7 @@ export class PixieEngineSprite implements IEngineSprite {
         this.pivotX = .5;
         this.pivotY = 1;
         this.anchorX = .5;
-        this.pivotY = 1;
+        this.anchorY = 1;
     }
     private _width: number;
     private _height: number;
@@ -114,10 +114,13 @@ export class PixieEngineSprite implements IEngineSprite {
 	public set faceRight(value: boolean) {
         if (value != this._faceRight){
             if (value){
+                console.log("face right?");
                 this.sprite.scale.x = Math.abs(this.sprite.scale.x);
             } else {
+                console.log("face left?");
                 this.sprite.scale.x = Math.abs(this.sprite.scale.x) * -1;
             }
+            console.log(this.sprite.scale.x);
         }
 		this._faceRight = value;
 	}
