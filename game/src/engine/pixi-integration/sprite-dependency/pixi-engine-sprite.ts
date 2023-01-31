@@ -13,6 +13,10 @@ export class PixieEngineSprite implements IEngineSprite {
         gameDependencies.checkDependency(gameDependencies.pixiGame);
         this.pixieGame = gameDependencies.pixiGame;
         this.sprite = this.pixieGame.getSpriteAnimation("greyWalk");
+        this.pivotX = .5;
+        this.pivotY = 1;
+        this.anchorX = .5;
+        this.pivotY = 1;
     }
     private _width: number;
     private _height: number;
@@ -20,6 +24,16 @@ export class PixieEngineSprite implements IEngineSprite {
     private _x: number;
     private _y: number;
     private _vx: number;
+    private _rotate:number=0;
+
+    public get rotate(){
+        return this._rotate;
+    }
+
+    public set rotate(newRotate:number){
+        this._rotate = newRotate;
+        this.sprite.rotation = newRotate;
+    }
 
     /**
      * Getter width
@@ -141,6 +155,31 @@ export class PixieEngineSprite implements IEngineSprite {
 		this._vy = value;
 	}
     private _vy: number;
+    
+    get pivotX(){
+        return this.sprite.pivot.x;
+    }
+    get pivotY(){
+        return this.sprite.pivot.y;
+    }
+    get anchorX(){
+        return this.sprite.anchor.x;
+    }
+    get anchorY(){
+        return this.sprite.anchor.y;
+    }
+    set pivotX(value:number){
+        this.sprite.anchor.x = value;
+    }
+    set pivotY(value:number){
+        this.sprite.pivot.y = value;
+    }
+    set anchorX(value:number){
+        this.sprite.pivot.x = value;
+    }
+    set anchorY(value:number){
+        this.sprite.anchor.y = value;
+    }
     setSprite(animationName: string): void {
         // console.log(`setSprite to ${animationName}`)
         const newSprite = this.pixieGame.getSpriteAnimation(animationName);
@@ -149,10 +188,10 @@ export class PixieEngineSprite implements IEngineSprite {
         newSprite.width = this.sprite.width;
         newSprite.height = this.sprite.height;
         newSprite.scale.x = this.sprite.scale.x;
-        newSprite.pivot.x = .5;
-        newSprite.pivot.y = .5;
-        newSprite.anchor.x = .5;
-        newSprite.anchor.y = 1;
+        newSprite.pivot.x = this.pivotX;
+        newSprite.pivot.y = this.pivotY;
+        newSprite.anchor.x = this.anchorX;
+        newSprite.anchor.y = this.anchorY;
         this.pixieGame.container.removeChild(this.sprite);
         this.sprite = newSprite;
     }

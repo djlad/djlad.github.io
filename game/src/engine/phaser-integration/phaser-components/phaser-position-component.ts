@@ -90,4 +90,8 @@ export class PhaserPositionComponent extends Component implements IPositionCompo
     static create():PhaserPositionComponent{
         return new PhaserPositionComponent(PhaserGame.createSingleton());
     }
+    pivotX:number = .5;
+    pivotY:number = 1;
+    anchorX:number = .5;
+    anchorY:number = 1;
 }

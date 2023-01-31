@@ -71,6 +71,7 @@ export class GenericPositionComponent extends Component implements IPositionComp
     }
     set rotate(radiansToRotate:number){
         this._rotate = radiansToRotate%(2*Math.PI);
+        this.engineSprite.rotate = radiansToRotate;
     }
     get x():number{
         return this._x;
@@ -120,6 +121,30 @@ export class GenericPositionComponent extends Component implements IPositionComp
     moved:boolean=false;
     applyOffsets:boolean=true;
 
+    get pivotX(){
+        return this.engineSprite.pivotX;
+    }
+    get pivotY(){
+        return this.engineSprite.pivotY;
+    }
+    get anchorX(){
+        return this.engineSprite.anchorX;
+    }
+    get anchorY(){
+        return this.engineSprite.anchorY
+    }
+    set pivotX(value:number){
+        this.engineSprite.pivotX = value;
+    }
+    set pivotY(value:number){
+        this.engineSprite.pivotY = value;
+    }
+    set anchorX(value:number){
+        this.engineSprite.anchorX = value;
+    }
+    set anchorY(value:number){
+        this.engineSprite.anchorY = value;
+    }
 
 
     update(entity:Entity, args:EntityUpdateArgs):void{

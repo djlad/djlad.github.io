@@ -12,4 +12,8 @@ export interface IPositionComponent {
     faceY:number;
     moved:boolean;
     applyOffsets:boolean;
+    pivotX:number;
+    pivotY:number;
+    anchorX:number;
+    anchorY:number;
 }

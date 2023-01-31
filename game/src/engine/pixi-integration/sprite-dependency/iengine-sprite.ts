@@ -6,6 +6,11 @@ export interface IEngineSprite {
     y:number;
     vx:number;
     vy:number;
+    rotate:number;
+    pivotX:number;
+    pivotY:number;
+    anchorX:number;
+    anchorY:number;
     setSprite(animationName:string):void;
 
 }

@@ -72,4 +72,8 @@ export class PositionComponent extends Component implements IPositionComponent {
     static create():PositionComponent{
         return new PositionComponent();
     }
+    pivotX:number = .5;
+    pivotY:number = 1;
+    anchorX:number = .5;
+    anchorY:number = 1;
 }

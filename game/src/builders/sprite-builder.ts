@@ -72,8 +72,8 @@ export function populateSpriteManager(spriteManager:ISpriteLoader):ISpriteLoader
     sm.loadSprite("arm", "arm.png", 1, 1);
     sm.addAnimation("arm", "arm0", [1]);
     
-    sm.loadSpriteOverlapping("swords", "sword-7Soul1.png");
-    // sm.addAnimation("swordAs", "arrowsword", [0], 30)
+    sm.loadSprite("swords", "sword-7Soul1.png", 8, 6);
+    sm.addAnimation("swords", "arrowsword", [1], 30)
     sm.loadSprite("dwarves", "fantasysprites/DwarfSprites2.png", 12, 8);
     sm.addAnimation("dwarves", "dwarfopeneyes", [35]);
     sm.addAnimation("dwarves", "dwarfopeneyesWalk", [33, 35, 34, 35], 5);

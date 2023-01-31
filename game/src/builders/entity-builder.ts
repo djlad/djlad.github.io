@@ -10,6 +10,7 @@ import { ParticlesEntity } from "../entities/particles/particles-entity";
 import { ClickableEntity } from "../entities/clickable-entity";
 import { DeerEntity } from "../entities/deer-entity";
 import { UIPanelEntity } from "../entities/ui-panel-entity";
+import { WeaponEntity } from "../entities/weapon-entity";
 
 
 export function buildEntities(game:Game):void{
@@ -24,4 +25,5 @@ export function buildEntities(game:Game):void{
     game.registerEntity("click", new ClickableEntity());
     game.registerEntity("deer", new DeerEntity());
     game.registerEntity("uipanel", new UIPanelEntity());
+    game.registerEntity("weapon", new WeaponEntity());
 }
