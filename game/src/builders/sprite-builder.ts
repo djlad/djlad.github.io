@@ -89,9 +89,9 @@ export function populateSpriteManager(spriteManager:ISpriteLoader):ISpriteLoader
     sm.addAnimation("people3", "brownpuffgirl", [80]);
     sm.addAnimation("people3", "brownpuffgirlwalk", [79, 80, 81], 5);
 
-    sm.loadSprite("victorian2", "BearSprites.webp", 12, 8);
+    /*sm.loadSprite("victorian2", "BearSprites.webp", 12, 8);
     sm.addAnimation("victorian2", "nun", [79], 5);
-    sm.addAnimation("victorian2", "nunwalk", [78,79,80, 79], 5);
+    sm.addAnimation("victorian2", "nunwalk", [78,79,80, 79], 5);*/
 
     sm.loadSprite("greg", "greg.png", 2,2);
     sm.addAnimation("greg", "greg", [0]);
