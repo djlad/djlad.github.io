@@ -95,7 +95,7 @@ build(config).then(()=>{
 if (process.argv.length != 3 && process.argv[2] != "build"){
     results["local"] = "127.0.0.1"
     for(let nic in results){
-        console.log(`Serving dev site at http://${results[nic]}:${port}/dist/cdnindex.html`);
+        console.log(`Serving dev site at http://${results[nic]}:${port}/dist/index.html`);
     }
     watch(config);
 }
