@@ -44,11 +44,13 @@ const config = {
     plugins:[
         externalGlobalPlugin.externalGlobalPlugin({
             'phaser': 'window.Phaser',
+            'pixi.js': 'window.PIXI'
           })
     ]
 };
 
 function build(config){
+    config.watch = false;
     return esbuild.build(config).catch((e)=>{
         console.log(e);
         return process.exit(1);
@@ -66,10 +68,12 @@ function watch(config){
     });;
 }
 
-const port = 8003;
+const port = 8004;
 build(config).then(()=>{
     console.log(`Built game in ./dist`);
 });
-console.log("Serving dev site at http://127.0.0.1:${port}/dist/cdnindex.html");
-watch(config).then(()=>{
-});
+
+if (process.argv.length != 3 && process.argv[2] != "build"){
+    console.log("Serving dev site at http://127.0.0.1:${port}/dist/cdnindex.html");
+    watch(config);
+}
