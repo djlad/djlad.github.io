@@ -3,6 +3,25 @@ import * as esbuild from 'esbuild';
 import {readFileSync, write, writeFile, writeFileSync} from 'fs';
 import * as imageSize from 'image-size';
 import externalGlobalPlugin from "esbuild-plugin-external-global";
+import { networkInterfaces } from 'os';
+
+const nets = networkInterfaces();
+const results = Object.create(null); // Or just '{}', an empty object
+
+for (const name of Object.keys(nets)) {
+    for (const net of nets[name]) {
+        // Skip over non-IPv4 and internal (i.e. 127.0.0.1) addresses
+        // 'IPv4' is in Node <= 17, from 18 it's a number 4 or 6
+        const familyV4Value = typeof net.family === 'string' ? 'IPv4' : 4
+        if (net.family === familyV4Value && !net.internal) {
+            if (!results[name]) {
+                results[name] = [];
+            }
+            results[name].push(net.address);
+        }
+    }
+}
+console.log(results);
 
 
 const packageJson = JSON.parse(readFileSync("package.json"));
@@ -74,6 +93,9 @@ build(config).then(()=>{
 });
 
 if (process.argv.length != 3 && process.argv[2] != "build"){
-    console.log("Serving dev site at http://127.0.0.1:${port}/dist/cdnindex.html");
+    results["local"] = "127.0.0.1"
+    for(let nic in results){
+        console.log(`Serving dev site at http://${results[nic]}:${port}/dist/cdnindex.html`);
+    }
     watch(config);
 }
