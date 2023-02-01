@@ -2465,7 +2465,7 @@ ${item.itemName}: ${item.itemQuantity}`;
     static create() {
       let tc = new TileComponent();
       let spriteName = "grass";
-      let mapWidth = 1e3;
+      let mapWidth = 200;
       let centerOffset = mapWidth / 2 - 5;
       let xlow = 4;
       let xhigh = xlow + 6;
@@ -3715,10 +3715,11 @@ ${item.itemName}: ${item.itemQuantity}`;
       let pPos = particle.getComponent("position");
       pPos.x = 150;
       pPos.y = 400;
-      placeField(360, 300, "wheat", 32, 5);
-      placeField(720, 300, "corn", 64);
-      placeField(360, 660, "turnip", 64);
-      placeField(720, 660, "onion", 64);
+      const tileWidth = 64;
+      placeField(tileWidth * 5, tileWidth * 5, "wheat", tileWidth, 6);
+      placeField(tileWidth * 12, tileWidth * 5, "corn", tileWidth);
+      placeField(tileWidth * 5, tileWidth * 12, "turnip", tileWidth);
+      placeField(tileWidth * 12, tileWidth * 12, "onion", tileWidth);
       function placeField(x, y, cropName, d = 64, width = 5) {
         var crop;
         var cc;
@@ -3741,8 +3742,8 @@ ${item.itemName}: ${item.itemQuantity}`;
         var player2 = game.addEntity("player");
         var pc = player2.getComponent("position");
         var ac2 = player2.getComponent("animation");
-        pc.x = 300;
-        pc.y = 380;
+        pc.x = 0;
+        pc.y = 0;
         return player2;
       }
       game.start();

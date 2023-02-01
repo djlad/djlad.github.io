@@ -25,7 +25,7 @@ export class TileComponent extends Component{
     public static create(): TileComponent{
         let tc = new TileComponent();
         let spriteName = "grass";
-        let mapWidth = 1000;
+        let mapWidth = 200;
         let centerOffset = mapWidth/2-5;
         let xlow = 4;
         let xhigh = xlow + 6

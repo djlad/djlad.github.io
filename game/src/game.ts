@@ -61,11 +61,11 @@ function startGame(){
     pPos.x = 150;
     pPos.y = 400;
     
-
-    placeField(360,300, "wheat", 32, 5)
-    placeField(720,300, "corn", 64)
-    placeField(360,660, "turnip", 64)
-    placeField(720,660, "onion", 64)
+    const tileWidth = 64;
+    placeField(tileWidth*5, tileWidth*5, "wheat", tileWidth, 6);
+    placeField(tileWidth*12, tileWidth*5, "corn", tileWidth);
+    placeField(tileWidth*5, tileWidth*12, "turnip", tileWidth);
+    placeField(tileWidth*12, tileWidth*12, "onion", tileWidth);
     // setTimeout(makePlayer, 1000);
     function placeField(x:number,y:number, cropName:string, d:number=64, width:number=5){
         var crop:Entity;
@@ -92,8 +92,8 @@ function startGame(){
         var player = game.addEntity("player");
         var pc= <PositionComponent>player.getComponent("position");
         var ac = <AnimationComponent>player.getComponent("animation");
-        pc.x = 300;
-        pc.y = 380;
+        pc.x = 0;
+        pc.y = 0;
         return player;
     }
     game.start();
