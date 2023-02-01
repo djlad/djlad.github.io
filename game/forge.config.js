@@ -12,7 +12,12 @@ module.exports = {
     },
     {
       name: '@electron-forge/maker-deb',
-      config: {},
+      config: {
+        options: {
+          maintainer: 'Joe Bloggs',
+          homepage: 'https://example.com'
+        }
+      }
     },
     {
       name: '@electron-forge/maker-rpm',
