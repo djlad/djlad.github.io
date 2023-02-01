@@ -62,10 +62,10 @@ function startGame(){
     pPos.y = 400;
     
 
-    placeField(360,300, "wheat", 50, 5)
-    placeField(660,300, "corn", 50)
-    placeField(360,600, "turnip", 50)
-    placeField(660,600, "onion", 50)
+    placeField(360,300, "wheat", 32, 5)
+    placeField(720,300, "corn", 64)
+    placeField(360,660, "turnip", 64)
+    placeField(720,660, "onion", 64)
     // setTimeout(makePlayer, 1000);
     function placeField(x:number,y:number, cropName:string, d:number=64, width:number=5){
         var crop:Entity;

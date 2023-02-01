@@ -38,10 +38,8 @@ export class WeaponComponent extends Component {
     }
     flip(faceRight:boolean){
         if (faceRight == this.weaponPosition.faceRight)return;
-        this.weaponOffsetX = faceRight ? -Math.abs(this.weaponOffsetX):Math.abs(this.weaponOffsetX);
         this.weaponPosition.faceRight = faceRight;
-        // console.log(this.weaponOffsetX);
-        // console.log(this.weaponPosition.faceRight);
+        this.weaponOffsetX = faceRight ? -Math.abs(this.weaponOffsetX):Math.abs(this.weaponOffsetX);
     }
     spin(){
         this.weaponOffsetX = 0;
@@ -61,9 +59,9 @@ export class WeaponComponent extends Component {
             this.weaponPosition = <GenericPositionComponent>this.weaponEntity.getComponent("position");
         }
         const wielderPosition = <GenericPositionComponent>entity.getComponent("position");
+        this.flip(wielderPosition.faceRight);
         this.weaponPosition.x = wielderPosition.x + this.weaponOffsetX * wielderPosition.width + Math.ceil(Math.sin(this.wobble))*5;
         this.weaponPosition.y = wielderPosition.y + this.weaponOffsetY * wielderPosition.height;
-        this.flip(wielderPosition.faceRight);
         this.wobble += 0;
         this.weaponPosition.rotate+=this.rotationSpeed;
     }
