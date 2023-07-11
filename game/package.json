@@ -2,10 +2,9 @@
   "name": "aiwar",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "lib/index.js",
   "dependencies": {
     "@types/synaptic": "^1.0.3",
-    "electron-squirrel-startup": "^1.0.0",
     "esbuild": "0.16.17",
     "phaser": "^3.55.2",
     "synaptic": "^1.1.4",
@@ -19,7 +18,8 @@
     "make": "electron-forge make",
     "tauri": "tauri",
     "build": "node build.mjs build",
-    "dev": "node build.mjs"
+    "dev": "node build.mjs",
+    "lib": "node build.mjs lib && tsc --emitDeclarationOnly --outDir lib"
   },
   "repository": {
     "type": "git",
@@ -38,7 +38,7 @@
     "@electron-forge/maker-squirrel": "^6.0.4",
     "@electron-forge/maker-zip": "^6.0.4",
     "@tauri-apps/cli": "^1.2.3",
-    "electron": "^22.1.0",
+    "electron-squirrel-startup": "^1.0.0",
     "esbuild-plugin-external-global": "^1.0.1",
     "glob": "^8.0.3",
     "gulp": "^4.0.2",

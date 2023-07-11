@@ -54,6 +54,11 @@ export class TileComponent extends Component{
     createBuilder():void{
         let tileSetSpriteNames = ["grass", "soil"];
     }
+
+    removeTiles(){
+        this.tiles = [];
+        this.tilesByCoords = {};
+    }
     
     coordToTile(x:number, y:number):Tile[]{
         let tileX = Math.floor((x+.5*this.tileWidth)/this.tileWidth);

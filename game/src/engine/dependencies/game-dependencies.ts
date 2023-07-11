@@ -9,6 +9,7 @@ import { ICameras } from "./icameras";
 
 export class GameDependencies {
      engineCreator:IEngineCreator = null;// only necessary if using an engine like phaser/pixi
+     imgMetaData: {[key:string]: {width:number, height:number}} = null; 
      componentFactory: ComponentFactory = null;
      entityFactory:EntityFactory = null;
      renderer:Renderer = null;

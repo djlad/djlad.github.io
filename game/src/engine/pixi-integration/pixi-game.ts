@@ -3,6 +3,7 @@ import { metadata } from '../../metadata';
 import { TileComponent } from '../../components/tile-component/tile-component';
 import { Tile } from '../../components/tile-component/tile';
 import { GenericCameras } from '../dependencies/generic-cameras';
+import { GameDependencies } from '../dependencies/game-dependencies';
 
 type Dict<T> = {
     [key: string]: T;
@@ -17,6 +18,7 @@ export class PixiGame {
     spriteNameToAnimationName: {[key:string]: string[]} = {};
     outViewSprites: SpriteType[] = [];
     ptime: number;
+    metadata: {[key:string]: {width:number, height:number}};
     private tileKey(tile:Tile){
         return `${tile.tileX}:${tile.tileY}`
     }
@@ -101,7 +103,8 @@ export class PixiGame {
     animationNameToSpriteSheet: {[key:string]:Spritesheet} = {};
     spriteNameToSpriteSheet: {[key:string]:Spritesheet} = {};
     animationNameToParsed: {[key:string]:boolean} = {};
-    constructor(){
+    constructor(imgMetaData:{[key:string]:{width:number, height:number}}){
+        this.metadata = imgMetaData ?? metadata;
         this.app = new Application({
             width: window.innerWidth,
             height: window.innerHeight
@@ -162,8 +165,8 @@ export class PixiGame {
         texturePromise.then((texture)=>{
             this.spriteNameToTexture[spriteName] = texture;
         });
-        const width:number = metadata[path.replace("../", "")].width;
-        const height:number = metadata[path.replace("../", "")].height;
+        const width:number = this.metadata[path.replace("../", "")].width;
+        const height:number = this.metadata[path.replace("../", "")].height;
         const frames = this.getAtlasFrames(width, height, widthImgs, heightImgs);
         const atlas: ISpritesheetData = {
             frames:frames,
@@ -245,9 +248,10 @@ export class PixiGame {
     }
 
     private static pixiGame:PixiGame = null;
-    public static createSingleton(){
+    public static createSingleton(deps:GameDependencies){
         if (this.pixiGame != null) return PixiGame.pixiGame;
-        PixiGame.pixiGame = new PixiGame();
+        const metadata = deps.imgMetaData;
+        PixiGame.pixiGame = new PixiGame(metadata);
         return PixiGame.pixiGame;
     }
 }

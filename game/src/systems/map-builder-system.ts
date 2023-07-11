@@ -1,4 +1,4 @@
-import { AnimationComponent } from "../components/animation-component";
+import { AnimationComponent2 } from "../components/animation-component";
 import { ClickableComponent } from "../components/clickable-component";
 import { PositionComponent } from "../engine/component/components/position/position-component";
 import { SpriteId } from "../components/tile-component/sprite-id";
@@ -61,7 +61,7 @@ export class MapBuilderSystem extends EntitySystem{
                 let spriteName = tileComponent.tileSpriteNames[i];
                 let tileButton = this.game.addEntity("click");
                 this.tilePallete.push(tileButton);
-                let animation = <AnimationComponent>tileButton.getComponent("animation");
+                let animation = <AnimationComponent2>tileButton.getComponent("animation");
                 let position = <PositionComponent>tileButton.getComponent("position");
                 let clickable = <ClickableComponent>tileButton.getComponent("click");
                 animation.setSpriteNumber(spriteName, i2);

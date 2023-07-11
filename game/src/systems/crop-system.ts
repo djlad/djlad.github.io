@@ -1,6 +1,6 @@
 import { EntitySystem } from '../engine/system/system';
 import { Entity } from '../engine/entity/entity';
-import { AnimationComponent } from '../components/animation-component';
+import { AnimationComponent2 } from '../components/animation-component';
 import { CropComponent } from '../components/crop-component';
 import { ProjectileEntity } from '../entities/projectile-entity';
 import { PlayerEntity } from '../entities/player-entity';
@@ -18,7 +18,7 @@ export class CropSystem extends EntitySystem {
     }
     apply(args:SystemArgs):void{
         const entity = args.entity;
-        var a:AnimationComponent = <AnimationComponent>entity.getComponent("animation", true);
+        var a:AnimationComponent2 = <AnimationComponent2>entity.getComponent("animation", true);
         var c:CropComponent = <CropComponent>entity.getComponent("crop", true);
         var p:PositionComponent = <PositionComponent>entity.getComponent("position", true);
         if(a==null||c==null){
