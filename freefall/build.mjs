@@ -1,6 +1,6 @@
 import { glob }  from 'glob';
 import * as esbuild from 'esbuild';
-import {readFileSync, write, writeFile, writeFileSync} from 'fs';
+import {readFileSync, write, writeFile, writeFileSync, copyFileSync} from 'fs';
 import * as imageSize from 'image-size';
 import externalGlobalPlugin from "esbuild-plugin-external-global";
 import { networkInterfaces } from 'os';
@@ -26,6 +26,13 @@ var getDirectories = async function (src, callback) {
     const res = await glob(src + "/**/*", callback);
     return res;
 };
+const views = await getDirectories("views", (err, files)=>{});
+console.log(views);
+views.forEach(f =>{
+    const parts = f.split("\\");
+    copyFileSync(f, "dist/" + parts[parts.length-1])
+});
+
 
 const rawSpritePaths = await getDirectories("sprites", (err, files)=>{});
 const spritePaths = rawSpritePaths.map(p => p.replace(/\\/g, "/"));

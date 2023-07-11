@@ -1,0 +1,15 @@
+{
+  "name": "FreeFall",
+  "short_name": "FreeFall",
+  "display": "standalone",
+  "start_url": "/dist",
+  "theme_color": "#673ab6",
+  "background_color": "#111111",
+  "icons": [
+    {
+      "src": "/dist/icon.png",
+      "sizes": "64x64",
+      "type": "image/png"
+    }
+  ]
+}

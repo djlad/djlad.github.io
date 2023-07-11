@@ -29,7 +29,7 @@ export function startGame(game:Game){
     const pos = <GenericPositionComponent>player.getComponent("position");
     pos.x = 300;
     pos.y = 200;
-    placeFloor(pos.x, pos.y + 100);
+    placeFloor(pos.x, pos.y + window.innerHeight/4);
 }
 
 game.addStarter(startGame);
