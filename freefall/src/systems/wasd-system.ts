@@ -1,6 +1,17 @@
 import { EntitySystem, Game, EventType, SystemArgs, GenericPositionComponent, WasdComponent, Entity, EventManager, GameEvent, PositionComponent, AnimationComponent, TransitionComponent, CropHarvesterComponent, WeaponComponent, InventoryComponent, GenericAnimationComponent } from "aiwar";
+import { requestAccessAsync } from "./accelerometer";
 
 export class WasdSystem extends EntitySystem {
+    rotation: {
+        alpha: number,
+        beta: number,
+        gama: number
+    } = {
+        alpha: 0,
+        beta: 0,
+        gama: 0
+    };
+    private jumpSpeed:number = -40;
     constructor(game:Game){
         super(game);
         game.eventManager.addListener(EventType.touchStart, (e)=>{
@@ -17,6 +28,14 @@ export class WasdSystem extends EntitySystem {
             this.touchCurrent.x = e.eventData.x;
             this.touchCurrent.y = e.eventData.y;
         });
+        const d = document.getElementById("t");
+        requestAccessAsync(e=>{
+            this.rotation.alpha = e.alpha;
+            this.rotation.beta = e.beta;
+            this.rotation.gama = e.gamma;
+            if (d == null) return;
+            d.innerHTML = e.alpha + "<br/>" + e.beta + "<br/>" + e.gamma;
+        }, console.log);
     }
     private move:boolean = false;
     private stop:boolean = false;
@@ -30,6 +49,9 @@ export class WasdSystem extends EntitySystem {
         return wasd;
     }
 
+    oncePerLoop = (args: SystemArgs) => {
+    }
+
     apply(args:SystemArgs){
         const entity = args.entity;
         const position = <GenericPositionComponent>entity.getComponent("position", true);
@@ -37,8 +59,9 @@ export class WasdSystem extends EntitySystem {
         const wasd = <WasdComponent>entity.getComponent("wasd", true);
         if (position == null) return;
         if (wasd == null) return;
+        this.controlTiltToMove(position, entity);
         // this.controlTapToMove(position, entity);
-        this.controlSwipeToMoveJump(position, entity);
+        // this.controlSwipeToMoveJump(position, entity);
         /*if (this.move){
             const swiped = Math.abs(this.touchCurrent.x - this.touchStart.x) > this.swipeThreshold;
             if (!swiped){
@@ -55,7 +78,16 @@ export class WasdSystem extends EntitySystem {
         }*/
         ac.setSprite(wasd.walkSprite);
     }
-
+    controlTiltToMove(position:GenericPositionComponent, entity:Entity){
+        const direction = this.rotation?.gama;
+        const percentMaxSpeed = (direction ?? 0) /80;
+        position.vx = 25 * percentMaxSpeed;
+        position.faceRight = position.vx >= 0;
+        while(this.touchEndEvents.length > 0){
+            const end = this.touchEndEvents.pop();
+            this.jump(entity, position);
+        }
+    }
     controlTapToMove(position:GenericPositionComponent, entity:Entity){
         while(this.touchEndEvents.length > 0){
             const end = this.touchEndEvents.pop();
@@ -75,9 +107,7 @@ export class WasdSystem extends EntitySystem {
                 position.vx = 0;
             }
             if (swipedy && end.y < this.touchStart.y) {
-                if (entity.targetedEvents.length !== 0){
-                    position.vy = -40;
-                }
+                this.jump(entity, position);
             }
         }
     }
@@ -104,6 +134,12 @@ export class WasdSystem extends EntitySystem {
                     position.vy = -40;
                 }
             }
+        }
+    }
+
+    private jump(entity, position){
+        if (entity.targetedEvents.length !== 0){
+            position.vy = this.jumpSpeed;
         }
     }
 

@@ -2956,16 +2956,50 @@ ${item.itemName}: ${item.itemQuantity}`;
     }
   };
 
+  // src/systems/accelerometer.ts
+  async function requestAccessAsync(onDeviceOrientation, setError) {
+    if (!DeviceOrientationEvent) {
+      setError(new Error("Device orientation event is not supported by your browser"));
+      return false;
+    }
+    const requester = "requestPermission";
+    const hasRequester = DeviceOrientationEvent.hasOwnProperty(requester);
+    const requesterIsFunc = hasRequester && typeof DeviceOrientationEvent[requester] === "function";
+    if (hasRequester && requesterIsFunc) {
+      let permission;
+      try {
+        permission = await DeviceOrientationEvent[requester]();
+      } catch (err) {
+        setError(err);
+        return false;
+      }
+      if (permission !== "granted") {
+        setError(new Error("Request to access the device orientation was rejected"));
+        return false;
+      }
+    }
+    window.addEventListener("deviceorientation", onDeviceOrientation);
+    return true;
+  }
+
   // src/systems/wasd-system.ts
   var WasdSystem = class extends EntitySystem {
     constructor(game2) {
       super(game2);
+      this.rotation = {
+        alpha: 0,
+        beta: 0,
+        gama: 0
+      };
+      this.jumpSpeed = -40;
       this.move = false;
       this.stop = false;
       this.touchStart = { x: 0, y: 0 };
       this.touchCurrent = { x: 0, y: 0 };
       this.touchEndEvents = [];
       this.swipeThreshold = 64;
+      this.oncePerLoop = (args) => {
+      };
       game2.eventManager.addListener(EventType.touchStart, (e) => {
         this.move = true;
         this.touchStart.x = e.eventData.x;
@@ -2980,6 +3014,15 @@ ${item.itemName}: ${item.itemQuantity}`;
         this.touchCurrent.x = e.eventData.x;
         this.touchCurrent.y = e.eventData.y;
       });
+      const d = document.getElementById("t");
+      requestAccessAsync((e) => {
+        this.rotation.alpha = e.alpha;
+        this.rotation.beta = e.beta;
+        this.rotation.gama = e.gamma;
+        if (d == null)
+          return;
+        d.innerHTML = e.alpha + "<br/>" + e.beta + "<br/>" + e.gamma;
+      }, console.log);
     }
     static create(game2) {
       var wasd = new WasdSystem(game2);
@@ -2994,8 +3037,18 @@ ${item.itemName}: ${item.itemQuantity}`;
         return;
       if (wasd == null)
         return;
-      this.controlSwipeToMoveJump(position, entity);
+      this.controlTiltToMove(position, entity);
       ac.setSprite(wasd.walkSprite);
+    }
+    controlTiltToMove(position, entity) {
+      const direction = this.rotation?.gama;
+      const percentMaxSpeed = (direction ?? 0) / 80;
+      position.vx = 25 * percentMaxSpeed;
+      position.faceRight = position.vx >= 0;
+      while (this.touchEndEvents.length > 0) {
+        const end = this.touchEndEvents.pop();
+        this.jump(entity, position);
+      }
     }
     controlTapToMove(position, entity) {
       while (this.touchEndEvents.length > 0) {
@@ -3017,9 +3070,7 @@ ${item.itemName}: ${item.itemQuantity}`;
           position.vx = 0;
         }
         if (swipedy && end.y < this.touchStart.y) {
-          if (entity.targetedEvents.length !== 0) {
-            position.vy = -40;
-          }
+          this.jump(entity, position);
         }
       }
     }
@@ -3046,6 +3097,11 @@ ${item.itemName}: ${item.itemQuantity}`;
             position.vy = -40;
           }
         }
+      }
+    }
+    jump(entity, position) {
+      if (entity.targetedEvents.length !== 0) {
+        position.vy = this.jumpSpeed;
       }
     }
     applyEvents(entity, eventManager) {
