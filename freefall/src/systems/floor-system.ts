@@ -1,4 +1,4 @@
-import { Entity, EntitySystem, EventManager, Game, GenericPositionComponent, SystemArgs } from "aiwar";
+import { Entity, EntitySystem, EventManager, EventType, Game, GenericAnimationComponent, GenericPositionComponent, SystemArgs } from "aiwar";
 import { startGame } from "../game";
 
 export class FloorSystem extends EntitySystem {
@@ -9,6 +9,15 @@ export class FloorSystem extends EntitySystem {
     floors:Entity[] = [];
     floorWidth: number = 64*2;
     apply(args: SystemArgs): void {
+        const entity = args.entity;
+        const ac = <GenericAnimationComponent>entity.getComponent("animation", true);
+        if (ac == null) return;
+        if (ac.spriteName !== "jungleGreyTile") return;
+        entity.targetedEvents.forEach(event=>{
+            if (event.eventName === EventType.collision){
+                ac.setSprite("jungleBrownTile");
+            }
+        });
     }
     applyEvents(entity: Entity, eventManager: EventManager): void {
         if (entity.targetedEvents.length === 0) return;

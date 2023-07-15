@@ -4,6 +4,9 @@ export function buildSprites(sm: SpriteManager){
     sm.loadSprite("jungleGreyTiles", "opp1_jungle_tiles/environment/tiles/jungle/tile_jungle_ground_grey.png", 6, 6);
     sm.addAnimation("jungleGreyTiles", "jungleGreyTile", [7]);
     
+    sm.loadSprite("jungleBrownTiles", "opp1_jungle_tiles/environment/tiles/jungle/tile_jungle_ground_brown.png", 6, 6);
+    sm.addAnimation("jungleBrownTiles", "jungleBrownTile", [7]);
+    
     let cn = 24 * 8 + 18;
     sm.addAnimation("scrops", "corn", [cn]);
     sm.loadSprite("victorian", "victoriansprites.png", 12, 8);

@@ -2730,12 +2730,12 @@ ${item.itemName}: ${item.itemQuantity}`;
   }
 
   // src/components/gravity.ts
-  var GravityComponent = class extends Component {
+  var GravityComponent = class _GravityComponent extends Component {
+    gravityY = 2;
+    gravityX = 0;
+    terminalVelocity = 20;
     constructor() {
       super("gravity");
-      this.gravityY = 2;
-      this.gravityX = 0;
-      this.terminalVelocity = 20;
     }
     setGravity(x, y) {
       this.gravityX = x;
@@ -2771,19 +2771,19 @@ ${item.itemName}: ${item.itemQuantity}`;
       });
     }
     static create(game2, entityId) {
-      return new GravityComponent();
+      return new _GravityComponent();
     }
   };
 
   // src/components/floor-component.ts
-  var FloorComponent = class extends Component {
+  var FloorComponent = class _FloorComponent extends Component {
     constructor() {
       super("floor");
     }
     update(entity, args) {
     }
     static create() {
-      return new FloorComponent();
+      return new _FloorComponent();
     }
   };
 
@@ -2843,47 +2843,55 @@ ${item.itemName}: ${item.itemQuantity}`;
   }
 
   // src/systems/floor-system.ts
-  var FloorSystem = class extends EntitySystem {
-    constructor() {
-      super(...arguments);
-      this.timer = 0;
-      this.timeBetweenFloors = 45;
-      this.floorsMade = 0;
-      this.maxSpeed = -5;
-      this.floors = [];
-      this.floorWidth = 64 * 2;
-      this.oncePerLoop = (args) => {
-        this.timer++;
-        if (this.timer < this.timeBetweenFloors)
-          return;
-        this.timer = 0;
-        const height = window.innerHeight;
-        let speed = -5 - 0.4 * this.floorsMade;
-        speed = Math.abs(speed) > Math.abs(this.maxSpeed) ? this.maxSpeed : speed;
-        this.timeBetweenFloors = Math.abs(this.floorWidth * 2.5 / speed);
-        if (this.floorsMade % 10 === 0) {
-          this.placeBarrier(speed);
-        } else {
-          const x = window.innerWidth * Math.random();
-          this.placeFloor(x, height + this.floorWidth, speed);
-        }
-        this.floors.forEach((floor) => {
-          floor.getComponent("position").vy = speed;
-        });
-        const py = this.game.getById(1).getComponent("position").y;
-        if (py < 0 || py > window.innerHeight) {
-          this.floorsMade = 0;
-          this.timer = 0;
-          startGame(this.game);
-        }
-      };
-    }
+  var FloorSystem = class _FloorSystem extends EntitySystem {
+    timer = 0;
+    timeBetweenFloors = 45;
+    floorsMade = 0;
+    maxSpeed = -5;
+    floors = [];
+    floorWidth = 64 * 2;
     apply(args) {
+      const entity = args.entity;
+      const ac = entity.getComponent("animation", true);
+      if (ac == null)
+        return;
+      if (ac.spriteName !== "jungleGreyTile")
+        return;
+      entity.targetedEvents.forEach((event) => {
+        if (event.eventName === EventType.collision) {
+          ac.setSprite("jungleBrownTile");
+        }
+      });
     }
     applyEvents(entity, eventManager) {
       if (entity.targetedEvents.length === 0)
         return;
     }
+    oncePerLoop = (args) => {
+      this.timer++;
+      if (this.timer < this.timeBetweenFloors)
+        return;
+      this.timer = 0;
+      const height = window.innerHeight;
+      let speed = -5 - 0.4 * this.floorsMade;
+      speed = Math.abs(speed) > Math.abs(this.maxSpeed) ? this.maxSpeed : speed;
+      this.timeBetweenFloors = Math.abs(this.floorWidth * 2.5 / speed);
+      if (this.floorsMade % 10 === 0) {
+        this.placeBarrier(speed);
+      } else {
+        const x = window.innerWidth * Math.random();
+        this.placeFloor(x, height + this.floorWidth, speed);
+      }
+      this.floors.forEach((floor) => {
+        floor.getComponent("position").vy = speed;
+      });
+      const py = this.game.getById(1).getComponent("position").y;
+      if (py < 0 || py > window.innerHeight) {
+        this.floorsMade = 0;
+        this.timer = 0;
+        startGame(this.game);
+      }
+    };
     checkJumpable(x) {
     }
     placeBarrier(vy) {
@@ -2908,38 +2916,35 @@ ${item.itemName}: ${item.itemQuantity}`;
       return floor;
     }
     static create(game2) {
-      return new FloorSystem(game2);
+      return new _FloorSystem(game2);
     }
   };
 
   // src/systems/box-collision-system.ts
-  var BoxCollisionSystem = class extends EntitySystem {
-    constructor() {
-      super(...arguments);
-      this.oncePerLoop = (args) => {
-        const entities = this.game.entities;
-        for (let i = 0; i < entities.length; i++) {
-          const entity1 = entities[i];
-          const box1 = entity1.getComponent("position");
-          for (let j = i + 1; j < entities.length; j++) {
-            const entity2 = entities[j];
-            const box2 = entity2.getComponent("position");
-            if (this.checkCollision(box1, box2)) {
-              entity1.emit(GameEvent.create(
-                EventType.collision,
-                entity2
-              ));
-              entity2.emit(GameEvent.create(
-                EventType.collision,
-                entity1
-              ));
-            }
-          }
-        }
-      };
-    }
+  var BoxCollisionSystem = class _BoxCollisionSystem extends EntitySystem {
     apply(args) {
     }
+    oncePerLoop = (args) => {
+      const entities = this.game.entities;
+      for (let i = 0; i < entities.length; i++) {
+        const entity1 = entities[i];
+        const box1 = entity1.getComponent("position");
+        for (let j = i + 1; j < entities.length; j++) {
+          const entity2 = entities[j];
+          const box2 = entity2.getComponent("position");
+          if (this.checkCollision(box1, box2)) {
+            entity1.emit(GameEvent.create(
+              EventType.collision,
+              entity2
+            ));
+            entity2.emit(GameEvent.create(
+              EventType.collision,
+              entity1
+            ));
+          }
+        }
+      }
+    };
     checkCollision(box1, box2) {
       const halfWidth1 = box1.width / 2;
       const halfHeight1 = box1.height / 2;
@@ -2952,7 +2957,7 @@ ${item.itemName}: ${item.itemQuantity}`;
     applyEvents(entity, eventManager) {
     }
     static create(game2) {
-      return new BoxCollisionSystem(game2);
+      return new _BoxCollisionSystem(game2);
     }
   };
 
@@ -2983,23 +2988,15 @@ ${item.itemName}: ${item.itemQuantity}`;
   }
 
   // src/systems/wasd-system.ts
-  var WasdSystem = class extends EntitySystem {
+  var WasdSystem = class _WasdSystem extends EntitySystem {
+    rotation = {
+      alpha: 0,
+      beta: 0,
+      gama: 0
+    };
+    jumpSpeed = -40;
     constructor(game2) {
       super(game2);
-      this.rotation = {
-        alpha: 0,
-        beta: 0,
-        gama: 0
-      };
-      this.jumpSpeed = -40;
-      this.move = false;
-      this.stop = false;
-      this.touchStart = { x: 0, y: 0 };
-      this.touchCurrent = { x: 0, y: 0 };
-      this.touchEndEvents = [];
-      this.swipeThreshold = 64;
-      this.oncePerLoop = (args) => {
-      };
       game2.eventManager.addListener(EventType.touchStart, (e) => {
         this.move = true;
         this.touchStart.x = e.eventData.x;
@@ -3024,10 +3021,18 @@ ${item.itemName}: ${item.itemQuantity}`;
         d.innerHTML = e.alpha + "<br/>" + e.beta + "<br/>" + e.gamma;
       }, console.log);
     }
+    move = false;
+    stop = false;
+    touchStart = { x: 0, y: 0 };
+    touchCurrent = { x: 0, y: 0 };
+    touchEndEvents = [];
+    swipeThreshold = 64;
     static create(game2) {
-      var wasd = new WasdSystem(game2);
+      var wasd = new _WasdSystem(game2);
       return wasd;
     }
+    oncePerLoop = (args) => {
+    };
     apply(args) {
       const entity = args.entity;
       const position = entity.getComponent("position", true);
@@ -3239,6 +3244,8 @@ ${item.itemName}: ${item.itemQuantity}`;
   function buildSprites(sm) {
     sm.loadSprite("jungleGreyTiles", "opp1_jungle_tiles/environment/tiles/jungle/tile_jungle_ground_grey.png", 6, 6);
     sm.addAnimation("jungleGreyTiles", "jungleGreyTile", [7]);
+    sm.loadSprite("jungleBrownTiles", "opp1_jungle_tiles/environment/tiles/jungle/tile_jungle_ground_brown.png", 6, 6);
+    sm.addAnimation("jungleBrownTiles", "jungleBrownTile", [7]);
     let cn = 24 * 8 + 18;
     sm.addAnimation("scrops", "corn", [cn]);
     sm.loadSprite("victorian", "victoriansprites.png", 12, 8);
@@ -3259,7 +3266,7 @@ ${item.itemName}: ${item.itemQuantity}`;
   }
 
   // src/metadata.ts
-  var metadata2 = { "sprites/victoriansprites.png": { "height": 384, "width": 384, "type": "png" }, "sprites/opp1_jungle_tiles/db32.png": { "height": 32, "width": 64, "type": "png" }, "sprites/opp1_jungle_tiles/mockups/temple01.png": { "height": 320, "width": 800, "type": "png" }, "sprites/opp1_jungle_tiles/mockups/jungle03.png": { "height": 320, "width": 800, "type": "png" }, "sprites/opp1_jungle_tiles/mockups/jungle02.png": { "height": 320, "width": 800, "type": "png" }, "sprites/opp1_jungle_tiles/mockups/jungle01.png": { "height": 320, "width": 800, "type": "png" }, "sprites/opp1_jungle_tiles/sprites/misc/spr_obj_cart_str_front_anim.gif": { "height": 48, "width": 48, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/misc/spr_obj_cart_str_complete_anim.gif": { "height": 48, "width": 48, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/misc/spr_obj_cart_str_back_anim.gif": { "height": 48, "width": 48, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/misc/spr_obj_cart_slope3_complete_anim.gif": { "height": 48, "width": 48, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/misc/spr_obj_cart_slope2_front_anim.gif": { "height": 48, "width": 48, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/misc/spr_obj_cart_slope2_complete_anim.gif": { "height": 48, "width": 48, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/misc/spr_obj_cart_slope2_back_anim.gif": { "height": 48, "width": 48, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/misc/spr_obj_cart_slope1_front_anim.gif": { "height": 48, "width": 48, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/misc/spr_obj_cart_slope1_complete_anim.gif": { "height": 48, "width": 48, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/misc/spr_obj_cart_slope1_back_anim.gif": { "height": 48, "width": 48, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/humans/spr_m_unko.png": { "height": 48, "width": 32, "type": "png" }, "sprites/opp1_jungle_tiles/sprites/humans/spr_f_traveler_walk_anim.gif": { "height": 64, "width": 64, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/humans/spr_f_traveler_idle_anim.gif": { "height": 64, "width": 64, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/humans/spr_f_sara.png": { "height": 64, "width": 64, "type": "png" }, "sprites/opp1_jungle_tiles/sprites/humans/spr_f_ayla.png": { "height": 80, "width": 64, "type": "png" }, "sprites/opp1_jungle_tiles/sprites/humans/spr_f_archeologist_idle_anim.gif": { "height": 57, "width": 43, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/creatures/spr_stonegolem.png": { "height": 80, "width": 176, "type": "png" }, "sprites/opp1_jungle_tiles/sprites/creatures/spr_skeleton_walk_anim.gif": { "height": 72, "width": 74, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/creatures/spr_robot_short02_idle_anim.gif": { "height": 96, "width": 64, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/creatures/spr_robot_short01_idle_anim.gif": { "height": 96, "width": 64, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/creatures/spr_robot_heavy01_idle_anim.gif": { "height": 96, "width": 64, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/creatures/spr_ape_yeti.png": { "height": 80, "width": 80, "type": "png" }, "sprites/opp1_jungle_tiles/sprites/animals/spr_wasp_idle_anim.gif": { "height": 96, "width": 96, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/animals/spr_ram.png": { "height": 64, "width": 64, "type": "png" }, "sprites/opp1_jungle_tiles/sprites/animals/spr_monkey_hanging.png": { "height": 144, "width": 48, "type": "png" }, "sprites/opp1_jungle_tiles/sprites/animals/spr_leafbug_idle_anim.gif": { "height": 64, "width": 64, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/animals/spr_leafbug_alert_anim.gif": { "height": 64, "width": 64, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/animals/spr_dog_small.png": { "height": 32, "width": 32, "type": "png" }, "sprites/opp1_jungle_tiles/sprites/animals/spr_dog_medium.png": { "height": 64, "width": 64, "type": "png" }, "sprites/opp1_jungle_tiles/sprites/animals/spr_dog.png": { "height": 72, "width": 102, "type": "png" }, "sprites/opp1_jungle_tiles/environment/tiles/guide_jungle_vines.png": { "height": 480, "width": 960, "type": "png" }, "sprites/opp1_jungle_tiles/environment/tiles/guide_jungle.png": { "height": 928, "width": 768, "type": "png" }, "sprites/opp1_jungle_tiles/environment/objects/obj_carniplant_attack_anim.gif": { "height": 96, "width": 128, "type": "gif" }, "sprites/opp1_jungle_tiles/environment/objects/obj_carniplant.png": { "height": 96, "width": 128, "type": "png" }, "sprites/opp1_jungle_tiles/environment/background/bg_solid_colors.png": { "height": 128, "width": 256, "type": "png" }, "sprites/opp1_jungle_tiles/sprites/humans/traveler/spr_m_traveler_walk_anim.gif": { "height": 64, "width": 64, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/humans/traveler/spr_m_traveler_slide_anim.gif": { "height": 64, "width": 64, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/humans/traveler/spr_m_traveler_run_anim.gif": { "height": 64, "width": 64, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/humans/traveler/spr_m_traveler_look_anim.gif": { "height": 64, "width": 64, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/humans/traveler/spr_m_traveler_jump_complete_anim.gif": { "height": 64, "width": 64, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/humans/traveler/spr_m_traveler_jump_4land_anim.gif": { "height": 64, "width": 64, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/humans/traveler/spr_m_traveler_jump_3down_anim.gif": { "height": 64, "width": 64, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/humans/traveler/spr_m_traveler_jump_2midair_anim.gif": { "height": 64, "width": 64, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/humans/traveler/spr_m_traveler_jump_1up_anim.gif": { "height": 64, "width": 64, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/humans/traveler/spr_m_traveler_idle_anim.gif": { "height": 64, "width": 64, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/humans/traveler/spr_m_traveler_duck_anim.gif": { "height": 64, "width": 64, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/humans/villagers/spr_village_npc_tall03_idle_anim.gif": { "height": 96, "width": 64, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/humans/villagers/spr_village_npc_tall02_idle_anim.gif": { "height": 96, "width": 64, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/humans/villagers/spr_village_npc_tall01_idle_anim.gif": { "height": 96, "width": 64, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/humans/villagers/spr_village_npc_short02_idle_anim.gif": { "height": 96, "width": 64, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/humans/villagers/spr_village_npc_short01_idle_anim.gif": { "height": 96, "width": 64, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/humans/villagers/spr_village_npc_girl04_idle_anim.gif": { "height": 96, "width": 64, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/humans/villagers/spr_village_npc_girl03_idle_anim.gif": { "height": 96, "width": 64, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/humans/villagers/spr_village_npc_girl02_idle_anim.gif": { "height": 96, "width": 64, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/humans/villagers/spr_village_npc_girl01_idle_anim.gif": { "height": 96, "width": 64, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/humans/villagers/spr_village_npc_child02_idle_anim.gif": { "height": 64, "width": 64, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/humans/villagers/spr_village_npc_child01_idle_anim.gif": { "height": 64, "width": 64, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/humans/villagers/spr_m_pjnerd2.png": { "height": 67, "width": 38, "type": "png" }, "sprites/opp1_jungle_tiles/sprites/humans/villagers/spr_m_pjnerd.png": { "height": 64, "width": 64, "type": "png" }, "sprites/opp1_jungle_tiles/sprites/humans/villagers/spr_m_old_idle_anim.gif": { "height": 58, "width": 42, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/humans/villagers/spr_f_old_idle_anim.gif": { "height": 62, "width": 44, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/humans/native/spr_m_native_tallface.png": { "height": 80, "width": 64, "type": "png" }, "sprites/opp1_jungle_tiles/sprites/humans/native/spr_m_native_hero_run_anim.gif": { "height": 64, "width": 64, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/humans/native/spr_m_native_hero_idle_anim.gif": { "height": 64, "width": 64, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/humans/native/spr_f_native_walk_anim.gif": { "height": 58, "width": 31, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/humans/native/spr_f_native_longhair_walk_anim.gif": { "height": 58, "width": 31, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/humans/native/spr_f_native_longhair_idle_anim.gif": { "height": 58, "width": 31, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/humans/arctic/spr_m_arctic_tall_talking_anim.png": { "height": 80, "width": 381, "type": "png" }, "sprites/opp1_jungle_tiles/sprites/humans/arctic/spr_m_arctic_spear.png": { "height": 80, "width": 64, "type": "png" }, "sprites/opp1_jungle_tiles/sprites/humans/arctic/spr_m_arctic_small_talking_anim.png": { "height": 80, "width": 382, "type": "png" }, "sprites/opp1_jungle_tiles/sprites/humans/arctic/spr_m_arctic_kid.png": { "height": 64, "width": 64, "type": "png" }, "sprites/opp1_jungle_tiles/sprites/humans/arctic/spr_m_arctic_fat.png": { "height": 80, "width": 64, "type": "png" }, "sprites/opp1_jungle_tiles/sprites/humans/arctic/spr_m_arctic_earwarmer.png": { "height": 64, "width": 32, "type": "png" }, "sprites/opp1_jungle_tiles/sprites/humans/arctic/spr_m_arctic_brute.png": { "height": 80, "width": 96, "type": "png" }, "sprites/opp1_jungle_tiles/sprites/humans/arctic/spr_f_arctic_old.png": { "height": 80, "width": 64, "type": "png" }, "sprites/opp1_jungle_tiles/sprites/humans/arctic/spr_f_arctic_lisa.png": { "height": 80, "width": 32, "type": "png" }, "sprites/opp1_jungle_tiles/sprites/animals/toucan/spr_toucan_up_anim.gif": { "height": 64, "width": 64, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/animals/toucan/spr_toucan_squawk_anim.gif": { "height": 64, "width": 64, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/animals/toucan/spr_toucan_hop_anim.gif": { "height": 64, "width": 64, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/animals/toucan/spr_toucan_fly_anim.gif": { "height": 64, "width": 64, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/animals/toucan/spr_toucan_down_anim.gif": { "height": 64, "width": 64, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/animals/frog/spr_frog_r_idle_anim.gif": { "height": 64, "width": 64, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/animals/frog/spr_frog_r_attack_anim.gif": { "height": 64, "width": 128, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/animals/frog/spr_frog_g_jump_4land_anim.gif": { "height": 39, "width": 72, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/animals/frog/spr_frog_g_jump_3down.gif": { "height": 24, "width": 42, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/animals/frog/spr_frog_g_jump_2up.gif": { "height": 31, "width": 40, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/animals/frog/spr_frog_g_jump_1launch_anim.gif": { "height": 65, "width": 68, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/animals/frog/spr_frog_g_idle_anim.gif": { "height": 64, "width": 64, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/animals/frog/spr_frog_g_attack_anim.gif": { "height": 64, "width": 128, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/animals/frog/spr_frog_b_idle_anim.gif": { "height": 64, "width": 64, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/animals/frog/spr_frog_b_attack_anim.gif": { "height": 64, "width": 128, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/animals/frog/frog_r_idle.gif": { "height": 64, "width": 64, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/animals/frog/Frog_r_attack_anim.gif": { "height": 64, "width": 128, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/animals/frog/frog_jump_complete_anim.gif": { "height": 128, "width": 287, "type": "gif" }, "sprites/opp1_jungle_tiles/environment/tiles/temple/tile_temple.png": { "height": 256, "width": 544, "type": "png" }, "sprites/opp1_jungle_tiles/environment/tiles/jungle/tile_jungle_water.png": { "height": 128, "width": 160, "type": "png" }, "sprites/opp1_jungle_tiles/environment/tiles/jungle/tile_jungle_wall_grey.png": { "height": 384, "width": 128, "type": "png" }, "sprites/opp1_jungle_tiles/environment/tiles/jungle/tile_jungle_wall_brown.png": { "height": 384, "width": 128, "type": "png" }, "sprites/opp1_jungle_tiles/environment/tiles/jungle/tile_jungle_vegetation.png": { "height": 32, "width": 256, "type": "png" }, "sprites/opp1_jungle_tiles/environment/tiles/jungle/tile_jungle_tree_light.png": { "height": 352, "width": 320, "type": "png" }, "sprites/opp1_jungle_tiles/environment/tiles/jungle/tile_jungle_tree_dark.png": { "height": 352, "width": 320, "type": "png" }, "sprites/opp1_jungle_tiles/environment/tiles/jungle/tile_jungle_treelimb.png": { "height": 192, "width": 448, "type": "png" }, "sprites/opp1_jungle_tiles/environment/tiles/jungle/tile_jungle_slopes_grey.png": { "height": 160, "width": 192, "type": "png" }, "sprites/opp1_jungle_tiles/environment/tiles/jungle/tile_jungle_slopes_brown.png": { "height": 160, "width": 192, "type": "png" }, "sprites/opp1_jungle_tiles/environment/tiles/jungle/tile_jungle_plants_objects.png": { "height": 416, "width": 512, "type": "png" }, "sprites/opp1_jungle_tiles/environment/tiles/jungle/tile_jungle_ground_grey.png": { "height": 192, "width": 192, "type": "png" }, "sprites/opp1_jungle_tiles/environment/tiles/jungle/tile_jungle_ground_brown.png": { "height": 192, "width": 192, "type": "png" }, "sprites/opp1_jungle_tiles/environment/tiles/jungle/tile_jungle_bridge.png": { "height": 96, "width": 352, "type": "png" }, "sprites/opp1_jungle_tiles/environment/tiles/jungle/tile_jungle_bottom_water.png": { "height": 128, "width": 128, "type": "png" }, "sprites/opp1_jungle_tiles/environment/tiles/jungle/tile_jungle_bottom_grey.png": { "height": 128, "width": 128, "type": "png" }, "sprites/opp1_jungle_tiles/environment/tiles/jungle/tile_jungle_bottom_brown.png": { "height": 128, "width": 128, "type": "png" }, "sprites/opp1_jungle_tiles/environment/tiles/jungle/tile_jungle_bg_vines.png": { "height": 544, "width": 416, "type": "png" }, "sprites/opp1_jungle_tiles/environment/background/bg objects/bg_cloud8.png": { "height": 41, "width": 64, "type": "png" }, "sprites/opp1_jungle_tiles/environment/background/bg objects/bg_cloud7.png": { "height": 43, "width": 54, "type": "png" }, "sprites/opp1_jungle_tiles/environment/background/bg objects/bg_cloud6.png": { "height": 211, "width": 512, "type": "png" }, "sprites/opp1_jungle_tiles/environment/background/bg objects/bg_cloud5.png": { "height": 118, "width": 190, "type": "png" }, "sprites/opp1_jungle_tiles/environment/background/bg objects/bg_cloud4.png": { "height": 256, "width": 120, "type": "png" }, "sprites/opp1_jungle_tiles/environment/background/bg objects/bg_cloud3.png": { "height": 51, "width": 76, "type": "png" }, "sprites/opp1_jungle_tiles/environment/background/bg objects/bg_cloud2.png": { "height": 128, "width": 234, "type": "png" }, "sprites/opp1_jungle_tiles/environment/background/bg objects/bg_cloud01.png": { "height": 157, "width": 174, "type": "png" } };
+  var metadata2 = { "sprites/victoriansprites.png": { "height": 384, "width": 384, "type": "png" }, "sprites/opp1_jungle_tiles/db32.png": { "height": 32, "width": 64, "type": "png" }, "sprites/opp1_jungle_tiles/mockups/temple01.png": { "height": 320, "width": 800, "type": "png" }, "sprites/opp1_jungle_tiles/mockups/jungle03.png": { "height": 320, "width": 800, "type": "png" }, "sprites/opp1_jungle_tiles/mockups/jungle02.png": { "height": 320, "width": 800, "type": "png" }, "sprites/opp1_jungle_tiles/mockups/jungle01.png": { "height": 320, "width": 800, "type": "png" }, "sprites/opp1_jungle_tiles/sprites/misc/spr_obj_cart_str_front_anim.gif": { "height": 48, "width": 48, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/misc/spr_obj_cart_str_complete_anim.gif": { "height": 48, "width": 48, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/misc/spr_obj_cart_str_back_anim.gif": { "height": 48, "width": 48, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/misc/spr_obj_cart_slope3_complete_anim.gif": { "height": 48, "width": 48, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/misc/spr_obj_cart_slope2_front_anim.gif": { "height": 48, "width": 48, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/misc/spr_obj_cart_slope2_complete_anim.gif": { "height": 48, "width": 48, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/misc/spr_obj_cart_slope2_back_anim.gif": { "height": 48, "width": 48, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/misc/spr_obj_cart_slope1_front_anim.gif": { "height": 48, "width": 48, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/misc/spr_obj_cart_slope1_complete_anim.gif": { "height": 48, "width": 48, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/misc/spr_obj_cart_slope1_back_anim.gif": { "height": 48, "width": 48, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/humans/spr_m_unko.png": { "height": 48, "width": 32, "type": "png" }, "sprites/opp1_jungle_tiles/sprites/humans/spr_f_traveler_walk_anim.gif": { "height": 64, "width": 64, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/humans/spr_f_traveler_idle_anim.gif": { "height": 64, "width": 64, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/humans/spr_f_sara.png": { "height": 64, "width": 64, "type": "png" }, "sprites/opp1_jungle_tiles/sprites/humans/spr_f_ayla.png": { "height": 80, "width": 64, "type": "png" }, "sprites/opp1_jungle_tiles/sprites/humans/spr_f_archeologist_idle_anim.gif": { "height": 57, "width": 43, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/creatures/spr_stonegolem.png": { "height": 80, "width": 176, "type": "png" }, "sprites/opp1_jungle_tiles/sprites/creatures/spr_skeleton_walk_anim.gif": { "height": 72, "width": 74, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/creatures/spr_robot_short02_idle_anim.gif": { "height": 96, "width": 64, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/creatures/spr_robot_short01_idle_anim.gif": { "height": 96, "width": 64, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/creatures/spr_robot_heavy01_idle_anim.gif": { "height": 96, "width": 64, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/creatures/spr_ape_yeti.png": { "height": 80, "width": 80, "type": "png" }, "sprites/opp1_jungle_tiles/sprites/animals/spr_wasp_idle_anim.gif": { "height": 96, "width": 96, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/animals/spr_ram.png": { "height": 64, "width": 64, "type": "png" }, "sprites/opp1_jungle_tiles/sprites/animals/spr_monkey_hanging.png": { "height": 144, "width": 48, "type": "png" }, "sprites/opp1_jungle_tiles/sprites/animals/spr_leafbug_idle_anim.gif": { "height": 64, "width": 64, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/animals/spr_leafbug_alert_anim.gif": { "height": 64, "width": 64, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/animals/spr_dog_small.png": { "height": 32, "width": 32, "type": "png" }, "sprites/opp1_jungle_tiles/sprites/animals/spr_dog_medium.png": { "height": 64, "width": 64, "type": "png" }, "sprites/opp1_jungle_tiles/sprites/animals/spr_dog.png": { "height": 72, "width": 102, "type": "png" }, "sprites/opp1_jungle_tiles/environment/tiles/guide_jungle_vines.png": { "height": 480, "width": 960, "type": "png" }, "sprites/opp1_jungle_tiles/environment/tiles/guide_jungle.png": { "height": 928, "width": 768, "type": "png" }, "sprites/opp1_jungle_tiles/environment/objects/obj_carniplant_attack_anim.gif": { "height": 96, "width": 128, "type": "gif" }, "sprites/opp1_jungle_tiles/environment/objects/obj_carniplant.png": { "height": 96, "width": 128, "type": "png" }, "sprites/opp1_jungle_tiles/environment/background/bg_solid_colors.png": { "height": 128, "width": 256, "type": "png" }, "sprites/opp1_jungle_tiles/sprites/humans/villagers/spr_village_npc_tall03_idle_anim.gif": { "height": 96, "width": 64, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/humans/villagers/spr_village_npc_tall02_idle_anim.gif": { "height": 96, "width": 64, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/humans/villagers/spr_village_npc_tall01_idle_anim.gif": { "height": 96, "width": 64, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/humans/villagers/spr_village_npc_short02_idle_anim.gif": { "height": 96, "width": 64, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/humans/villagers/spr_village_npc_short01_idle_anim.gif": { "height": 96, "width": 64, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/humans/villagers/spr_village_npc_girl04_idle_anim.gif": { "height": 96, "width": 64, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/humans/villagers/spr_village_npc_girl03_idle_anim.gif": { "height": 96, "width": 64, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/humans/villagers/spr_village_npc_girl02_idle_anim.gif": { "height": 96, "width": 64, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/humans/villagers/spr_village_npc_girl01_idle_anim.gif": { "height": 96, "width": 64, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/humans/villagers/spr_village_npc_child02_idle_anim.gif": { "height": 64, "width": 64, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/humans/villagers/spr_village_npc_child01_idle_anim.gif": { "height": 64, "width": 64, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/humans/villagers/spr_m_pjnerd2.png": { "height": 67, "width": 38, "type": "png" }, "sprites/opp1_jungle_tiles/sprites/humans/villagers/spr_m_pjnerd.png": { "height": 64, "width": 64, "type": "png" }, "sprites/opp1_jungle_tiles/sprites/humans/villagers/spr_m_old_idle_anim.gif": { "height": 58, "width": 42, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/humans/villagers/spr_f_old_idle_anim.gif": { "height": 62, "width": 44, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/humans/traveler/spr_m_traveler_walk_anim.gif": { "height": 64, "width": 64, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/humans/traveler/spr_m_traveler_slide_anim.gif": { "height": 64, "width": 64, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/humans/traveler/spr_m_traveler_run_anim.gif": { "height": 64, "width": 64, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/humans/traveler/spr_m_traveler_look_anim.gif": { "height": 64, "width": 64, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/humans/traveler/spr_m_traveler_jump_complete_anim.gif": { "height": 64, "width": 64, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/humans/traveler/spr_m_traveler_jump_4land_anim.gif": { "height": 64, "width": 64, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/humans/traveler/spr_m_traveler_jump_3down_anim.gif": { "height": 64, "width": 64, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/humans/traveler/spr_m_traveler_jump_2midair_anim.gif": { "height": 64, "width": 64, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/humans/traveler/spr_m_traveler_jump_1up_anim.gif": { "height": 64, "width": 64, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/humans/traveler/spr_m_traveler_idle_anim.gif": { "height": 64, "width": 64, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/humans/traveler/spr_m_traveler_duck_anim.gif": { "height": 64, "width": 64, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/humans/native/spr_m_native_tallface.png": { "height": 80, "width": 64, "type": "png" }, "sprites/opp1_jungle_tiles/sprites/humans/native/spr_m_native_hero_run_anim.gif": { "height": 64, "width": 64, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/humans/native/spr_m_native_hero_idle_anim.gif": { "height": 64, "width": 64, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/humans/native/spr_f_native_walk_anim.gif": { "height": 58, "width": 31, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/humans/native/spr_f_native_longhair_walk_anim.gif": { "height": 58, "width": 31, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/humans/native/spr_f_native_longhair_idle_anim.gif": { "height": 58, "width": 31, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/humans/arctic/spr_m_arctic_tall_talking_anim.png": { "height": 80, "width": 381, "type": "png" }, "sprites/opp1_jungle_tiles/sprites/humans/arctic/spr_m_arctic_spear.png": { "height": 80, "width": 64, "type": "png" }, "sprites/opp1_jungle_tiles/sprites/humans/arctic/spr_m_arctic_small_talking_anim.png": { "height": 80, "width": 382, "type": "png" }, "sprites/opp1_jungle_tiles/sprites/humans/arctic/spr_m_arctic_kid.png": { "height": 64, "width": 64, "type": "png" }, "sprites/opp1_jungle_tiles/sprites/humans/arctic/spr_m_arctic_fat.png": { "height": 80, "width": 64, "type": "png" }, "sprites/opp1_jungle_tiles/sprites/humans/arctic/spr_m_arctic_earwarmer.png": { "height": 64, "width": 32, "type": "png" }, "sprites/opp1_jungle_tiles/sprites/humans/arctic/spr_m_arctic_brute.png": { "height": 80, "width": 96, "type": "png" }, "sprites/opp1_jungle_tiles/sprites/humans/arctic/spr_f_arctic_old.png": { "height": 80, "width": 64, "type": "png" }, "sprites/opp1_jungle_tiles/sprites/humans/arctic/spr_f_arctic_lisa.png": { "height": 80, "width": 32, "type": "png" }, "sprites/opp1_jungle_tiles/sprites/animals/toucan/spr_toucan_up_anim.gif": { "height": 64, "width": 64, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/animals/toucan/spr_toucan_squawk_anim.gif": { "height": 64, "width": 64, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/animals/toucan/spr_toucan_hop_anim.gif": { "height": 64, "width": 64, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/animals/toucan/spr_toucan_fly_anim.gif": { "height": 64, "width": 64, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/animals/toucan/spr_toucan_down_anim.gif": { "height": 64, "width": 64, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/animals/frog/spr_frog_r_idle_anim.gif": { "height": 64, "width": 64, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/animals/frog/spr_frog_r_attack_anim.gif": { "height": 64, "width": 128, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/animals/frog/spr_frog_g_jump_4land_anim.gif": { "height": 39, "width": 72, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/animals/frog/spr_frog_g_jump_3down.gif": { "height": 24, "width": 42, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/animals/frog/spr_frog_g_jump_2up.gif": { "height": 31, "width": 40, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/animals/frog/spr_frog_g_jump_1launch_anim.gif": { "height": 65, "width": 68, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/animals/frog/spr_frog_g_idle_anim.gif": { "height": 64, "width": 64, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/animals/frog/spr_frog_g_attack_anim.gif": { "height": 64, "width": 128, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/animals/frog/spr_frog_b_idle_anim.gif": { "height": 64, "width": 64, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/animals/frog/spr_frog_b_attack_anim.gif": { "height": 64, "width": 128, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/animals/frog/frog_r_idle.gif": { "height": 64, "width": 64, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/animals/frog/Frog_r_attack_anim.gif": { "height": 64, "width": 128, "type": "gif" }, "sprites/opp1_jungle_tiles/sprites/animals/frog/frog_jump_complete_anim.gif": { "height": 128, "width": 287, "type": "gif" }, "sprites/opp1_jungle_tiles/environment/tiles/temple/tile_temple.png": { "height": 256, "width": 544, "type": "png" }, "sprites/opp1_jungle_tiles/environment/tiles/jungle/tile_jungle_water.png": { "height": 128, "width": 160, "type": "png" }, "sprites/opp1_jungle_tiles/environment/tiles/jungle/tile_jungle_wall_grey.png": { "height": 384, "width": 128, "type": "png" }, "sprites/opp1_jungle_tiles/environment/tiles/jungle/tile_jungle_wall_brown.png": { "height": 384, "width": 128, "type": "png" }, "sprites/opp1_jungle_tiles/environment/tiles/jungle/tile_jungle_vegetation.png": { "height": 32, "width": 256, "type": "png" }, "sprites/opp1_jungle_tiles/environment/tiles/jungle/tile_jungle_tree_light.png": { "height": 352, "width": 320, "type": "png" }, "sprites/opp1_jungle_tiles/environment/tiles/jungle/tile_jungle_tree_dark.png": { "height": 352, "width": 320, "type": "png" }, "sprites/opp1_jungle_tiles/environment/tiles/jungle/tile_jungle_treelimb.png": { "height": 192, "width": 448, "type": "png" }, "sprites/opp1_jungle_tiles/environment/tiles/jungle/tile_jungle_slopes_grey.png": { "height": 160, "width": 192, "type": "png" }, "sprites/opp1_jungle_tiles/environment/tiles/jungle/tile_jungle_slopes_brown.png": { "height": 160, "width": 192, "type": "png" }, "sprites/opp1_jungle_tiles/environment/tiles/jungle/tile_jungle_plants_objects.png": { "height": 416, "width": 512, "type": "png" }, "sprites/opp1_jungle_tiles/environment/tiles/jungle/tile_jungle_ground_grey.png": { "height": 192, "width": 192, "type": "png" }, "sprites/opp1_jungle_tiles/environment/tiles/jungle/tile_jungle_ground_brown.png": { "height": 192, "width": 192, "type": "png" }, "sprites/opp1_jungle_tiles/environment/tiles/jungle/tile_jungle_bridge.png": { "height": 96, "width": 352, "type": "png" }, "sprites/opp1_jungle_tiles/environment/tiles/jungle/tile_jungle_bottom_water.png": { "height": 128, "width": 128, "type": "png" }, "sprites/opp1_jungle_tiles/environment/tiles/jungle/tile_jungle_bottom_grey.png": { "height": 128, "width": 128, "type": "png" }, "sprites/opp1_jungle_tiles/environment/tiles/jungle/tile_jungle_bottom_brown.png": { "height": 128, "width": 128, "type": "png" }, "sprites/opp1_jungle_tiles/environment/tiles/jungle/tile_jungle_bg_vines.png": { "height": 544, "width": 416, "type": "png" }, "sprites/opp1_jungle_tiles/environment/background/bg objects/bg_cloud8.png": { "height": 41, "width": 64, "type": "png" }, "sprites/opp1_jungle_tiles/environment/background/bg objects/bg_cloud7.png": { "height": 43, "width": 54, "type": "png" }, "sprites/opp1_jungle_tiles/environment/background/bg objects/bg_cloud6.png": { "height": 211, "width": 512, "type": "png" }, "sprites/opp1_jungle_tiles/environment/background/bg objects/bg_cloud5.png": { "height": 118, "width": 190, "type": "png" }, "sprites/opp1_jungle_tiles/environment/background/bg objects/bg_cloud4.png": { "height": 256, "width": 120, "type": "png" }, "sprites/opp1_jungle_tiles/environment/background/bg objects/bg_cloud3.png": { "height": 51, "width": 76, "type": "png" }, "sprites/opp1_jungle_tiles/environment/background/bg objects/bg_cloud2.png": { "height": 128, "width": 234, "type": "png" }, "sprites/opp1_jungle_tiles/environment/background/bg objects/bg_cloud01.png": { "height": 157, "width": 174, "type": "png" } };
 
   // src/game.ts
   var game = pixiGameBuilder(metadata2);

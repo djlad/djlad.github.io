@@ -51,7 +51,7 @@ const config = {
     bundle: true,
     // outdir: "./dist",
     outfile: "./dist/game.mjs",
-    watch: true,
+    // watch: true,
     // external: Object.keys(dependencies??[]).concat(Object.keys(peerDependencies??[])),
     sourcemap: true,
     target: ["chrome107"],
@@ -71,22 +71,24 @@ const config = {
 };
 
 function build(config){
-    config.watch = false;
     return esbuild.build(config).catch((e)=>{
         console.log(e);
         return process.exit(1);
     });
 }
 
-function watch(config){
-    config.watch = false;
-    return esbuild.serve({
-        servedir:".",
-        port:port
-    }, config).catch((e)=>{
+async function watch(config){
+    const ctx = await esbuild.context(config).catch((e)=>{
         console.log(e);
         return process.exit(1);
-    });;
+    });
+    console.log(ctx);
+    console.log(ctx);
+    ctx.watch();
+    ctx.serve({
+        servedir:".",
+        port:port
+    });
 }
 
 const port = 8003;
