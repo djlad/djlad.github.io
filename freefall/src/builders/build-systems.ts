@@ -1,7 +1,7 @@
 import { CollisionSystem, Game} from "aiwar";
-import { FloorSystem } from "../systems/floor-system";
 import { BoxCollisionSystem } from "../systems/box-collision-system";
 import { WasdSystem } from "../systems/wasd-system";
+import { FloorSystem } from "../systems/floor-system/floor-system";
 
 export function buildSystems(game:Game){
     // game.addSystem(CollisionSystem.create(game));

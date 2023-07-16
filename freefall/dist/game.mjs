@@ -2842,84 +2842,6 @@ ${item.itemName}: ${item.itemQuantity}`;
     game2.registerEntity("floor", new FloorEntity());
   }
 
-  // src/systems/floor-system.ts
-  var FloorSystem = class _FloorSystem extends EntitySystem {
-    timer = 0;
-    timeBetweenFloors = 45;
-    floorsMade = 0;
-    maxSpeed = -5;
-    floors = [];
-    floorWidth = 64 * 2;
-    apply(args) {
-      const entity = args.entity;
-      const ac = entity.getComponent("animation", true);
-      if (ac == null)
-        return;
-      if (ac.spriteName !== "jungleGreyTile")
-        return;
-      entity.targetedEvents.forEach((event) => {
-        if (event.eventName === EventType.collision) {
-          ac.setSprite("jungleBrownTile");
-        }
-      });
-    }
-    applyEvents(entity, eventManager) {
-      if (entity.targetedEvents.length === 0)
-        return;
-    }
-    oncePerLoop = (args) => {
-      this.timer++;
-      if (this.timer < this.timeBetweenFloors)
-        return;
-      this.timer = 0;
-      const height = window.innerHeight;
-      let speed = -5 - 0.4 * this.floorsMade;
-      speed = Math.abs(speed) > Math.abs(this.maxSpeed) ? this.maxSpeed : speed;
-      this.timeBetweenFloors = Math.abs(this.floorWidth * 2.5 / speed);
-      if (this.floorsMade % 10 === 0) {
-        this.placeBarrier(speed);
-      } else {
-        const x = window.innerWidth * Math.random();
-        this.placeFloor(x, height + this.floorWidth, speed);
-      }
-      this.floors.forEach((floor) => {
-        floor.getComponent("position").vy = speed;
-      });
-      const py = this.game.getById(1).getComponent("position").y;
-      if (py < 0 || py > window.innerHeight) {
-        this.floorsMade = 0;
-        this.timer = 0;
-        startGame(this.game);
-      }
-    };
-    checkJumpable(x) {
-    }
-    placeBarrier(vy) {
-      const numFloors = Math.floor(window.innerWidth / this.floorWidth) + 1;
-      const floorToSkip = Math.floor(Math.random() * numFloors);
-      const newFloorsMade = this.floorsMade + 1;
-      Array.from(Array(numFloors).keys()).forEach((i) => {
-        if (Math.abs(floorToSkip - i) < 2)
-          return;
-        this.placeFloor(i * this.floorWidth + this.floorWidth / 2, window.innerHeight + this.floorWidth, vy);
-      });
-      this.floorsMade = newFloorsMade;
-    }
-    placeFloor(x, y, vy = -1) {
-      const floor = this.game.addEntity("floor");
-      const pos = floor.getComponent("position");
-      pos.x = x;
-      pos.y = y;
-      pos.vy = vy;
-      this.floors.push(floor);
-      this.floorsMade++;
-      return floor;
-    }
-    static create(game2) {
-      return new _FloorSystem(game2);
-    }
-  };
-
   // src/systems/box-collision-system.ts
   var BoxCollisionSystem = class _BoxCollisionSystem extends EntitySystem {
     apply(args) {
@@ -3230,6 +3152,141 @@ ${item.itemName}: ${item.itemQuantity}`;
       wasdComponent.dashHeight = position.height;
       wasdComponent.dashSprite = animation.animationName;
       wasdComponent.dashSpriteNumber = animation.getSpriteNumber();
+    }
+  };
+
+  // src/systems/floor-system/floor-challenge.ts
+  var FloorChallenge = /* @__PURE__ */ ((FloorChallenge2) => {
+    FloorChallenge2[FloorChallenge2["randomSteps"] = 0] = "randomSteps";
+    FloorChallenge2[FloorChallenge2["closeBarriers"] = 1] = "closeBarriers";
+    FloorChallenge2[FloorChallenge2["challengeDone"] = 2] = "challengeDone";
+    return FloorChallenge2;
+  })(FloorChallenge || {});
+
+  // src/systems/floor-system/randomenum.ts
+  function randomEnum(anEnum) {
+    const enumValues = Object.keys(anEnum).map((n) => Number.parseInt(n)).filter((n) => !Number.isNaN(n));
+    const randomIndex = Math.floor(Math.random() * enumValues.length);
+    const randomEnumValue = enumValues[randomIndex];
+    return randomEnumValue;
+  }
+
+  // src/systems/floor-system/floor-system.ts
+  var FloorSystem = class _FloorSystem extends EntitySystem {
+    timer = 0;
+    timeBetweenFloors = 45;
+    floorsMade = 0;
+    floorLevel = 0;
+    // increase when floor is made or when a barrier is placed
+    maxSpeed = -5;
+    floors = [];
+    floorWidth = 64 * 2;
+    currentChallenge = 0 /* randomSteps */;
+    // currentChallengeFunc: ()=>FloorChallenge = this.randomFloorChallengeGen();
+    currentChallengeFunc = this.closeBarriersChallenge();
+    speed = 0;
+    apply(args) {
+      const entity = args.entity;
+      const ac = entity.getComponent("animation", true);
+      if (ac == null)
+        return;
+      if (ac.spriteName !== "jungleGreyTile")
+        return;
+      entity.targetedEvents.forEach((event) => {
+        if (event.eventName === EventType.collision) {
+          ac.setSprite("jungleBrownTile");
+        }
+      });
+    }
+    applyEvents(entity, eventManager) {
+      if (entity.targetedEvents.length === 0)
+        return;
+    }
+    oncePerLoop = (args) => {
+      this.timer++;
+      this.speed = -5 - 0.4 * this.floorLevel;
+      this.speed = Math.abs(this.speed) > Math.abs(this.maxSpeed) ? this.maxSpeed : this.speed;
+      this.timeBetweenFloors = Math.abs(this.floorWidth * 2.5 / this.speed);
+      let newChallenge = this.currentChallengeFunc();
+      if (newChallenge === 2 /* challengeDone */) {
+        this.timer = 0;
+        this.currentChallenge = randomEnum(FloorChallenge);
+        this.currentChallengeFunc = () => 2 /* challengeDone */;
+        console.log("next challenge", this.currentChallenge.toString());
+        switch (this.currentChallenge) {
+          case 0 /* randomSteps */:
+            this.currentChallengeFunc = this.randomFloorChallengeGen();
+            break;
+          case 1 /* closeBarriers */:
+            this.currentChallengeFunc = this.closeBarriersChallenge();
+            break;
+        }
+      }
+      this.floors.forEach((floor) => {
+        floor.getComponent("position").vy = this.speed;
+      });
+      this.checkLost();
+    };
+    checkJumpable(x) {
+    }
+    closeBarriersChallenge() {
+      let floorsMade = 0;
+      return () => {
+        if (this.timer % this.timeBetweenFloors !== 0)
+          return 1 /* closeBarriers */;
+        if (this.floorsMade > 10)
+          return 2 /* challengeDone */;
+        this.placeBarrier(this.speed, 2);
+        floorsMade++;
+        return 1 /* closeBarriers */;
+      };
+    }
+    randomFloorChallengeGen() {
+      let floorsMade = 0;
+      return () => {
+        if (this.timer % this.timeBetweenFloors !== 0)
+          return 0 /* randomSteps */;
+        if (floorsMade > 10)
+          return 2 /* challengeDone */;
+        const height = window.innerHeight;
+        const x = window.innerWidth * Math.random();
+        this.placeFloor(x, height + this.floorWidth, this.speed);
+        floorsMade++;
+        return 0 /* randomSteps */;
+      };
+    }
+    checkLost() {
+      const py = this.game.getById(1).getComponent("position").y;
+      if (py < 0 || py > window.innerHeight) {
+        this.floorsMade = 0;
+        this.floorLevel = 0;
+        this.timer = 0;
+        startGame(this.game);
+      }
+    }
+    placeBarrier(vy, holeSize = 2) {
+      const numFloors = Math.floor(window.innerWidth / this.floorWidth) + 1;
+      const floorToSkip = Math.floor(Math.random() * (numFloors - holeSize + 1));
+      Array.from(Array(numFloors).keys()).forEach((i) => {
+        if (i >= floorToSkip && i - floorToSkip < holeSize)
+          return;
+        this.placeFloor(i * this.floorWidth + this.floorWidth / 2, window.innerHeight + this.floorWidth, vy);
+      });
+      this.floorLevel += 1;
+      return floorToSkip;
+    }
+    placeFloor(x, y, vy = -1) {
+      const floor = this.game.addEntity("floor");
+      const pos = floor.getComponent("position");
+      pos.x = x;
+      pos.y = y;
+      pos.vy = vy;
+      this.floors.push(floor);
+      this.floorsMade++;
+      return floor;
+    }
+    static create(game2) {
+      return new _FloorSystem(game2);
     }
   };
 
