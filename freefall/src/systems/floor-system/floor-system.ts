@@ -43,6 +43,8 @@ export class FloorSystem extends EntitySystem {
             }
             console.log("next challenge", FloorChallenge[this.currentChallenge]);
             switch(this.currentChallenge){
+                case FloorChallenge.custom:
+                    this.currentChallengeFunc = this.customChallenge();
                 case FloorChallenge.randomSteps:
                     this.currentChallengeFunc = this.randomFloorChallengeGen();
                     break;
@@ -61,6 +63,11 @@ export class FloorSystem extends EntitySystem {
     }
     checkJumpable(x:number){
 
+    }
+    customChallenge(){
+        return ()=>{
+            return FloorChallenge.custom;
+        }
     }
     closeBarriersChallenge(){
         let floorsMade: number = 0;

@@ -1,5 +1,6 @@
 export enum FloorChallenge {
     randomSteps,
     closeBarriers,
-    challengeDone
+    challengeDone,
+    custom
 }
