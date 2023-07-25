@@ -43,12 +43,22 @@ export class EventManager {
         });
         window.addEventListener("touchend", (e)=>{
             const rect = canvas.getBoundingClientRect()
-            const x = e.touches[0].clientX - rect.left
-            const y = e.touches[0].clientY - rect.top
+            const x = e.changedTouches[0].clientX - rect.left
+            const y = e.changedTouches[0].clientY - rect.top
             this.emit(EventType.touchEnd,{
                 x:x,
                 y:y
             });
+        });
+        window.addEventListener("touchmove", (e)=>{
+            const rect = canvas.getBoundingClientRect()
+            const x = e.touches[0].clientX - rect.left
+            const y = e.touches[0].clientY - rect.top
+            this.emit(EventType.touchMove,{
+                x:x,
+                y:y
+            });
+
         });
         return keys;
     }

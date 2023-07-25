@@ -124,15 +124,6 @@ export class WasdSystem extends EntitySystem {
                 case EventType.spaceUp:
                     this.dash(wasdComponent, position, animation, transition);
                 break;
-                case EventType.spaceUp:
-                    // position = <PositionComponent>entity.getComponent("position");
-                    // let placeItem:PlaceItemComponent;
-                    // placeItem = <PlaceItemComponent>entity.getComponent("placeItem");
-                    // placeItem.placeItem("crop", [0, 0], (entity:Entity)=>{
-                    //     let crop:CropComponent = <CropComponent>entity.getComponent("crop");
-                    //     crop.setCrop("onion")
-                    // });
-                break;
                 case EventType.fUp:
                     let cropHarvester:CropHarvesterComponent;
                     cropHarvester = <CropHarvesterComponent>entity.getComponent("cropHarvester", true);

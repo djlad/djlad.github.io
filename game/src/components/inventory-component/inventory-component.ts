@@ -7,7 +7,7 @@ import { InventoryItemType } from "./inventory-item-type";
 import { GameEvent } from "../../engine/events/game-event";
 import { EventType } from "../../engine/events/EventType";
 import { InventoryItemEntity } from "../../entities/inventory-item-entity";
-import { AnimationComponent } from "../animation-component";
+import { AnimationComponent2 } from "../animation-component";
 import { TextComponent } from "../text-component/text-component";
 
 export class InventoryComponent extends Component {
@@ -102,8 +102,8 @@ export class InventoryComponent extends Component {
     update(entity:Entity):void{
         for(let i:number=0;i<this.inventoryItemEntities.length;i++){
             let inventoryItemEntity = this.inventoryItemEntities[i];
-            let spriteComponent:AnimationComponent;
-            spriteComponent = <AnimationComponent>inventoryItemEntity.getComponent("animation");
+            let spriteComponent:AnimationComponent2;
+            spriteComponent = <AnimationComponent2>inventoryItemEntity.getComponent("animation");
             let item:InventoryItem = this.itemSlots[i];
             let itemType:InventoryItemType = this.itemRegistry.itemTypes[item.itemName];
             spriteComponent.setSprite(itemType.itemSpriteName);

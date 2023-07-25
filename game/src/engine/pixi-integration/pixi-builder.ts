@@ -12,9 +12,10 @@ import { PixieEngineCreator } from "./sprite-dependency/pixie-engine-creator";
 import { GenericRenderer } from "./generic-render";
 import { GenericRenderSystem } from "./systems/generic-render-system";
 
-export function pixiGameBuilder():Game{
+export function pixiGameBuilder(metadata:{[key:string]: {width:number, height:number}} = null):Game{
     const deps = new PixiDependencies()
-    deps.pixiGame = PixiGame.createSingleton(); 
+    deps.imgMetaData = metadata;
+    deps.pixiGame = PixiGame.createSingleton(deps); 
     deps.spriteManager = PixiSpriteManager.create(deps);
     // deps.cameras = 
     // deps.renderer = HtmlRenderer.create();

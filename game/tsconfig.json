@@ -14,7 +14,8 @@
         "allowJs": true,
         "esModuleInterop": true,
         "isolatedModules": true,
-        "noEmit": true
+        // "noEmit": true,
+        "declaration": true // generates .d.ts file for library consumers. unused by game
     },
     "include":[
         "src/**/*"

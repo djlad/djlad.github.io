@@ -3,7 +3,7 @@ import { SpriteManager } from '../engine/renderers/sprite-manager';
 import { SpriteAnimation } from '../engine/renderers/sprite-animation';
 import { Entity } from '../engine/entity/entity';
 import { EntityUpdateArgs } from '../engine/entity/entity-update-args';
-export class AnimationComponent extends Component {
+export class AnimationComponent2 extends Component {
     constructor(animationName:string, delay:number, spriteManager:SpriteManager){
         super("animation");
         this.delay = delay;
@@ -76,10 +76,10 @@ export class AnimationComponent extends Component {
         }
     }
 
-    static create():AnimationComponent{
+    static create():AnimationComponent2{
         var spriteManager:SpriteManager = SpriteManager.singeltonCreate();
         // var spriteManager:SpriteManager = createSpriteManager();
-        var ac:AnimationComponent = new AnimationComponent("blond", 2, spriteManager);
+        var ac:AnimationComponent2 = new AnimationComponent2("blond", 2, spriteManager);
         return ac;
     }
 }

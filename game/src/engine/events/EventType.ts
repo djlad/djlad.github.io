@@ -51,5 +51,6 @@ export enum EventType {
     dash,
     entityMoved,
     touchStart,
-    touchEnd
+    touchEnd,
+    touchMove
 }

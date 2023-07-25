@@ -1,0 +1,16 @@
+{
+  "name": "FreeFall",
+  "short_name": "FreeFall",
+  "display": "fullscreen",
+  "start_url": "index.html",
+  "theme_color": "#673ab6",
+  "background_color": "#111111",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "64x64",
+      "type": "image/png"
+    }
+  ]
+}

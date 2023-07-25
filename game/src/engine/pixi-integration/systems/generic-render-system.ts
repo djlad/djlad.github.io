@@ -1,4 +1,4 @@
-import { AnimationComponent } from "../../../components/animation-component";
+import { AnimationComponent2 } from "../../../components/animation-component";
 import { Component } from "../../component/component";
 import { IPositionComponent } from "../../component/components/position/iposition-component";
 import { PositionComponent } from "../../component/components/position/position-component";
@@ -34,7 +34,7 @@ export class GenericRenderSystem extends EntitySystem {
             sprite.x = this.cameras.transformX(newX);
             sprite.y = this.cameras.transformY(newY);
         })
-        this.pixieGame = PixiGame.createSingleton();
+        this.pixieGame = PixiGame.createSingleton(game.gameDependencies);
     }
     oncePerLoop = (args:SystemArgs) => {
         const first = args.entity;

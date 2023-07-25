@@ -1,6 +1,6 @@
 import { Component } from "../../engine/component/component";
 import { Entity } from "../../engine/entity/entity";
-import {AnimationComponent} from "../animation-component";
+import {AnimationComponent2} from "../animation-component";
 export class TransitionComponent extends Component{
     constructor(){
         super("transition");
@@ -15,7 +15,7 @@ export class TransitionComponent extends Component{
     speed: number = 15;
     update(entity: Entity): void {
         if (!this.running) return;
-        let animation = <AnimationComponent>entity.getComponent("animation", true);
+        let animation = <AnimationComponent2>entity.getComponent("animation", true);
         if (animation == null) return;
         this.reference = animation.getRGBs();
         this.target = animation.getRGBs(this.targetAnimationName, this.targetSpriteNumber, this.reference.width, this.reference.height);

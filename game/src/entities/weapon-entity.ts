@@ -1,4 +1,4 @@
-import { AnimationComponent } from "../components/animation-component";
+import { AnimationComponent2 } from "../components/animation-component";
 import { PositionComponent } from "../engine/component/components/position/position-component";
 import { GameDependencies } from "../engine/dependencies/game-dependencies";
 import { Entity } from "../engine/entity/entity";
@@ -8,7 +8,7 @@ import { GenericPositionComponent } from "../engine/pixi-integration/pixi-compon
 export class WeaponEntity implements EntityRegistration{
     create(gameDependencies: GameDependencies, entity: Entity): Entity {
         const pos = <GenericPositionComponent>entity.addComponent("position");
-        const anim = <AnimationComponent>entity.addComponent("animation");
+        const anim = <AnimationComponent2>entity.addComponent("animation");
         anim.setSprite("arrowsword");
         pos.width = 32;
         pos.height = 32;

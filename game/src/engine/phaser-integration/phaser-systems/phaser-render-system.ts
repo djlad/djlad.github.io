@@ -1,5 +1,5 @@
 import { Game } from "../../game";
-import { AnimationComponent } from "../../../components/animation-component";
+import { AnimationComponent2 } from "../../../components/animation-component";
 import { PositionComponent } from "../../component/components/position/position-component";
 import { PrimitiveComponent } from "../../../components/primitive-component";
 import { TextComponent } from "../../../components/text-component/text-component";

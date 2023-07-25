@@ -1,6 +1,6 @@
 import glob from 'glob';
 import * as esbuild from 'esbuild';
-import {readFileSync, write, writeFile, writeFileSync} from 'fs';
+import {fstat, readFileSync, write, writeFile, writeFileSync, rmSync, mkdirSync} from 'fs';
 import * as imageSize from 'image-size';
 import externalGlobalPlugin from "esbuild-plugin-external-global";
 import { networkInterfaces } from 'os';
@@ -92,7 +92,41 @@ build(config).then(()=>{
     console.log(`Built game in ./dist`);
 });
 
-if (process.argv.length != 3 && process.argv[2] != "build"){
+if (process.argv[2] === "lib"){
+    console.log("Building library");
+    const libEntryPoint = "src/index.ts";
+    const allEntryPoints = [];
+    rmSync("lib", {recursive:true});
+    mkdirSync("lib");
+    getDirectories("src", (err, matches)=>{
+        const tsMatches = matches.filter(m=>m.endsWith(".ts"))
+            .filter(m=>m !== "src/game.ts");
+        const relativeMatches = tsMatches.map(m=>m.replace("src/", "./").replace(".ts", ""));
+        const exportLines = relativeMatches.map(match=>`export * from "${match}";`).join("\n");
+        writeFile(libEntryPoint, exportLines, ()=>{
+            esbuild.build({
+                entryPoints: [libEntryPoint],
+                outfile: 'lib/index.js',
+                bundle: true,
+                sourcemap: true,
+                // minify: true,
+                // splitting: true,
+                format: 'esm',
+                target: ['esnext'],
+                plugins:[
+                    externalGlobalPlugin.externalGlobalPlugin({
+                        'phaser': 'window.Phaser',
+                        'pixi.js': 'window.PIXI'
+                      })
+                ]
+            }).catch((e)=>{
+                console.log(e);
+                return process.exit(1);
+            });
+        })
+    })
+}
+else if (process.argv.length != 3 && process.argv[2] != "build"){
     results["local"] = "127.0.0.1"
     for(let nic in results){
         console.log(`Serving dev site at http://${results[nic]}:${port}/dist/index.html`);
