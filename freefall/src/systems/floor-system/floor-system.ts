@@ -38,14 +38,19 @@ export class FloorSystem extends EntitySystem {
         if (newChallenge === FloorChallenge.challengeDone){
             this.timer = 0;
             this.currentChallenge = randomEnum(FloorChallenge);
-            this.currentChallengeFunc = ()=>FloorChallenge.challengeDone;
-            console.log("next challenge", this.currentChallenge.toString());
+            while(this.currentChallenge === FloorChallenge.challengeDone){
+                this.currentChallenge = randomEnum(FloorChallenge);
+            }
+            console.log("next challenge", FloorChallenge[this.currentChallenge]);
             switch(this.currentChallenge){
                 case FloorChallenge.randomSteps:
                     this.currentChallengeFunc = this.randomFloorChallengeGen();
                     break;
                 case FloorChallenge.closeBarriers:
                     this.currentChallengeFunc = this.closeBarriersChallenge();
+                    break;
+                default:
+                    this.currentChallengeFunc = ()=>FloorChallenge.challengeDone;
                     break;
             }
         }
@@ -60,9 +65,9 @@ export class FloorSystem extends EntitySystem {
     closeBarriersChallenge(){
         let floorsMade: number = 0;
         return (): FloorChallenge => {
+        if (floorsMade > 3) return FloorChallenge.challengeDone;
             if (this.timer % this.timeBetweenFloors !== 0) return FloorChallenge.closeBarriers;
-            if (this.floorsMade > 10) return FloorChallenge.challengeDone;
-            this.placeBarrier(this.speed, 2)
+            this.placeBarrier(this.speed, 2);
             floorsMade++;
             return FloorChallenge.closeBarriers;
         }
@@ -70,8 +75,8 @@ export class FloorSystem extends EntitySystem {
     randomFloorChallengeGen(){
         let floorsMade: number = 0;
         return (): FloorChallenge => {
+            if (floorsMade > 3) return FloorChallenge.challengeDone;
             if (this.timer % this.timeBetweenFloors !== 0) return FloorChallenge.randomSteps;
-            if (floorsMade > 10) return FloorChallenge.challengeDone;
             const height = window.innerHeight;
             const x = window.innerWidth * Math.random();
             this.placeFloor(x, height+this.floorWidth, this.speed);

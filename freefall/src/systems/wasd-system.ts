@@ -1,5 +1,5 @@
 import { EntitySystem, Game, EventType, SystemArgs, GenericPositionComponent, WasdComponent, Entity, EventManager, GameEvent, PositionComponent, AnimationComponent, TransitionComponent, CropHarvesterComponent, WeaponComponent, InventoryComponent, GenericAnimationComponent } from "aiwar";
-import { requestAccessAsync } from "./accelerometer";
+import { addGyroPermissionButton} from "./accelerometer";
 
 export class WasdSystem extends EntitySystem {
     rotation: {
@@ -29,13 +29,13 @@ export class WasdSystem extends EntitySystem {
             this.touchCurrent.y = e.eventData.y;
         });
         const d = document.getElementById("t");
-        requestAccessAsync(e=>{
-            this.rotation.alpha = e.alpha;
-            this.rotation.beta = e.beta;
-            this.rotation.gama = e.gamma;
-            if (d == null) return;
-            d.innerHTML = e.alpha + "<br/>" + e.beta + "<br/>" + e.gamma;
-        }, console.log);
+        addGyroPermissionButton((e: { alpha: number; beta: number; gamma: number; })=>{
+                this.rotation.alpha = e.alpha;
+                this.rotation.beta = e.beta;
+                this.rotation.gama = e.gamma;
+                if (d == null) return;
+                d.innerHTML = e.alpha + "<br/>" + e.beta + "<br/>" + e.gamma;
+            });
     }
     private move:boolean = false;
     private stop:boolean = false;
