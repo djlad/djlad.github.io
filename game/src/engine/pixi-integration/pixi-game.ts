@@ -72,8 +72,8 @@ export class PixiGame {
                     tileSprite.texture = spriteSheet.textures[spriteNum];
                     this.tileSprites[key] = tileSprite;
                 }
-                tileSprite.x = cameras.transformX(tiles.tileCoordToReal(tileAtCoord.tileX));
-                tileSprite.y = cameras.transformY(tiles.tileCoordToReal(tileAtCoord.tileY));
+                tileSprite.x = cameras.transformX(tiles.tileCoordToReal(tileAtCoord.tileX)) - cameras.center.vx;
+                tileSprite.y = cameras.transformY(tiles.tileCoordToReal(tileAtCoord.tileY)) - cameras.center.vy;
             }
         }
     }

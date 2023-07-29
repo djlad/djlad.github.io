@@ -1,0 +1,105 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "untitled.tmx",
+    "expandedProjectPaths": [
+        "."
+    ],
+    "file.lastUsedOpenFilter": "All Files (*)",
+    "fileStates": {
+        "/Users/firefly/git/djlad.github.io/game/sprites/tilesets/firstmap.tmx": {
+            "scale": 1.099,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 215.19563239308462,
+                "y": 186.533212010919
+            }
+        },
+        "/Users/firefly/git/djlad.github.io/game/sprites/tilesets/reed.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "/Users/firefly/git/djlad.github.io/game/sprites/tilesets/submission_daneeklu/tilesets/grass.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "/Users/firefly/git/djlad.github.io/game/sprites/tilesets/wheat.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "farming_fishing.tsx": {
+            "scaleInDock": 0.6429,
+            "scaleInEditor": 1
+        },
+        "fence.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "grass.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "plants.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "plowedsoil.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "reed.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "sandwater.tsx": {
+            "scaleInDock": 1.031,
+            "scaleInEditor": 1
+        },
+        "untitled.tmx": {
+            "scale": 1.71,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 471.0526315789474,
+                "y": 342.10526315789474
+            }
+        },
+        "water.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "youngwheat.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        }
+    },
+    "last.imagePath": "/Users/firefly/git/djlad.github.io/game/sprites/LPC Base Assets/tiles",
+    "map.lastUsedFormat": "tmx",
+    "openFiles": [
+        "farming_fishing.tsx",
+        "untitled.tmx",
+        "water.tsx",
+        "youngwheat.tsx",
+        "sandwater.tsx",
+        "reed.tsx",
+        "plowedsoil.tsx",
+        "fence.tsx"
+    ],
+    "project": "tiledproject.tiled-project",
+    "recentFiles": [
+        "untitled.tmx",
+        "farming_fishing.tsx",
+        "fence.tsx",
+        "plowedsoil.tsx",
+        "reed.tsx",
+        "sandwater.tsx",
+        "youngwheat.tsx",
+        "water.tsx",
+        "grass.tsx",
+        "plants.tsx",
+        "/Users/firefly/git/djlad.github.io/game/sprites/tilesets/wheat.tsx",
+        "/Users/firefly/git/djlad.github.io/game/sprites/tilesets/reed.tsx"
+    ],
+    "tileset.lastUsedFormat": "tsx"
+}

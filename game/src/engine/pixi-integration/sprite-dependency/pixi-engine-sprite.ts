@@ -7,8 +7,8 @@ import { PixiGame } from "../pixi-game";
 import { AnimatedSprite } from "pixi.js";
 
 export class PixieEngineSprite implements IEngineSprite {
-    pixieGame: PixiGame;
-    sprite: AnimatedSprite;
+    private pixieGame: PixiGame;
+    private sprite: AnimatedSprite;
     constructor(gameDependencies:PixiDependencies){
         gameDependencies.checkDependency(gameDependencies.pixiGame);
         this.pixieGame = gameDependencies.pixiGame;
