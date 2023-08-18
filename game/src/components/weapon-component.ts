@@ -31,6 +31,7 @@ export class WeaponComponent extends Component {
         this.weaponPosition.rotate = 5;
     }
     sheatheBack(){
+        if (!this.weaponPosition.faceRight)this.flip(true);
         this.weaponOffsetX = -.6;
         this.weaponOffsetY = -.75;
         this.weaponPosition.rotate = 3.2;
@@ -45,7 +46,7 @@ export class WeaponComponent extends Component {
         this.weaponOffsetX = 0;
         this.weaponOffsetY = -.5;
         this.weaponPosition.rotate = 5;
-        this.rotationSpeed = .1;
+        this.rotationSpeed = this.weaponPosition.faceRight ? .1 : -.1;
     }
     zeroOut(){
         this.weaponOffsetX = 0;
