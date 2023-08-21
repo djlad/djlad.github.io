@@ -19,7 +19,7 @@ import { ClickableComponent } from '../components/clickable-component';
 import { AnimationComponent } from '../engine/component/components/animation/animation-component';
 import { PhaserAnimationComponent } from '../engine/phaser-integration/phaser-components/phaser-animation-component';
 import { PhaserPositionComponent } from '../engine/phaser-integration/phaser-components/phaser-position-component';
-import { WeaponComponent } from '../components/weapon-component';
+import { WeaponComponent } from '../components/weapon-component/weapon-component';
 
 
 export function buildComponents(game:Game):void{

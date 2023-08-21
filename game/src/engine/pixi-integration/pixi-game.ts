@@ -140,12 +140,15 @@ export class PixiGame {
     start(){
     }
     private getAtlasFrames(sheetWidth:number, sheetHeight:number, widthImgs:number, heightImgs:number){
-        const frameWidth = sheetWidth/widthImgs;
-        const frameHeight = sheetHeight/heightImgs;
+        const frameWidth = sheetWidth/widthImgs-1;
+        const frameHeight = sheetHeight/heightImgs-1;
+        if (sheetWidth === 256 && sheetHeight === 192){
+            console.log(frameWidth, frameHeight);
+        }
         const frames: Dict<ISpritesheetFrameData> = {};
         let frameNumber = 0;
-        for (let y=0;y<sheetHeight;y+=frameHeight){
-            for(let x=0;x<sheetWidth;x+=frameWidth){
+        for (let y=0;y<sheetHeight;y+=frameHeight+1){
+            for(let x=0;x<sheetWidth;x+=frameWidth+1){
                 const frameKey = `${frameNumber}`;
                 frames[frameKey] = {
                     frame:{x:x, y:y, w:frameWidth, h:frameHeight},
@@ -167,6 +170,10 @@ export class PixiGame {
         });
         const width:number = this.metadata[path.replace("../", "")].width;
         const height:number = this.metadata[path.replace("../", "")].height;
+        if ('swords' === spriteName){
+            console.log(spriteName);
+            console.log(width, height);
+        }
         const frames = this.getAtlasFrames(width, height, widthImgs, heightImgs);
         const atlas: ISpritesheetData = {
             frames:frames,

@@ -14,9 +14,10 @@ import { CropComponent } from '../components/crop-component';
 import { Component } from '../engine/component/component';
 import { TransitionComponent } from '../components/transitions/transition-component';
 import { AnimationComponent } from '../engine/component/components/animation/animation-component';
-import { WeaponComponent } from '../components/weapon-component';
+import { WeaponComponent } from '../components/weapon-component/weapon-component';
 import { SystemArgs } from '../engine/system/system-args';
 import { GenericPositionComponent } from '../engine/pixi-integration/pixi-components/generic-position-component';
+import { WieldState } from '../components/weapon-component/wield-state';
 
 export class WasdSystem extends EntitySystem {
     constructor(game:Game){
@@ -133,7 +134,7 @@ export class WasdSystem extends EntitySystem {
                     //console.log("p up")
                     console.log(this.game);
                     const weapon = <WeaponComponent>entity.getComponent("weapon");
-                    if (weapon.rotationSpeed == 0){
+                    if (weapon.swipe.rotateSpeed == 0){
                         weapon.spin();
                     } else {
                         weapon.sheatheBack();
@@ -147,6 +148,14 @@ export class WasdSystem extends EntitySystem {
                 case EventType.jUp:
                     var ge:GameEvent = GameEvent.create(EventType.fireProjectile);
                     entity.emit(ge);
+                break;
+                case EventType.kUp:
+                    const weapon1 = <WeaponComponent>entity.getComponent("weapon");
+                    if (weapon1.weaponState === WieldState.backSheathe){
+                        weapon1.holdWeapon();
+                    } else if (weapon1.weaponState === WieldState.hold){
+                        weapon1.sheatheBack();
+                    }
                 break;
             }
         }

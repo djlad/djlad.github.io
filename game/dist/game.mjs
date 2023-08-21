@@ -52,13 +52,15 @@
       let particles = entity.addComponent("particles");
       particles.targetParticles = 0;
       entity.addComponent("transition");
-      entity.addComponent("weapon");
+      const weapon = entity.addComponent("weapon");
+      weapon.setWielder(entity);
       var sprite = "grey";
+      var walkSprite = "greyWalk";
       animation.setSprite(sprite);
       wasd.sprite = sprite;
-      position.width = 69;
-      position.height = 44;
-      position.pivotX = 0.39;
+      wasd.walkSprite = walkSprite;
+      position.width = 32;
+      position.height = 48;
       let multi = 2.4;
       position.width *= multi;
       position.height *= multi;
@@ -1152,6 +1154,14 @@
           case 16 /* jUp */:
             var ge = GameEvent.create(31 /* fireProjectile */);
             entity.emit(ge);
+            break;
+          case 17 /* kUp */:
+            const weapon1 = entity.getComponent("weapon");
+            if (weapon1.weaponState === 0 /* backSheathe */) {
+              weapon1.holdWeapon();
+            } else if (weapon1.weaponState === 1 /* hold */) {
+              weapon1.sheatheBack();
+            }
             break;
         }
       }
@@ -3179,12 +3189,15 @@ ${item.itemName}: ${item.itemQuantity}`;
     start() {
     }
     getAtlasFrames(sheetWidth, sheetHeight, widthImgs, heightImgs) {
-      const frameWidth = sheetWidth / widthImgs;
-      const frameHeight = sheetHeight / heightImgs;
+      const frameWidth = sheetWidth / widthImgs - 1;
+      const frameHeight = sheetHeight / heightImgs - 1;
+      if (sheetWidth === 256 && sheetHeight === 192) {
+        console.log(frameWidth, frameHeight);
+      }
       const frames = {};
       let frameNumber = 0;
-      for (let y = 0; y < sheetHeight; y += frameHeight) {
-        for (let x = 0; x < sheetWidth; x += frameWidth) {
+      for (let y = 0; y < sheetHeight; y += frameHeight + 1) {
+        for (let x = 0; x < sheetWidth; x += frameWidth + 1) {
           const frameKey = `${frameNumber}`;
           frames[frameKey] = {
             frame: { x, y, w: frameWidth, h: frameHeight },
@@ -3206,6 +3219,10 @@ ${item.itemName}: ${item.itemQuantity}`;
       });
       const width = this.metadata[path.replace("../", "")].width;
       const height = this.metadata[path.replace("../", "")].height;
+      if ("swords" === spriteName) {
+        console.log(spriteName);
+        console.log(width, height);
+      }
       const frames = this.getAtlasFrames(width, height, widthImgs, heightImgs);
       const atlas = {
         frames,
@@ -3590,45 +3607,80 @@ ${item.itemName}: ${item.itemQuantity}`;
     return game;
   }
 
-  // src/components/weapon-component.ts
+  // src/components/weapon-component/swipe.ts
+  var Swipe = class {
+    constructor(rotate, offsetX, offsetY, rotateSpeed) {
+      this.rotate = rotate;
+      this.offsetX = offsetX;
+      this.offsetY = offsetY;
+      this.rotateSpeed = rotateSpeed;
+    }
+    flip() {
+      this.rotate = this.flipRotate(this.rotate);
+      this.offsetX *= -1;
+      this.rotateSpeed *= -1;
+    }
+    flipRotate(rotate) {
+      return Math.PI * 0.5 - rotate;
+    }
+  };
+
+  // src/components/weapon-component/weapon-component.ts
   var WeaponComponent = class extends Component {
-    constructor(gameDependencies, entityId) {
+    constructor(gameDependencies) {
       super("weapon");
+      this.wielder = null;
       this.weaponEntity = null;
       this.weaponPosition = null;
+      this.swipe = new Swipe(0, 0, 0, 0);
       this.weaponOffsetX = 0;
       this.weaponOffsetY = -0.5;
+      this.weaponFaceRight = true;
       this.wobble = 0;
       this.rotationSpeed = 0.1;
+      this.weaponState = 0 /* backSheathe */;
       this.game = gameDependencies.game;
     }
+    setWielder(wielder) {
+      this.wielder = wielder;
+      this.weaponEntity = this.game.addEntity("weapon");
+      this.weaponPosition = this.weaponEntity.getComponent("position");
+    }
+    setSwipe(swipe) {
+      this.swipe = swipe;
+      this.weaponPosition.rotate = swipe.rotate;
+    }
     holdWeapon() {
-      this.weaponOffsetX = 0.1;
-      this.weaponOffsetY = -0.45;
-      this.weaponPosition.rotate = 2;
+      const position = this.wielder.getComponent("position");
+      const newPos = new Swipe(2, 0.1, -0.45, 0);
+      if (!position.faceRight)
+        newPos.flip();
+      this.setSwipe(newPos);
+      this.weaponState = 1 /* hold */;
     }
     sheatheWeapon() {
-      this.weaponOffsetX = 0.5;
-      this.weaponOffsetY = -0.5;
-      this.weaponPosition.rotate = 5;
+      const newPos = new Swipe(5, 0.5, -0.5, 0);
+      this.setSwipe(newPos);
     }
     sheatheBack() {
-      this.weaponOffsetX = -0.6;
-      this.weaponOffsetY = -0.75;
-      this.weaponPosition.rotate = 3.2;
-      this.rotationSpeed = 0;
+      const newPos = new Swipe(3.2, -0.6, -0.75, 0);
+      const position = this.wielder.getComponent("position");
+      if (!position.faceRight)
+        newPos.flip();
+      this.setSwipe(newPos);
+      this.weaponState = 0 /* backSheathe */;
     }
     flip(faceRight) {
-      if (faceRight == this.weaponPosition.faceRight)
+      if (faceRight === this.weaponFaceRight)
         return;
-      this.weaponPosition.faceRight = faceRight;
-      this.weaponOffsetX = faceRight ? -Math.abs(this.weaponOffsetX) : Math.abs(this.weaponOffsetX);
+      this.weaponFaceRight = faceRight;
+      this.swipe.flip();
+      this.weaponPosition.rotate = this.swipe.rotate;
     }
     spin() {
-      this.weaponOffsetX = 0;
-      this.weaponOffsetY = -0.5;
-      this.weaponPosition.rotate = 5;
-      this.rotationSpeed = 0.1;
+      console.log("spin");
+      const newPos = new Swipe(5, 0, -0.5, this.weaponPosition.faceRight ? 0.1 : -0.1);
+      this.setSwipe(newPos);
     }
     zeroOut() {
       this.weaponOffsetX = 0;
@@ -3637,19 +3689,20 @@ ${item.itemName}: ${item.itemQuantity}`;
       this.rotationSpeed = 0;
     }
     update(entity, args) {
-      if (this.weaponEntity == null) {
-        this.weaponEntity = this.game.addEntity("weapon");
-        this.weaponPosition = this.weaponEntity.getComponent("position");
-      }
+      if (this.weaponEntity == null)
+        console.warn("weapon component needs to call setWielder first");
       const wielderPosition = entity.getComponent("position");
       this.flip(wielderPosition.faceRight);
-      this.weaponPosition.x = wielderPosition.x + this.weaponOffsetX * wielderPosition.width + Math.ceil(Math.sin(this.wobble)) * 5;
-      this.weaponPosition.y = wielderPosition.y + this.weaponOffsetY * wielderPosition.height;
-      this.wobble += 0;
-      this.weaponPosition.rotate += this.rotationSpeed;
+      const { offsetX, offsetY, rotate, rotateSpeed } = this.swipe;
+      this.weaponPosition.x = wielderPosition.x + offsetX * wielderPosition.width;
+      this.weaponPosition.y = wielderPosition.y + offsetY * wielderPosition.height;
+      this.weaponPosition.rotate += rotateSpeed;
     }
-    static create(gameDependencies, entityId) {
-      return new WeaponComponent(gameDependencies, entityId);
+    flipRotate(rotate) {
+      return Math.PI * 0.5 - rotate;
+    }
+    static create(gameDependencies) {
+      return new WeaponComponent(gameDependencies);
     }
   };
 

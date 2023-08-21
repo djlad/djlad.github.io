@@ -9,6 +9,7 @@ import { AnimationComponent } from '../engine/component/components/animation/ani
 import { GameDependencies } from '../engine/dependencies/game-dependencies';
 import { EntityRegistration } from '../engine/entity/entity-registration';
 import { GenericPositionComponent } from '../engine/pixi-integration/pixi-components/generic-position-component';
+import { WeaponComponent } from '../components/weapon-component/weapon-component';
 
 export class PlayerEntity implements EntityRegistration{
     create(gameDependencies: GameDependencies, entity: Entity): Entity {
@@ -22,7 +23,8 @@ export class PlayerEntity implements EntityRegistration{
         let particles = <ParticleComponent>entity.addComponent("particles");
         particles.targetParticles = 0;
         entity.addComponent("transition");
-        entity.addComponent("weapon");
+        const weapon = <WeaponComponent>entity.addComponent("weapon");
+        weapon.setWielder(entity);
         
         var sprite:string = "grey";
         // var sprite:string = "greythrow";

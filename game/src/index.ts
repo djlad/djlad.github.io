@@ -28,7 +28,7 @@ export * from "./components/tile-component/tile-component";
 export * from "./components/tile-component/tile";
 export * from "./components/transitions/transition-component";
 export * from "./components/wasd-component";
-export * from "./components/weapon-component";
+export * from "./components/weapon-component/weapon-component";
 export * from "./engine/component/component-factory";
 export * from "./engine/component/component";
 export * from "./engine/component/components/animation/animation-component";

@@ -8,7 +8,7 @@ import { AnimationComponent } from './engine/component/components/animation/anim
 import { Entity } from './engine/entity/entity';
 import { PixiDependencies } from './engine/pixi-integration/pixi-dependencies';
 import { GenericPositionComponent } from './engine/pixi-integration/pixi-components/generic-position-component';
-import { WeaponComponent } from './components/weapon-component';
+import { WeaponComponent } from './components/weapon-component/weapon-component';
 
 declare var synaptic:any;
 export declare var g:Game;
