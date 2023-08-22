@@ -31,7 +31,7 @@ function startGame(){
     var villager = game.addEntity("villager");
     var component = <PositionComponent>villager.getComponent("position");
     let ac = <AnimationComponent>villager.getComponent("animation");
-    ac.setSprite("arrowsword");
+    ac.setSprite("bluecloak");
     component.x = 150;
     component.y = 300;
     component.vx = 0;

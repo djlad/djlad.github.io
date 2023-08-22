@@ -9,6 +9,7 @@ import { GenericPositionComponent } from "../../engine/pixi-integration/pixi-com
 import { WeaponEntity } from "../../entities/weapon-entity";
 import { Swipe } from "./swipe";
 import { WieldState } from "./wield-state";
+import { sheahteBackPos, holdWeaponPos, slashPos, slashUp, slashDown } from "./swipedata";
 
 export class WeaponComponent extends Component {
     constructor(gameDependencies:GameDependencies){
@@ -29,6 +30,16 @@ export class WeaponComponent extends Component {
     rotationSpeed:number = .1;
     weaponState: WieldState = WieldState.backSheathe;
     private sheatheSpeed = .1;
+    private attacks = [slashUp, slashDown];
+    private attacki:number = 0;
+    attack() {
+        const current = this.swipe;
+        let slashes = slashPos(current);
+        slashes = this.attacks[this.attacki](current);
+        this.attacki = (this.attacki + 1) % this.attacks.length;
+        // slashes = slashDown(current);
+        this.setSwipes(slashes);
+    }
     setWielder(wielder:Entity){
         this.wielder = wielder;
         this.weaponEntity = this.game.addEntity("weapon");
@@ -36,21 +47,18 @@ export class WeaponComponent extends Component {
     }
     setSwipe(swipe:Swipe){
         this.swipe = swipe;
-        /*this.weaponOffsetX = swipe.offsetX;
-        this.weaponOffsetY = swipe.offsetY;
-        // this.weaponPosition.rotate = swipe.rotate;
-        this.rotationSpeed = swipe.rotateSpeed;*/
         this.weaponPosition.rotate = swipe.rotate;
     }
     setSwipes(swipes:Swipe[]){
+        if (!this.weaponFaceRight)swipes.forEach(e=>e.flip());
         this.swipes = swipes;
         this.swipei = 0;
     }
     holdWeapon(){
         this.weaponState = WieldState.hold;
         const position = <GenericPositionComponent>this.wielder.getComponent("position");
-        const newPos: Swipe = new Swipe(2,.1,-.45,0, this.sheatheSpeed);
-        if (!position.faceRight)newPos.flip();
+        const newPos: Swipe = holdWeaponPos();
+        const newPos2 = new Swipe(0,0,0,0);
         // this.setSwipe(newPos);
         this.setSwipes([newPos]);
     }
@@ -60,9 +68,8 @@ export class WeaponComponent extends Component {
 
     }
     sheatheBack(){
-        const newPos: Swipe = new Swipe(3.2, -.6, -.75, 0, this.sheatheSpeed);
+        const newPos: Swipe = sheahteBackPos();
         const position = <GenericPositionComponent>this.wielder.getComponent("position");
-        if (!position.faceRight)newPos.flip();
         // this.setSwipe(newPos);
         this.setSwipes([newPos]);
         this.weaponState = WieldState.backSheathe;
@@ -117,10 +124,9 @@ export class WeaponComponent extends Component {
         const movey = dy/h * speed;
         const movex = dx/h * speed;
         const time = h/speed;
-        const mr = time === 0 ? 0 : dr/time;
-        if (true || this.swipe.rotateSpeed === 0) {
-            this.swipe.rotateSpeed = mr;
-        }
+        let mr = dr/time;
+        if (target.swipeToSpeed !== 0) mr = target.swipeToSpeed;
+        this.swipe.rotateSpeed = mr;
         if (Math.abs(dx) >= Math.abs(movex)){
             this.swipe.offsetX += movex;
         } else {
@@ -138,10 +144,11 @@ export class WeaponComponent extends Component {
             this.swipe.rotate = target.rotate;
             this.swipe.rotateSpeed = 0;
         }
-        console.log(this.swipei);
         if (h === 0 && dr === 0){
-            this.swipei = -1;
-            console.log(this.swipei);
+            this.swipei++;
+            if (this.swipei >= this.swipes.length){
+                this.swipei = -1;
+            }
         }
     }
     private flipRotate(rotate:number) {

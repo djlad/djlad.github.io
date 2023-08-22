@@ -146,8 +146,12 @@ export class WasdSystem extends EntitySystem {
                     inventory.inventoryToString();
                 break;
                 case EventType.jUp:
-                    var ge:GameEvent = GameEvent.create(EventType.fireProjectile);
-                    entity.emit(ge);
+                    // var ge:GameEvent = GameEvent.create(EventType.fireProjectile);
+                    // entity.emit(ge);
+                    const weapon2 = <WeaponComponent>entity.getComponent("weapon");
+                    if (weapon2.weaponState === WieldState.hold) {
+                        weapon2.attack();
+                    }
                 break;
                 case EventType.kUp:
                     const weapon1 = <WeaponComponent>entity.getComponent("weapon");

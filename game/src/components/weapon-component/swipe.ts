@@ -13,7 +13,8 @@ export class Swipe {
         public offsetY:number,
         public rotateSpeed: number,
         public speed:number = 0,
-        public longWay:boolean = false
+        public longWay:boolean = false,
+        public swipeToSpeed:number = 0
         ){
             this.rotate = rotate;
         }
@@ -21,6 +22,7 @@ export class Swipe {
         this.rotate = this.flipRotate(this.rotate);
         this.offsetX *= -1;
         this.rotateSpeed *= -1;
+        this.swipeToSpeed *= -1;
     }
     private flipRotate(rotate:number) {
         return Math.PI * .5 - rotate;
