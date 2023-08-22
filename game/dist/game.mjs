@@ -1140,7 +1140,7 @@
           case 13 /* pUp */:
             console.log(this.game);
             const weapon = entity.getComponent("weapon");
-            if (weapon.rotationSpeed == 0) {
+            if (weapon.swipe.rotateSpeed == 0) {
               weapon.spin();
             } else {
               weapon.sheatheBack();
@@ -3609,11 +3609,21 @@ ${item.itemName}: ${item.itemQuantity}`;
 
   // src/components/weapon-component/swipe.ts
   var Swipe = class {
-    constructor(rotate, offsetX, offsetY, rotateSpeed) {
-      this.rotate = rotate;
+    constructor(rotate, offsetX, offsetY, rotateSpeed, speed = 0, longWay = false) {
       this.offsetX = offsetX;
       this.offsetY = offsetY;
       this.rotateSpeed = rotateSpeed;
+      this.speed = speed;
+      this.longWay = longWay;
+      this._rotate = 0;
+      this.twopi = Math.PI * 2;
+      this.rotate = rotate;
+    }
+    get rotate() {
+      return this._rotate;
+    }
+    set rotate(value) {
+      this._rotate = (value % this.twopi + this.twopi) % this.twopi;
     }
     flip() {
       this.rotate = this.flipRotate(this.rotate);
@@ -3633,12 +3643,15 @@ ${item.itemName}: ${item.itemQuantity}`;
       this.weaponEntity = null;
       this.weaponPosition = null;
       this.swipe = new Swipe(0, 0, 0, 0);
+      this.swipes = [];
+      this.swipei = -1;
       this.weaponOffsetX = 0;
       this.weaponOffsetY = -0.5;
       this.weaponFaceRight = true;
       this.wobble = 0;
       this.rotationSpeed = 0.1;
       this.weaponState = 0 /* backSheathe */;
+      this.sheatheSpeed = 0.1;
       this.game = gameDependencies.game;
     }
     setWielder(wielder) {
@@ -3650,35 +3663,38 @@ ${item.itemName}: ${item.itemQuantity}`;
       this.swipe = swipe;
       this.weaponPosition.rotate = swipe.rotate;
     }
+    setSwipes(swipes) {
+      this.swipes = swipes;
+      this.swipei = 0;
+    }
     holdWeapon() {
+      this.weaponState = 1 /* hold */;
       const position = this.wielder.getComponent("position");
-      const newPos = new Swipe(2, 0.1, -0.45, 0);
+      const newPos = new Swipe(2, 0.1, -0.45, 0, this.sheatheSpeed);
       if (!position.faceRight)
         newPos.flip();
-      this.setSwipe(newPos);
-      this.weaponState = 1 /* hold */;
+      this.setSwipes([newPos]);
     }
     sheatheWeapon() {
       const newPos = new Swipe(5, 0.5, -0.5, 0);
-      this.setSwipe(newPos);
     }
     sheatheBack() {
-      const newPos = new Swipe(3.2, -0.6, -0.75, 0);
+      const newPos = new Swipe(3.2, -0.6, -0.75, 0, this.sheatheSpeed);
       const position = this.wielder.getComponent("position");
       if (!position.faceRight)
         newPos.flip();
-      this.setSwipe(newPos);
+      this.setSwipes([newPos]);
       this.weaponState = 0 /* backSheathe */;
     }
     flip(faceRight) {
       if (faceRight === this.weaponFaceRight)
         return;
       this.weaponFaceRight = faceRight;
+      this.swipes.forEach((swipe) => swipe.flip());
       this.swipe.flip();
       this.weaponPosition.rotate = this.swipe.rotate;
     }
     spin() {
-      console.log("spin");
       const newPos = new Swipe(5, 0, -0.5, this.weaponPosition.faceRight ? 0.1 : -0.1);
       this.setSwipe(newPos);
     }
@@ -3696,7 +3712,58 @@ ${item.itemName}: ${item.itemQuantity}`;
       const { offsetX, offsetY, rotate, rotateSpeed } = this.swipe;
       this.weaponPosition.x = wielderPosition.x + offsetX * wielderPosition.width;
       this.weaponPosition.y = wielderPosition.y + offsetY * wielderPosition.height;
-      this.weaponPosition.rotate += rotateSpeed;
+      this.weaponPosition.rotate = rotate;
+      this.swipeTowards();
+    }
+    rotateDistance(curRotate, targetRotate, longWay = false) {
+      const d1 = Math.abs(targetRotate - curRotate);
+      const up = targetRotate >= curRotate;
+      let d2 = 2 * Math.PI - d1;
+      const check = longWay ? d2 > d1 : d2 < d1;
+      if (check) {
+        if (up)
+          return -Math.abs(d2);
+        return d2;
+      }
+      return d1 * (up ? 1 : -1);
+    }
+    swipeTowards() {
+      if (this.swipei === -1)
+        return;
+      const target = this.swipes[this.swipei];
+      const { speed } = target;
+      const dx = target.offsetX - this.swipe.offsetX;
+      const dy = target.offsetY - this.swipe.offsetY;
+      const dr = this.rotateDistance(this.swipe.rotate, target.rotate, target.longWay);
+      const h = Math.sqrt(dx * dx + dy * dy);
+      const movey = dy / h * speed;
+      const movex = dx / h * speed;
+      const time = h / speed;
+      const mr = time === 0 ? 0 : dr / time;
+      if (true) {
+        this.swipe.rotateSpeed = mr;
+      }
+      if (Math.abs(dx) >= Math.abs(movex)) {
+        this.swipe.offsetX += movex;
+      } else {
+        this.swipe.offsetX = target.offsetX;
+      }
+      if (Math.abs(dy) >= Math.abs(movey)) {
+        this.swipe.offsetY += movey;
+      } else {
+        this.swipe.offsetY = target.offsetY;
+      }
+      if (Math.abs(dr) >= Math.abs(this.swipe.rotateSpeed)) {
+        this.swipe.rotate += this.swipe.rotateSpeed;
+      } else {
+        this.swipe.rotate = target.rotate;
+        this.swipe.rotateSpeed = 0;
+      }
+      console.log(this.swipei);
+      if (h === 0 && dr === 0) {
+        this.swipei = -1;
+        console.log(this.swipei);
+      }
     }
     flipRotate(rotate) {
       return Math.PI * 0.5 - rotate;
