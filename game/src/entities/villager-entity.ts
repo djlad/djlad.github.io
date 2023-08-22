@@ -6,6 +6,7 @@ import { NeuralFightComponent } from '../components/neural-fight-component';
 import { AnimationComponent } from '../engine/component/components/animation/animation-component';
 import { EntityRegistration } from '../engine/entity/entity-registration';
 import { GameDependencies } from '../engine/dependencies/game-dependencies';
+import { WeaponComponent } from '../components/weapon-component/weapon-component';
 
 export class VillagerEntity implements EntityRegistration{
     create(gameDependcies: GameDependencies, entity: Entity){
@@ -14,14 +15,16 @@ export class VillagerEntity implements EntityRegistration{
         var fight:FightComponent = <FightComponent>entity.addComponent("fight");
         var health:HealthComponent = <HealthComponent>entity.addComponent("health");
         var neural:NeuralFightComponent = <NeuralFightComponent>entity.addComponent("neural");
+        const weapon = <WeaponComponent>entity.addComponent("weapon");
+        weapon.setWielder(entity);
+        weapon.sheatheBack();
         
-        position.width = 70;
-        /*animation.setSprite("brownpuffgirl");
-        
-        position.height = 32;
-        let multiplier = 2.5;
-        position.height *= multiplier * 1.1;
-        position.width *= multiplier;*/
+        position.width = 32;
+        position.height = 48;
+        // animation.setSprite("brownpuffgirl");
+        let multi = 2.4
+        position.width *= multi
+        position.height *= multi
         return entity;
     }
 }

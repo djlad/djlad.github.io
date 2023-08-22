@@ -4,6 +4,7 @@ import {readFileSync, write, writeFile, writeFileSync, copyFileSync} from 'fs';
 import * as imageSize from 'image-size';
 import externalGlobalPlugin from "esbuild-plugin-external-global";
 import { networkInterfaces } from 'os';
+import path from 'path';
 
 const nets = networkInterfaces();
 const results = Object.create(null); // Or just '{}', an empty object
@@ -29,7 +30,7 @@ var getDirectories = async function (src, callback) {
 const views = await getDirectories("views", (err, files)=>{});
 console.log(views);
 views.forEach(f =>{
-    const parts = f.split("\\");
+    const parts = f.split(path.sep);
     copyFileSync(f, "dist/" + parts[parts.length-1])
 });
 

@@ -34,7 +34,7 @@ import { createPhaserGame } from "./engine/phaser-integration/phaser-builder";
 import { RenderSystem } from "./systems/render-system";
 import { pixiGameBuilder } from "./engine/pixi-integration/pixi-builder";
 import { GenericAnimationComponent } from "./engine/pixi-integration/pixi-components/generic-animation-component";
-import { WeaponComponent } from "./components/weapon-component";
+import { WeaponComponent } from "./components/weapon-component/weapon-component";
 function sharedComponents(game:Game){
     game.registerComponent(WasdComponent);
     game.registerComponent(CropComponent);

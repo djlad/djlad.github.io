@@ -25,6 +25,7 @@ export class CollisionSystem extends EntitySystem{
     }
 
     private checkCol(e1:Entity, e2:Entity) {
+        console.log('check');
         var distance:number = this.distance(e1, e2);
         var p1:PositionComponent = <PositionComponent>e1.getComponent("position");
         var mask:number = ((p1.width) + (p1.height))/4;

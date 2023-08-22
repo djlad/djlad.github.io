@@ -8,7 +8,7 @@ import { AnimationComponent } from './engine/component/components/animation/anim
 import { Entity } from './engine/entity/entity';
 import { PixiDependencies } from './engine/pixi-integration/pixi-dependencies';
 import { GenericPositionComponent } from './engine/pixi-integration/pixi-components/generic-position-component';
-import { WeaponComponent } from './components/weapon-component';
+import { WeaponComponent } from './components/weapon-component/weapon-component';
 
 declare var synaptic:any;
 export declare var g:Game;
@@ -31,7 +31,7 @@ function startGame(){
     var villager = game.addEntity("villager");
     var component = <PositionComponent>villager.getComponent("position");
     let ac = <AnimationComponent>villager.getComponent("animation");
-    ac.setSprite("arrowsword");
+    ac.setSprite("bluecloak");
     component.x = 150;
     component.y = 300;
     component.vx = 0;

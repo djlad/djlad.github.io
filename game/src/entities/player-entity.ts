@@ -8,11 +8,13 @@ import { ParticleComponent } from '../components/particle-componet';
 import { AnimationComponent } from '../engine/component/components/animation/animation-component';
 import { GameDependencies } from '../engine/dependencies/game-dependencies';
 import { EntityRegistration } from '../engine/entity/entity-registration';
+import { GenericPositionComponent } from '../engine/pixi-integration/pixi-components/generic-position-component';
+import { WeaponComponent } from '../components/weapon-component/weapon-component';
 
 export class PlayerEntity implements EntityRegistration{
     create(gameDependencies: GameDependencies, entity: Entity): Entity {
         var animation:AnimationComponent = <AnimationComponent>entity.addComponent("animation");
-        var position:PositionComponent = <PositionComponent>entity.addComponent("position");
+        var position = <GenericPositionComponent>entity.addComponent("position");
         var wasd:WasdComponent = <WasdComponent>entity.addComponent("wasd");
         var inventory:InventoryComponent = <InventoryComponent>entity.addComponent("inventory");
         let placeItem:PlaceItemComponent = <PlaceItemComponent>entity.addComponent("placeItem");
@@ -21,7 +23,8 @@ export class PlayerEntity implements EntityRegistration{
         let particles = <ParticleComponent>entity.addComponent("particles");
         particles.targetParticles = 0;
         entity.addComponent("transition");
-        entity.addComponent("weapon");
+        const weapon = <WeaponComponent>entity.addComponent("weapon");
+        weapon.setWielder(entity);
         
         var sprite:string = "grey";
         // var sprite:string = "greythrow";

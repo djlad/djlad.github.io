@@ -106,6 +106,11 @@ export function populateSpriteManager(spriteManager:ISpriteLoader):ISpriteLoader
     sm.loadSpriteWithDimensions("woodpanelui", "tilesets/submission_daneeklu/ui/scrollsandblocks.png", 96, 96, 0, 128);
     // sm.loadSpriteWithDimensions("woodpanelui", "tilesets/submission_daneeklu/ui/scrollsandblocks.png", 10,10);
     sm.addAnimation("woodpanelui", "woodpanelsunken", [0]);
+    
+    
+    sm.loadSprite("femaleHero", "femalewarrior/Warrior_Sheet-Effect.png", 6, 17);
+    sm.addAnimation("femaleHero", "fHeroIdle", [0, 1, 2, 3, 4, 5]);
+    sm.addAnimation("femaleHero", "fHeroWalk", [6, 7, 8, 9, 10, 11]);
 
     return sm;
 }
