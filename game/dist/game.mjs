@@ -76,7 +76,14 @@
       var fight = entity.addComponent("fight");
       var health = entity.addComponent("health");
       var neural = entity.addComponent("neural");
-      position.width = 70;
+      const weapon = entity.addComponent("weapon");
+      weapon.setWielder(entity);
+      weapon.sheatheBack();
+      position.width = 32;
+      position.height = 48;
+      let multi = 2.4;
+      position.width *= multi;
+      position.height *= multi;
       return entity;
     }
   };
@@ -458,6 +465,7 @@
       return Math.sqrt(dx * dx + dy * dy);
     }
     checkCol(e1, e2) {
+      console.log("check");
       var distance = this.distance(e1, e2);
       var p1 = e1.getComponent("position");
       var mask = (p1.width + p1.height) / 4;
@@ -1152,8 +1160,10 @@
             inventory.inventoryToString();
             break;
           case 16 /* jUp */:
-            var ge = GameEvent.create(31 /* fireProjectile */);
-            entity.emit(ge);
+            const weapon2 = entity.getComponent("weapon");
+            if (weapon2.weaponState === 1 /* hold */) {
+              weapon2.attack();
+            }
             break;
           case 17 /* kUp */:
             const weapon1 = entity.getComponent("weapon");
@@ -3609,12 +3619,13 @@ ${item.itemName}: ${item.itemQuantity}`;
 
   // src/components/weapon-component/swipe.ts
   var Swipe = class {
-    constructor(rotate, offsetX, offsetY, rotateSpeed, speed = 0, longWay = false) {
+    constructor(rotate, offsetX, offsetY, rotateSpeed, speed = 0, longWay = false, swipeToSpeed = 0) {
       this.offsetX = offsetX;
       this.offsetY = offsetY;
       this.rotateSpeed = rotateSpeed;
       this.speed = speed;
       this.longWay = longWay;
+      this.swipeToSpeed = swipeToSpeed;
       this._rotate = 0;
       this.twopi = Math.PI * 2;
       this.rotate = rotate;
@@ -3629,11 +3640,29 @@ ${item.itemName}: ${item.itemQuantity}`;
       this.rotate = this.flipRotate(this.rotate);
       this.offsetX *= -1;
       this.rotateSpeed *= -1;
+      this.swipeToSpeed *= -1;
     }
     flipRotate(rotate) {
       return Math.PI * 0.5 - rotate;
     }
   };
+
+  // src/components/weapon-component/swipedata.ts
+  var sheatheSpeed = 0.1;
+  var sheatheRotateSpeed = sheatheSpeed * 3;
+  var attackSpeed = 0.2;
+  var holdWeaponPos = () => new Swipe(2, 0.1, -0.45, 0, sheatheSpeed, false, sheatheRotateSpeed);
+  var sheahteBackPos = () => new Swipe(3.2, -0.6, -0.75, 0, sheatheSpeed, false, sheatheRotateSpeed);
+  var slashPos = (current) => [
+    new Swipe(0, current.offsetX, current.offsetY, 0.1, 0.1, false, -0.2),
+    new Swipe(Math.PI, current.offsetX, current.offsetY, 0.1, 0.1, false, 0.2)
+    // new Swipe(current.rotate, current.offsetX, current.offsetY,.1,.1, false, -.2)
+    /*new Swipe(0, current.offsetX, current.offsetY,.1,.1, false, -.2),
+    new Swipe(current.rotate+1, current.offsetX, current.offsetY,.1,.1, false, .2),
+    new Swipe(current.rotate, current.offsetX, current.offsetY,.1,.1, false, -.2)*/
+  ];
+  var slashUp = (current) => [new Swipe(Math.PI * 0.25, current.offsetX, current.offsetY, 0.1, 0.1, false, -attackSpeed)];
+  var slashDown = (current) => [new Swipe(Math.PI * 1, current.offsetX, current.offsetY, 0.1, 0.1, false, attackSpeed)];
 
   // src/components/weapon-component/weapon-component.ts
   var WeaponComponent = class extends Component {
@@ -3652,7 +3681,16 @@ ${item.itemName}: ${item.itemQuantity}`;
       this.rotationSpeed = 0.1;
       this.weaponState = 0 /* backSheathe */;
       this.sheatheSpeed = 0.1;
+      this.attacks = [slashUp, slashDown];
+      this.attacki = 0;
       this.game = gameDependencies.game;
+    }
+    attack() {
+      const current = this.swipe;
+      let slashes = slashPos(current);
+      slashes = this.attacks[this.attacki](current);
+      this.attacki = (this.attacki + 1) % this.attacks.length;
+      this.setSwipes(slashes);
     }
     setWielder(wielder) {
       this.wielder = wielder;
@@ -3664,25 +3702,24 @@ ${item.itemName}: ${item.itemQuantity}`;
       this.weaponPosition.rotate = swipe.rotate;
     }
     setSwipes(swipes) {
+      if (!this.weaponFaceRight)
+        swipes.forEach((e) => e.flip());
       this.swipes = swipes;
       this.swipei = 0;
     }
     holdWeapon() {
       this.weaponState = 1 /* hold */;
       const position = this.wielder.getComponent("position");
-      const newPos = new Swipe(2, 0.1, -0.45, 0, this.sheatheSpeed);
-      if (!position.faceRight)
-        newPos.flip();
+      const newPos = holdWeaponPos();
+      const newPos2 = new Swipe(0, 0, 0, 0);
       this.setSwipes([newPos]);
     }
     sheatheWeapon() {
       const newPos = new Swipe(5, 0.5, -0.5, 0);
     }
     sheatheBack() {
-      const newPos = new Swipe(3.2, -0.6, -0.75, 0, this.sheatheSpeed);
+      const newPos = sheahteBackPos();
       const position = this.wielder.getComponent("position");
-      if (!position.faceRight)
-        newPos.flip();
       this.setSwipes([newPos]);
       this.weaponState = 0 /* backSheathe */;
     }
@@ -3739,10 +3776,10 @@ ${item.itemName}: ${item.itemQuantity}`;
       const movey = dy / h * speed;
       const movex = dx / h * speed;
       const time = h / speed;
-      const mr = time === 0 ? 0 : dr / time;
-      if (true) {
-        this.swipe.rotateSpeed = mr;
-      }
+      let mr = dr / time;
+      if (target.swipeToSpeed !== 0)
+        mr = target.swipeToSpeed;
+      this.swipe.rotateSpeed = mr;
       if (Math.abs(dx) >= Math.abs(movex)) {
         this.swipe.offsetX += movex;
       } else {
@@ -3759,10 +3796,11 @@ ${item.itemName}: ${item.itemQuantity}`;
         this.swipe.rotate = target.rotate;
         this.swipe.rotateSpeed = 0;
       }
-      console.log(this.swipei);
       if (h === 0 && dr === 0) {
-        this.swipei = -1;
-        console.log(this.swipei);
+        this.swipei++;
+        if (this.swipei >= this.swipes.length) {
+          this.swipei = -1;
+        }
       }
     }
     flipRotate(rotate) {
@@ -3828,7 +3866,7 @@ ${item.itemName}: ${item.itemQuantity}`;
       var villager = game.addEntity("villager");
       var component = villager.getComponent("position");
       let ac = villager.getComponent("animation");
-      ac.setSprite("arrowsword");
+      ac.setSprite("bluecloak");
       component.x = 150;
       component.y = 300;
       component.vx = 0;
