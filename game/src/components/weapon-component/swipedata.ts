@@ -5,7 +5,7 @@ const sheatheRotateSpeed = sheatheSpeed * 3;
 const attackSpeed = .2;
 
 export const holdWeaponPos = ()=>new Swipe(2,.1,-.45,0, sheatheSpeed, false, sheatheRotateSpeed);
-export const sheahteBackPos = ()=>new Swipe(3.2, -.6, -.75, 0, sheatheSpeed, false, sheatheRotateSpeed);
+export const sheahteBackPos = ()=>new Swipe(3.2, -.6, -.75, 0, sheatheSpeed, false, -sheatheRotateSpeed);
 export const slashPos = (current:Swipe)=>[
     new Swipe(0, current.offsetX, current.offsetY,.1,.1, false, -.2),
     new Swipe(Math.PI, current.offsetX, current.offsetY,.1,.1, false, .2),

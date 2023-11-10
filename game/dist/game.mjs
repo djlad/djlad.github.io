@@ -465,7 +465,6 @@
       return Math.sqrt(dx * dx + dy * dy);
     }
     checkCol(e1, e2) {
-      console.log("check");
       var distance = this.distance(e1, e2);
       var p1 = e1.getComponent("position");
       var mask = (p1.width + p1.height) / 4;
@@ -3652,7 +3651,7 @@ ${item.itemName}: ${item.itemQuantity}`;
   var sheatheRotateSpeed = sheatheSpeed * 3;
   var attackSpeed = 0.2;
   var holdWeaponPos = () => new Swipe(2, 0.1, -0.45, 0, sheatheSpeed, false, sheatheRotateSpeed);
-  var sheahteBackPos = () => new Swipe(3.2, -0.6, -0.75, 0, sheatheSpeed, false, sheatheRotateSpeed);
+  var sheahteBackPos = () => new Swipe(3.2, -0.6, -0.75, 0, sheatheSpeed, false, -sheatheRotateSpeed);
   var slashPos = (current) => [
     new Swipe(0, current.offsetX, current.offsetY, 0.1, 0.1, false, -0.2),
     new Swipe(Math.PI, current.offsetX, current.offsetY, 0.1, 0.1, false, 0.2)
@@ -3680,7 +3679,6 @@ ${item.itemName}: ${item.itemQuantity}`;
       this.wobble = 0;
       this.rotationSpeed = 0.1;
       this.weaponState = 0 /* backSheathe */;
-      this.sheatheSpeed = 0.1;
       this.attacks = [slashUp, slashDown];
       this.attacki = 0;
       this.game = gameDependencies.game;
@@ -3853,6 +3851,22 @@ ${item.itemName}: ${item.itemQuantity}`;
     return game;
   }
 
+  // src/characters/character-builder.ts
+  function villager(game, x, y) {
+    var villager2 = game.addEntity("villager");
+    var component = villager2.getComponent("position");
+    component.x = x;
+    component.y = y;
+    component.vx = 0;
+    return villager2;
+  }
+  function blue(game, x, y) {
+    const blue2 = villager(game, x, y);
+    let ac = blue2.getComponent("animation");
+    ac.setSprite("bluecloak");
+    return blue2;
+  }
+
   // src/game.ts
   function startGame() {
     let game = createPixiGame();
@@ -3863,17 +3877,11 @@ ${item.itemName}: ${item.itemQuantity}`;
       const playerSword = player.getComponent("weapon");
       setTimeout(() => playerSword.holdWeapon(), 100);
       game.gameDependencies.cameras.setMainCamera(playerPosition);
-      var villager = game.addEntity("villager");
-      var component = villager.getComponent("position");
-      let ac = villager.getComponent("animation");
-      ac.setSprite("bluecloak");
-      component.x = 150;
-      component.y = 300;
-      component.vx = 0;
+      const john = blue(game, 100, 100);
       let sword = game.addEntity("weapon");
       const pos = sword.getComponent("position");
       pos.x = 100;
-      pos.y = 100;
+      pos.y = 300;
       setInterval(() => {
         pos.rotate += 0.1;
       }, 1e3 / 30);
@@ -3906,15 +3914,15 @@ ${item.itemName}: ${item.itemQuantity}`;
       }
       function addCrop(x, y) {
         var crop = game.addEntity("crop");
-        var component2 = crop.getComponent("position");
-        component2.x = x;
-        component2.y = y;
+        var component = crop.getComponent("position");
+        component.x = x;
+        component.y = y;
         return crop;
       }
       function makePlayer() {
         var player2 = game.addEntity("player");
         var pc = player2.getComponent("position");
-        var ac2 = player2.getComponent("animation");
+        var ac = player2.getComponent("animation");
         pc.x = 0;
         pc.y = 0;
         return player2;

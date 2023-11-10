@@ -29,7 +29,6 @@ export class WeaponComponent extends Component {
     wobble:number=0;
     rotationSpeed:number = .1;
     weaponState: WieldState = WieldState.backSheathe;
-    private sheatheSpeed = .1;
     private attacks = [slashUp, slashDown];
     private attacki:number = 0;
     attack() {

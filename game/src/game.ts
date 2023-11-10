@@ -9,6 +9,7 @@ import { Entity } from './engine/entity/entity';
 import { PixiDependencies } from './engine/pixi-integration/pixi-dependencies';
 import { GenericPositionComponent } from './engine/pixi-integration/pixi-components/generic-position-component';
 import { WeaponComponent } from './components/weapon-component/weapon-component';
+import { blue } from './characters/character-builder';
 
 declare var synaptic:any;
 export declare var g:Game;
@@ -28,22 +29,12 @@ function startGame(){
     setTimeout(()=>playerSword.holdWeapon(), 100);
     game.gameDependencies.cameras.setMainCamera(playerPosition);
 
-    var villager = game.addEntity("villager");
-    var component = <PositionComponent>villager.getComponent("position");
-    let ac = <AnimationComponent>villager.getComponent("animation");
-    ac.setSprite("bluecloak");
-    component.x = 150;
-    component.y = 300;
-    component.vx = 0;
-    // component.height/=2
-    // component.width/=2
-    // ac.setSprite("grey");
-    // component.height = 60
+    const john = blue(game, 100, 100);
 
     let sword = game.addEntity("weapon");
     const pos = <GenericPositionComponent>sword.getComponent("position");
     pos.x = 100;
-    pos.y = 100;
+    pos.y = 300;
     setInterval(()=>{
         pos.rotate+=.1;
     },1000/30);
