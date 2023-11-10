@@ -54,6 +54,7 @@
       entity.addComponent("transition");
       const weapon = entity.addComponent("weapon");
       weapon.setWielder(entity);
+      entity.addComponent("dash");
       var sprite = "grey";
       var walkSprite = "greyWalk";
       animation.setSprite(sprite);
@@ -1137,7 +1138,6 @@
             position.vx = 0;
             break;
           case 9 /* spaceUp */:
-            this.dash(wasdComponent, position, animation, transition);
             break;
           case 15 /* fUp */:
             let cropHarvester;
@@ -1174,34 +1174,6 @@
             break;
         }
       }
-      this.updateDashing(entity, wasdComponent, position, animation, transition);
-    }
-    updateDashing(entity, wasdComponent, position, animation, transition) {
-      if (!wasdComponent.dashing)
-        return;
-      if (wasdComponent.dashingTime == Math.floor(wasdComponent.maxDashingTime / 2)) {
-        transition.start(wasdComponent.dashSprite, wasdComponent.dashSpriteNumber, false);
-      }
-      if (wasdComponent.dashingTime == 0) {
-        wasdComponent.dashing = false;
-        position.vx = 0;
-        position.vy = 0;
-        position.h = 0;
-        return;
-      }
-      wasdComponent.dashingTime -= 1;
-      position.vx = Math.sign(position.faceX) * wasdComponent.dashSpeed;
-      position.vy = Math.sign(position.faceY) * wasdComponent.dashSpeed;
-    }
-    dash(wasdComponent, position, animation, transition) {
-      if (wasdComponent.dashing)
-        return;
-      wasdComponent.startDashing();
-      wasdComponent.dashWidth = position.width;
-      wasdComponent.dashHeight = position.height;
-      wasdComponent.dashSprite = animation.animationName;
-      wasdComponent.dashSpriteNumber = animation.getSpriteNumber();
-      transition.start(null, 32);
     }
   };
 
@@ -3809,6 +3781,32 @@ ${item.itemName}: ${item.itemQuantity}`;
     }
   };
 
+  // src/components/dash-component.ts
+  var DashComponent = class extends Component {
+    constructor(gameDependencies) {
+      super("dash");
+      this.maxDashingTime = 20;
+      this.dashTime = 0;
+      this.dashing = false;
+      this.dashSpeed = 20;
+    }
+    startDashing() {
+      this.dashing = true;
+      this.dashTime = this.maxDashingTime;
+    }
+    update(entity, args) {
+      if (!this.dashing)
+        return;
+      this.dashTime -= args.delta;
+      if (this.dashTime <= 0) {
+        this.dashing = false;
+      }
+    }
+    static create(gameDependencies) {
+      return new DashComponent(gameDependencies);
+    }
+  };
+
   // src/game-builders.ts
   function sharedComponents(game) {
     game.registerComponent(WasdComponent);
@@ -3827,6 +3825,7 @@ ${item.itemName}: ${item.itemQuantity}`;
     game.registerComponent(CropHarvesterComponent);
     game.registerComponent(TextComponent);
     game.registerComponent(WeaponComponent);
+    game.registerComponent(DashComponent);
   }
   function sharedSystems(game) {
     game.addSystem(WasdSystem.create(game));

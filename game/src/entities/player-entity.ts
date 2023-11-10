@@ -25,6 +25,8 @@ export class PlayerEntity implements EntityRegistration{
         entity.addComponent("transition");
         const weapon = <WeaponComponent>entity.addComponent("weapon");
         weapon.setWielder(entity);
+
+        entity.addComponent("dash");
         
         var sprite:string = "grey";
         // var sprite:string = "greythrow";

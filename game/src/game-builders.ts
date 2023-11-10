@@ -35,6 +35,8 @@ import { RenderSystem } from "./systems/render-system";
 import { pixiGameBuilder } from "./engine/pixi-integration/pixi-builder";
 import { GenericAnimationComponent } from "./engine/pixi-integration/pixi-components/generic-animation-component";
 import { WeaponComponent } from "./components/weapon-component/weapon-component";
+import { DashComponent } from "./components/dash-component";
+import { DashSystem } from "./systems/dash-system";
 function sharedComponents(game:Game){
     game.registerComponent(WasdComponent);
     game.registerComponent(CropComponent);
@@ -52,7 +54,7 @@ function sharedComponents(game:Game){
     game.registerComponent(CropHarvesterComponent);
     game.registerComponent(TextComponent);
     game.registerComponent(WeaponComponent);
-
+    game.registerComponent(DashComponent);
 }
 
 function sharedSystems(game:Game){
@@ -68,6 +70,7 @@ function sharedSystems(game:Game){
     game.addSystem(ParticleSystem.create(game));
     game.addSystem(MapBuilderSystem.create(game));
     game.addSystem(ClickSystem.create(game));
+    game.addSystem(DashSystem.create(game));
 }
 
 function buildComponents(game:Game){

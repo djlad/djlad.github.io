@@ -20,6 +20,7 @@ import { AnimationComponent } from '../engine/component/components/animation/ani
 import { PhaserAnimationComponent } from '../engine/phaser-integration/phaser-components/phaser-animation-component';
 import { PhaserPositionComponent } from '../engine/phaser-integration/phaser-components/phaser-position-component';
 import { WeaponComponent } from '../components/weapon-component/weapon-component';
+import { DashComponent } from '../components/dash-component';
 
 
 export function buildComponents(game:Game):void{
