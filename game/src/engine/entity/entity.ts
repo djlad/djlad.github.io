@@ -12,9 +12,9 @@ export class Entity {
     }
     static id:number=-1;
     id:number=-1;
-    components:Component[] = [];
-    componentNameToComponent:{[key:string]:Component} = {};
-    componentFactory:ComponentFactory;
+    private components:Component[] = [];
+    private componentNameToComponent:{[key:string]:Component} = {};
+    private componentFactory:ComponentFactory;
     targetedEvents:GameEvent[] = [];
     delayedEvents:GameEvent[] = [];
     destroyed:boolean = false;
