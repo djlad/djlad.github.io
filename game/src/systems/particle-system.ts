@@ -39,6 +39,9 @@ export class ParticleSystem extends EntitySystem{
         }
     }
 
+    shouldApply(entity: Entity): boolean {
+        return entity.getComponent("particles", true) != null && entity.getComponent("position", true) != null;
+    }
     apply(args:SystemArgs): void {
         const entity = args.entity;
         let particles = <ParticleComponent> entity.getComponent("particles", true);

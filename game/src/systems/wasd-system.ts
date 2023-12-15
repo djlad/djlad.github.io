@@ -42,12 +42,14 @@ export class WasdSystem extends EntitySystem {
         return wasd;
     }
 
+    shouldApply(entity: Entity): boolean {
+        return entity.getComponent("wasd", true) != null && entity.getComponent("position", true) != null;
+    }
+
     apply(args:SystemArgs){
         const entity = args.entity;
-        const position = <GenericPositionComponent>entity.getComponent("position", true);
-        const wasd = <WasdComponent>entity.getComponent("wasd", true);
-        if (position == null) return;
-        if (wasd == null) return;
+        const position = <GenericPositionComponent>entity.getComponent("position");
+        const wasd = <WasdComponent>entity.getComponent("wasd");
         if (this.move){
             if (this.touchStart.x > window.innerWidth/2)position.vx = 10;
             else position.vx = -10;

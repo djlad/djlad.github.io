@@ -33,13 +33,16 @@ export class ClickSystem extends EntitySystem{
         }
     }
 
+    shouldApply(entity: Entity): boolean {
+        return entity.getComponent("click", true) != null && entity.getComponent("position", true) != null;
+    }
+
     apply(args:SystemArgs): void {
+        console.log('click system')
         const entity = args.entity;
         if(entity instanceof FirstEntity)this.clearClicksAndMoveClicksToProcess();
         let clickable = <ClickableComponent>entity.getComponent("click", true);
         let position = <PositionComponent>entity.getComponent("position", true);
-        if (clickable == null)return;
-        if (position == null)return;
         this.clicksToProcessThisLoop.forEach((event)=>{
             let x = event?.eventData.x;
             let y = event?.eventData.y;

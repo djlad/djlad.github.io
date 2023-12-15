@@ -3,7 +3,13 @@ import { Component } from '../component/component';
 import { GameEvent } from '../events/game-event';
 import { EntityUpdateArgs } from './entity-update-args';
 import { GameDependencies } from '../dependencies/game-dependencies';
+import { EntitySystem } from '../system/system';
+import { Game } from '../game';
+import { SystemArgs } from '../system/system-args';
 
+/**
+ * {@link Entity#applicableSystems} is added by {@link Game#addEntity}
+ */
 export class Entity {
     constructor(componentFactory:ComponentFactory){
         this.componentFactory = componentFactory;
@@ -15,10 +21,18 @@ export class Entity {
     private components:Component[] = [];
     private componentNameToComponent:{[key:string]:Component} = {};
     private componentFactory:ComponentFactory;
+    private applicableSystems:EntitySystem[] = [];//see above doc
     targetedEvents:GameEvent[] = [];
     delayedEvents:GameEvent[] = [];
     destroyed:boolean = false;
-
+    addApplicableSystem(system:EntitySystem){
+        this.applicableSystems.push(system);
+    }
+    applySystems(args: SystemArgs){
+        for(var i:number=0;i<this.applicableSystems.length;i++){
+            this.applicableSystems[i].apply(args);
+        }
+    }
     addComponent(componentName:string):Component{
         var component:Component = this.componentFactory.createComponent(componentName, this.id);
         this.componentNameToComponent[component.componentName] = component;

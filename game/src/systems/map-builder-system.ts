@@ -29,10 +29,12 @@ export class MapBuilderSystem extends EntitySystem{
             this.createPalleteEntities();
         });
     }
+    shouldApply(entity: Entity): boolean {
+        return entity.getComponent("tile") != null;
+    }
     apply(args:SystemArgs): void {
         const entity = args.entity;
         let tileComponent = <TileComponent>entity.getComponent("tile", true);
-        if (tileComponent == null) return;
         if (!this.openBuilder)return;
         if (this.clicks.length == 0)return;
         let event = this.clicks.pop();

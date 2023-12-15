@@ -16,14 +16,13 @@ export class CropSystem extends EntitySystem {
     constructor(game:Game){
         super(game);
     }
+    shouldApply(entity: Entity): boolean {
+        return entity.getComponent("crop", true) != null && entity.getComponent("animation", true) != null;
+    }
     apply(args:SystemArgs):void{
         const entity = args.entity;
         var a:AnimationComponent2 = <AnimationComponent2>entity.getComponent("animation", true);
         var c:CropComponent = <CropComponent>entity.getComponent("crop", true);
-        var p:PositionComponent = <PositionComponent>entity.getComponent("position", true);
-        if(a==null||c==null){
-            return;
-        }
         if (c.timeSinceGrowth == 0 || c.timeSinceGrowth==1){
             a.setSprite(c.growthSprites[c.growthStage]);
         }

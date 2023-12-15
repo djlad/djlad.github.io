@@ -12,10 +12,10 @@ export class HealthSystem extends EntitySystem{
     apply(args:SystemArgs){
 
     }
+    shouldApply(entity: Entity): boolean {
+        return entity.getComponent("health", true) != null;
+    }
     applyEvents(entity:Entity){
-        var health:HealthComponent = <HealthComponent>entity.getComponent("health", true);
-        if(health == null)return;
-
         var events:GameEvent[] = entity.targetedEvents;
         var event:GameEvent;
         //console.log(entity)

@@ -373,6 +373,9 @@
     applyEvents(entity, eventManager) {
       throw "an entity did not implement apply Events";
     }
+    shouldApply(entity) {
+      return true;
+    }
     //static create(game:Game):EntitySystem{
     //    throw "an entity system has no create method."
     //};
@@ -398,16 +401,16 @@
         this.clicksToProcessThisLoop.push(this.clicks.pop());
       }
     }
+    shouldApply(entity) {
+      return entity.getComponent("click", true) != null && entity.getComponent("position", true) != null;
+    }
     apply(args) {
+      console.log("click system");
       const entity = args.entity;
       if (entity instanceof FirstEntity)
         this.clearClicksAndMoveClicksToProcess();
       let clickable = entity.getComponent("click", true);
       let position = entity.getComponent("position", true);
-      if (clickable == null)
-        return;
-      if (position == null)
-        return;
       this.clicksToProcessThisLoop.forEach((event) => {
         let x = event?.eventData.x;
         let y = event?.eventData.y;
@@ -557,12 +560,22 @@
       this.id = -1;
       this.components = [];
       this.componentNameToComponent = {};
+      this.applicableSystems = [];
+      //see above doc
       this.targetedEvents = [];
       this.delayedEvents = [];
       this.destroyed = false;
       this.componentFactory = componentFactory;
       _Entity.id++;
       this.id = _Entity.id;
+    }
+    addApplicableSystem(system) {
+      this.applicableSystems.push(system);
+    }
+    applySystems(args) {
+      for (var i = 0; i < this.applicableSystems.length; i++) {
+        this.applicableSystems[i].apply(args);
+      }
     }
     addComponent(componentName) {
       var component = this.componentFactory.createComponent(componentName, this.id);
@@ -601,14 +614,13 @@
     constructor(game) {
       super(game);
     }
+    shouldApply(entity) {
+      return entity.getComponent("crop", true) != null && entity.getComponent("animation", true) != null;
+    }
     apply(args) {
       const entity = args.entity;
       var a = entity.getComponent("animation", true);
       var c = entity.getComponent("crop", true);
-      var p = entity.getComponent("position", true);
-      if (a == null || c == null) {
-        return;
-      }
       if (c.timeSinceGrowth == 0 || c.timeSinceGrowth == 1) {
         a.setSprite(c.growthSprites[c.growthStage]);
       }
@@ -664,10 +676,10 @@
     }
     apply(args) {
     }
+    shouldApply(entity) {
+      return entity.getComponent("health", true) != null;
+    }
     applyEvents(entity) {
-      var health = entity.getComponent("health", true);
-      if (health == null)
-        return;
       var events = entity.targetedEvents;
       var event;
       for (var i = 0; i < events.length; i++) {
@@ -839,6 +851,9 @@
     static create(game) {
       return new NeuralFightSystem(game);
     }
+    shouldApply(entity) {
+      return entity.getComponent("neural", true) != null;
+    }
     apply(args) {
       const entity = args.entity;
       var neural = entity.getComponent("neural", true);
@@ -902,11 +917,12 @@
       super(game);
       this.tileSize = 50;
     }
+    shouldApply(entity) {
+      return entity.getComponent("placeItem") != null;
+    }
     apply(args) {
       const entity = args.entity;
-      let placeItem = entity.getComponent("placeItem", true);
-      if (placeItem == null)
-        return;
+      let placeItem = entity.getComponent("placeItem");
       let requests = placeItem.placeItemRequests;
       for (let i = 0; i < requests.length; i++) {
         let placeItemRequest = requests[i];
@@ -957,14 +973,13 @@
     constructor(game) {
       super(game);
     }
+    shouldApply(entity) {
+      return entity.getComponent("projectile", true) != null && entity.getComponent("projectile", true) != null;
+    }
     apply(args) {
       const entity = args.entity;
       var position = entity.getComponent("position", true);
       var projectileComponent = entity.getComponent("projectile", true);
-      if (position == null)
-        return;
-      if (projectileComponent == null)
-        return;
       projectileComponent.lifeSpan--;
       if (projectileComponent.lifeSpan == 0) {
         this.game.destroy(entity);
@@ -1046,14 +1061,13 @@
       var wasd = new WasdSystem(game);
       return wasd;
     }
+    shouldApply(entity) {
+      return entity.getComponent("wasd", true) != null && entity.getComponent("position", true) != null;
+    }
     apply(args) {
       const entity = args.entity;
-      const position = entity.getComponent("position", true);
-      const wasd = entity.getComponent("wasd", true);
-      if (position == null)
-        return;
-      if (wasd == null)
-        return;
+      const position = entity.getComponent("position");
+      const wasd = entity.getComponent("wasd");
       if (this.move) {
         if (this.touchStart.x > window.innerWidth / 2)
           position.vx = 10;
@@ -1079,6 +1093,8 @@
       var position = entity.getComponent("position");
       var animation = entity.getComponent("animation");
       var transition = entity.getComponent("transition");
+      const dash = entity.getComponent("dash");
+      const dashing = dash.dashing;
       var speed = wasdComponent.speed;
       var sprite = wasdComponent.sprite;
       var walkSprite = wasdComponent.walkSprite;
@@ -1088,56 +1104,59 @@
         event = events[i];
         switch (event.eventName) {
           case 0 /* wDown */:
-            if (wasdComponent.dashing)
+            if (dashing)
               break;
             animation.setSprite(walkSprite);
             position.vy = -speed;
             break;
           case 4 /* wUp */:
-            if (wasdComponent.dashing)
+            if (dashing)
               break;
             animation.setSprite(sprite);
             position.vy = 0;
             break;
           case 1 /* aDown */:
-            if (wasdComponent.dashing)
+            if (dashing)
               break;
             position.faceRight = false;
             animation.setSprite(walkSprite);
             position.vx = -speed;
             break;
           case 5 /* aUp */:
-            if (wasdComponent.dashing)
+            if (dashing)
               break;
             animation.setSprite(sprite);
             position.vx = 0;
             break;
           case 2 /* sDown */:
-            if (wasdComponent.dashing)
+            if (dashing)
               break;
             animation.setSprite(walkSprite);
             position.vy = speed;
             break;
           case 6 /* sUp */:
-            if (wasdComponent.dashing)
+            if (dashing)
               break;
             animation.setSprite(sprite);
             position.vy = 0;
             break;
           case 3 /* dDown */:
-            if (wasdComponent.dashing)
+            if (dashing)
               break;
             position.faceRight = true;
             animation.setSprite(walkSprite);
             position.vx = speed;
             break;
           case 7 /* dUp */:
-            if (wasdComponent.dashing)
+            if (dashing)
               break;
             animation.setSprite(sprite);
             position.vx = 0;
             break;
           case 9 /* spaceUp */:
+            if (dashing)
+              break;
+            dash.startDashing();
             break;
           case 15 /* fUp */:
             let cropHarvester;
@@ -1906,13 +1925,11 @@
         args.delta = delta;
         args.fullFramePassed = framesPassed;
         this.entities[i].update(args);
-        for (var systemi = 0; systemi < this.systems.length; systemi++) {
-          const args2 = new SystemArgs();
-          args2.entity = this.entities[i];
-          args2.eventManager = this.eventManager;
-          args2.fullFramesPassed = framesPassed;
-          this.systems[systemi].apply(args2);
-        }
+        const args2 = new SystemArgs();
+        args2.entity = this.entities[i];
+        args2.eventManager = this.eventManager;
+        args2.fullFramesPassed = framesPassed;
+        this.entities[i].applySystems(args2);
       }
       var numEvents;
       for (var i = 0; i < this.entities.length; i++) {
@@ -1975,6 +1992,11 @@
     }
     addEntity(entityName) {
       var entity = this.entityFactory.create(entityName);
+      this.systems.forEach((system) => {
+        if (system.shouldApply(entity)) {
+          entity.addApplicableSystem(system);
+        }
+      });
       this.entities.push(entity);
       return entity;
     }
@@ -2596,20 +2618,8 @@ ${item.itemName}: ${item.itemQuantity}`;
     constructor() {
       super("wasd");
       this.speed = 5;
-      this.dashSpeed = 15;
-      this.dashingTime = 0;
-      this.maxDashingTime = 20;
-      this.dashing = false;
-      this.dashWidth = 0;
-      this.dashHeight = 0;
-      this.dashSprite = "";
-      this.dashSpriteNumber = 0;
       this.sprite = "grey";
       this.walkSprite = "greyWalk";
-    }
-    startDashing() {
-      this.dashing = true;
-      this.dashingTime = this.maxDashingTime;
     }
     update() {
     }
@@ -3795,15 +3805,44 @@ ${item.itemName}: ${item.itemQuantity}`;
       this.dashTime = this.maxDashingTime;
     }
     update(entity, args) {
-      if (!this.dashing)
-        return;
-      this.dashTime -= args.delta;
-      if (this.dashTime <= 0) {
-        this.dashing = false;
-      }
     }
     static create(gameDependencies) {
       return new DashComponent(gameDependencies);
+    }
+  };
+
+  // src/systems/dash-system.ts
+  var DashSystem = class extends EntitySystem {
+    constructor(game) {
+      super(game);
+    }
+    applyEvents(entity, eventManager) {
+    }
+    apply(args) {
+      const entity = args.entity;
+      const dash = entity.getComponent("dash");
+      if (dash == null)
+        return;
+      const dashing = dash.dashing;
+      const dashingTime = dash.dashTime;
+      const position = entity.getComponent("position");
+      const animation = entity.getComponent("animation");
+      if (!dashing)
+        return;
+      if (dashingTime <= 0) {
+        dash.dashing = false;
+        position.vx = 0;
+        position.vy = 0;
+        position.h = 0;
+        return;
+      }
+      dash.dashTime -= 1;
+      position.vx = Math.sign(position.faceX) * dash.dashSpeed;
+      position.vy = Math.sign(position.faceY) * dash.dashSpeed;
+    }
+    static create(game) {
+      var dash = new DashSystem(game);
+      return dash;
     }
   };
 
@@ -3839,6 +3878,7 @@ ${item.itemName}: ${item.itemQuantity}`;
     game.addSystem(ParticleSystem.create(game));
     game.addSystem(MapBuilderSystem.create(game));
     game.addSystem(ClickSystem.create(game));
+    game.addSystem(DashSystem.create(game));
   }
   function createPixiGame() {
     console.log("creating pixi game");

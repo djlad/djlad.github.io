@@ -16,13 +16,13 @@ export class ProjectileSystem extends EntitySystem {
         super(game);
     }
 
+    shouldApply(entity: Entity): boolean {
+        return entity.getComponent("projectile", true) != null && entity.getComponent("position", true) != null;
+    }
     apply(args:SystemArgs){
         const entity = args.entity;
         var position:PositionComponent = <PositionComponent> entity.getComponent("position", true);
         var projectileComponent:ProjectileComponent = <ProjectileComponent>entity.getComponent("projectile", true);
-        //console.log(projectileComponent)
-        if(position == null)return
-        if(projectileComponent == null)return
         projectileComponent.lifeSpan--;
         if (projectileComponent.lifeSpan == 0){
             //position.y -= 50;

@@ -16,6 +16,10 @@ export class NeuralFightSystem extends EntitySystem{
         return new NeuralFightSystem(game);
     }
 
+    shouldApply(entity: Entity): boolean {
+        return entity.getComponent("neural", true) != null;
+    }
+
     apply(args:SystemArgs){
         const entity = args.entity;
         var neural:NeuralFightComponent = <NeuralFightComponent>entity.getComponent("neural", true);

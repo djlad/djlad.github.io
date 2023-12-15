@@ -83,13 +83,18 @@ export class Game {
             args.delta = delta;
             args.fullFramePassed = framesPassed;
             this.entities[i].update(args);
-            for(var systemi=0;systemi<this.systems.length;systemi++){
+            /*for(var systemi=0;systemi<this.systems.length;systemi++){
                 const args = new SystemArgs();
                 args.entity = this.entities[i];
                 args.eventManager = this.eventManager;
                 args.fullFramesPassed = framesPassed;
                 this.systems[systemi].apply(args);
-            }
+            }*/
+            const args2 = new SystemArgs();
+            args2.entity = this.entities[i];
+            args2.eventManager = this.eventManager;
+            args2.fullFramesPassed = framesPassed;
+            this.entities[i].applySystems(args2);
         }
         var numEvents:number;
         for(var i=0;i<this.entities.length;i++){
@@ -156,6 +161,11 @@ export class Game {
 
     addEntity(entityName:string){
         var entity:Entity = this.entityFactory.create(entityName);
+        this.systems.forEach((system)=>{
+            if (system.shouldApply(entity)) {
+                entity.addApplicableSystem(system);
+            }
+        })
         this.entities.push(entity);
         //this.entitiesX.push(entity);
         return entity;

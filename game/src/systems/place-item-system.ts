@@ -10,11 +10,12 @@ export class PlaceItemSystem extends EntitySystem {
     constructor(game:Game){
         super(game);
     }
-
+    shouldApply(entity: Entity): boolean {
+        return entity.getComponent("placeItem") != null;
+    }
     apply(args:SystemArgs):void {
         const entity = args.entity;
-        let placeItem:PlaceItemComponent = <PlaceItemComponent>entity.getComponent("placeItem", true);
-        if (placeItem == null)return;
+        let placeItem:PlaceItemComponent = <PlaceItemComponent>entity.getComponent("placeItem");
         let requests:PlaceItemRequest[] = placeItem.placeItemRequests
         for(let i:number=0;i<requests.length;i++){
             let placeItemRequest:PlaceItemRequest = requests[i];

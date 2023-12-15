@@ -1,4 +1,4 @@
 rm -r dist/*
 cp views/* dist
-node build.mjs &
+node build.mjs
 tsc -w

@@ -14,10 +14,12 @@ export class DashSystem extends EntitySystem {
     applyEvents(entity: Entity, eventManager: EventManager): void {
         
     }
+    shouldApply(entity: Entity): boolean {
+        return entity.getComponent("dash", true) != null;
+    }
     apply(args:SystemArgs){
         const entity = args.entity;
         const dash = <DashComponent>entity.getComponent("dash");
-        if (dash == null)return;
         const dashing = dash.dashing;
         const dashingTime = dash.dashTime;
         const position = <GenericPositionComponent> entity.getComponent("position");

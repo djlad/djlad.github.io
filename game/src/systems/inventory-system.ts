@@ -15,13 +15,13 @@ export class InventorySystem extends EntitySystem {
     static create(game:Game) {
         return new InventorySystem(game);
     }
-
+    shouldApply(entity: Entity): boolean {
+        return entity.getComponent("inventory") != null && entity.getComponent("position") != null;
+    }
     apply(args:SystemArgs):void{
         const entity = args.entity;
         let inventory:InventoryComponent = <InventoryComponent>entity.getComponent("inventory", true);
         let entityPosition:PositionComponent = <PositionComponent>entity.getComponent("position", true);
-        if(inventory == null)return;
-        if(entityPosition == null)return;
         if(inventory.inventoryItemEntities.length == 0){
             for(let i:number=0;i<10;i++){
                 inventory

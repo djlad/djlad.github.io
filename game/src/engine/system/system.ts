@@ -23,6 +23,9 @@ export class EntitySystem {
     applyEvents(entity:Entity, eventManager:EventManager):void{
         throw "an entity did not implement apply Events";
     }
+    shouldApply(entity: Entity): boolean{
+        return true;
+    }
 
     //static create(game:Game):EntitySystem{
     //    throw "an entity system has no create method."
