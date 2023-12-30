@@ -30,7 +30,7 @@ import { AnimationComponent } from "./engine/component/components/animation/anim
 import { PlaceItemComponent } from "./components/place-item/place-item-component";
 import { CropHarvesterComponent } from "./components/crop-harvester-component";
 import { TextComponent } from "./components/text-component/text-component";
-import { createPhaserGame } from "./engine/phaser-integration/phaser-builder";
+// import { createPhaserGame } from "./engine/phaser-integration/phaser-builder";
 import { RenderSystem } from "./systems/render-system";
 import { pixiGameBuilder } from "./engine/pixi-integration/pixi-builder";
 import { GenericAnimationComponent } from "./engine/pixi-integration/pixi-components/generic-animation-component";
@@ -89,7 +89,7 @@ export function createPixiGame(){
     return game;
 }
 
-export function createPhaserGameGeneric():Game{
+/*export function createPhaserGameGeneric():Game{
     console.log("creating phaser game");
     let game:Game = createPhaserGame();
     sharedSystems(game);
@@ -97,7 +97,7 @@ export function createPhaserGameGeneric():Game{
     buildEntities(game);
     sharedComponents(game);
     return game;
-}
+}*/
 
 
 export function createGame(game:Game=null):Game{

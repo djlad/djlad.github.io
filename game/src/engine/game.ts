@@ -8,7 +8,7 @@ import { SpriteManager } from './renderers/sprite-manager';
 import { PositionComponent } from './component/components/position/position-component';
 import { SystemArgs } from './system/system-args';
 import { EntityUpdateArgs } from './entity/entity-update-args';
-import { PhaserGame } from './phaser-integration/phaser-game';
+// import { PhaserGame } from './phaser-integration/phaser-game';
 import { ISpriteLoader } from './renderers/isprite-loader';
 import { GameDependencies } from './dependencies/game-dependencies';
 import { ComponentFactory } from './component/component-factory';
@@ -67,7 +67,7 @@ export class Game {
     counter: number = 0;
     lastTime = performance.now();
     frameTracker:number = 0;
-    phaserGame:PhaserGame;
+    // phaserGame:PhaserGame;
     update(delta:number, framesPassed:number){
         // this.renderer.cbox();
         this.eventManager.update();

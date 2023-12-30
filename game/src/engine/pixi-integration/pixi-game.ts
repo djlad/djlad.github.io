@@ -1,4 +1,4 @@
-import { Application, Sprite, IApplicationOptions, Container, Assets, AssetsClass, AnimatedSprite, Spritesheet, BaseTexture, IAutoDetectOptions, IBaseTextureOptions, ISize, Resource, ISpritesheetData, ISpritesheetFrameData, spritesheetAsset, Texture, FrameObject} from 'pixi.js';
+import { utils, Application, Sprite, IApplicationOptions, Container, Assets, AssetsClass, AnimatedSprite, Spritesheet, BaseTexture, IAutoDetectOptions, IBaseTextureOptions, ISize, Resource, ISpritesheetData, ISpritesheetFrameData, spritesheetAsset, Texture, FrameObject} from 'pixi.js';
 import { metadata } from '../../metadata';
 import { TileComponent } from '../../components/tile-component/tile-component';
 import { Tile } from '../../components/tile-component/tile';
@@ -235,6 +235,7 @@ export class PixiGame {
         for (let i in spriteSheets){
             const spriteSheet = spriteSheets[i];
             spriteSheet.parse();
+            utils.clearTextureCache();
         }
     }
 

@@ -25,13 +25,6 @@
     mod
   ));
 
-  // external-global-plugin:phaser
-  var require_phaser = __commonJS({
-    "external-global-plugin:phaser"(exports, module) {
-      module.exports = window.Phaser;
-    }
-  });
-
   // external-global-plugin:pixi.js
   var require_pixi = __commonJS({
     "external-global-plugin:pixi.js"(exports, module) {
@@ -715,14 +708,13 @@
     static create(game) {
       return new InventorySystem(game);
     }
+    shouldApply(entity) {
+      return entity.getComponent("inventory") != null && entity.getComponent("position") != null;
+    }
     apply(args) {
       const entity = args.entity;
       let inventory = entity.getComponent("inventory", true);
       let entityPosition = entity.getComponent("position", true);
-      if (inventory == null)
-        return;
-      if (entityPosition == null)
-        return;
       if (inventory.inventoryItemEntities.length == 0) {
         for (let i = 0; i < 10; i++) {
           inventory.inventoryItemEntities.push(this.game.addEntity("inventoryItem"));
@@ -780,11 +772,12 @@
         this.createPalleteEntities();
       });
     }
+    shouldApply(entity) {
+      return entity.getComponent("tile") != null;
+    }
     apply(args) {
       const entity = args.entity;
       let tileComponent = entity.getComponent("tile", true);
-      if (tileComponent == null)
-        return;
       if (!this.openBuilder)
         return;
       if (this.clicks.length == 0)
@@ -898,6 +891,9 @@
         let particlePosition = particle.getComponent("primitive");
       }
     }
+    shouldApply(entity) {
+      return entity.getComponent("particles", true) != null && entity.getComponent("position", true) != null;
+    }
     apply(args) {
       const entity = args.entity;
       let particles = entity.getComponent("particles", true);
@@ -974,7 +970,7 @@
       super(game);
     }
     shouldApply(entity) {
-      return entity.getComponent("projectile", true) != null && entity.getComponent("projectile", true) != null;
+      return entity.getComponent("projectile", true) != null && entity.getComponent("position", true) != null;
     }
     apply(args) {
       const entity = args.entity;
@@ -1911,6 +1907,7 @@
     set entities(entities) {
       this._entities = entities;
     }
+    // phaserGame:PhaserGame;
     update(delta, framesPassed) {
       this.eventManager.update();
       for (let i2 = 0; i2 < this.systemsWithOncePerTurnUpdate.length; i2++) {
@@ -2711,168 +2708,6 @@ ${item.itemName}: ${item.itemQuantity}`;
     }
   };
 
-  // src/engine/phaser-integration/phaser-game.ts
-  var Phaser = __toESM(require_phaser());
-
-  // src/engine/phaser-integration/main-scene.ts
-  var import_phaser = __toESM(require_phaser());
-  var MainScene = class extends import_phaser.Scene {
-    constructor() {
-      super({ key: "main" });
-      this.updater = () => {
-      };
-      this.creators = [];
-      this.loaders = [];
-    }
-    setUpdater(updateFunction) {
-      this.updater = updateFunction;
-    }
-    addCreator(creator) {
-      this.creators.push(creator);
-    }
-    addPreloader(loader) {
-      this.loaders.push(loader);
-    }
-    preload() {
-      console.log("loading " + this.loaders.length);
-      this.loaders.forEach(
-        (loader) => {
-          loader(this);
-        }
-      );
-    }
-    create() {
-      console.log(`creating main scene with ${this.creators.length} creators`);
-      this.creators.forEach((creator) => {
-        creator(this);
-      });
-    }
-    update(time, delta) {
-      this.updater(delta);
-    }
-  };
-
-  // src/engine/phaser-integration/phaser-game.ts
-  var _PhaserGame = class {
-    constructor() {
-      this.mainScene = new MainScene();
-      this.config = {
-        type: Phaser.WEBGL,
-        width: window.innerWidth,
-        height: window.innerHeight,
-        scene: MainScene,
-        fps: {
-          target: 60,
-          forceSetTimeOut: true
-        },
-        physics: {
-          default: "arcade",
-          arcade: {},
-          matter: {
-            gravity: false,
-            debug: {
-              showBody: true,
-              showStaticBody: true
-            }
-          }
-        }
-      };
-    }
-    start() {
-      this.game = new Phaser.Game(this.config);
-      this.mainScene.addCreator((scene) => {
-        console.log("creator for canvas");
-        const canvas = this.game.canvas;
-        canvas.style.margin = "0";
-        canvas.style.padding = "0";
-        canvas.style.overflow = "hidden";
-        canvas.style.position = "fixed";
-        canvas.style.top = "0px";
-        canvas.style.left = "0px";
-      });
-      this.game.scene.add("mainReal", this.mainScene);
-      this.game.scene.switch("main", "mainReal");
-    }
-    setUpdater(updater) {
-      this.mainScene.setUpdater(updater);
-    }
-    static createSingleton() {
-      if (_PhaserGame.phaserGame == null) {
-        _PhaserGame.phaserGame = new _PhaserGame();
-      }
-      return _PhaserGame.phaserGame;
-    }
-  };
-  var PhaserGame = _PhaserGame;
-  PhaserGame.phaserGame = null;
-
-  // src/metadata.ts
-  var metadata = { "sprites/arm.png": { "height": 32, "width": 32, "type": "png" }, "sprites/BearSprites.webp": { "height": 384, "width": 384, "type": "webp" }, "sprites/blond.png": { "height": 259, "width": 64, "type": "png" }, "sprites/blondWalk.png": { "height": 336, "width": 317, "type": "png" }, "sprites/crops.png": { "height": 256, "width": 384, "type": "png" }, "sprites/deer/deer female calciumtrice.png": { "height": 160, "width": 160, "type": "png" }, "sprites/deer/deer male calciumtrice.png": { "height": 160, "width": 160, "type": "png" }, "sprites/fantasysprites.png": { "height": 512, "width": 384, "type": "png" }, "sprites/fantasysprites/CompSpriteC.png": { "height": 166, "width": 96, "type": "png" }, "sprites/fantasysprites/DwarfSprites.png": { "height": 256, "width": 384, "type": "png" }, "sprites/fantasysprites/DwarfSprites2.png": { "height": 256, "width": 384, "type": "png" }, "sprites/fantasysprites/EnemySpriteSheet1.png": { "height": 256, "width": 384, "type": "png" }, "sprites/fantasysprites/FDwarfSheet.png": { "height": 256, "width": 384, "type": "png" }, "sprites/fantasysprites/PeopleSpriteSheet2.png": { "height": 256, "width": 384, "type": "png" }, "sprites/fantasysprites/PeopleSpriteSheet3.png": { "height": 256, "width": 384, "type": "png" }, "sprites/fantasysprites/SpriteCompD.png": { "height": 188, "width": 96, "type": "png" }, "sprites/femalewarrior/Warrior_Sheet-Effect.png": { "height": 748, "width": 414, "type": "png" }, "sprites/fireball.png": { "height": 512, "width": 512, "type": "png" }, "sprites/greg.png": { "height": 96, "width": 64, "type": "png" }, "sprites/greyactions.png": { "height": 96, "width": 64, "type": "png" }, "sprites/LPC Base Assets/sprites/monsters/bat.png": { "height": 128, "width": 96, "type": "png" }, "sprites/LPC Base Assets/sprites/monsters/bee.png": { "height": 128, "width": 96, "type": "png" }, "sprites/LPC Base Assets/sprites/monsters/big_worm.png": { "height": 200, "width": 105, "type": "png" }, "sprites/LPC Base Assets/sprites/monsters/eyeball.png": { "height": 152, "width": 96, "type": "png" }, "sprites/LPC Base Assets/sprites/monsters/ghost.png": { "height": 184, "width": 120, "type": "png" }, "sprites/LPC Base Assets/sprites/monsters/man_eater_flower.png": { "height": 304, "width": 180, "type": "png" }, "sprites/LPC Base Assets/sprites/monsters/pumpking.png": { "height": 184, "width": 138, "type": "png" }, "sprites/LPC Base Assets/sprites/monsters/slime.png": { "height": 128, "width": 96, "type": "png" }, "sprites/LPC Base Assets/sprites/monsters/small_worm.png": { "height": 128, "width": 96, "type": "png" }, "sprites/LPC Base Assets/sprites/monsters/snake.png": { "height": 128, "width": 96, "type": "png" }, "sprites/LPC Base Assets/sprites/people/female_hurt.png": { "height": 64, "width": 384, "type": "png" }, "sprites/LPC Base Assets/sprites/people/female_slash.png": { "height": 256, "width": 384, "type": "png" }, "sprites/LPC Base Assets/sprites/people/female_spellcast.png": { "height": 258, "width": 448, "type": "png" }, "sprites/LPC Base Assets/sprites/people/female_walkcycle.png": { "height": 256, "width": 576, "type": "png" }, "sprites/LPC Base Assets/sprites/people/hairfemale.png": { "height": 280, "width": 120, "type": "png" }, "sprites/LPC Base Assets/sprites/people/hairmale.png": { "height": 360, "width": 120, "type": "png" }, "sprites/LPC Base Assets/sprites/people/male_hurt_pants.png": { "height": 64, "width": 384, "type": "png" }, "sprites/LPC Base Assets/sprites/people/male_hurt.png": { "height": 64, "width": 384, "type": "png" }, "sprites/LPC Base Assets/sprites/people/male_pants.png": { "height": 256, "width": 576, "type": "png" }, "sprites/LPC Base Assets/sprites/people/male_slash_pants.png": { "height": 256, "width": 384, "type": "png" }, "sprites/LPC Base Assets/sprites/people/male_slash.png": { "height": 256, "width": 384, "type": "png" }, "sprites/LPC Base Assets/sprites/people/male_spellcast_pants.png": { "height": 256, "width": 448, "type": "png" }, "sprites/LPC Base Assets/sprites/people/male_spellcast.png": { "height": 256, "width": 448, "type": "png" }, "sprites/LPC Base Assets/sprites/people/male_walkcycle.png": { "height": 256, "width": 576, "type": "png" }, "sprites/LPC Base Assets/sprites/people/princess.png": { "height": 256, "width": 576, "type": "png" }, "sprites/LPC Base Assets/sprites/people/soldier_altcolor.png": { "height": 256, "width": 576, "type": "png" }, "sprites/LPC Base Assets/sprites/people/soldier.png": { "height": 256, "width": 576, "type": "png" }, "sprites/LPC Base Assets/tiles/barrel.png": { "height": 64, "width": 128, "type": "png" }, "sprites/LPC Base Assets/tiles/brackish.png": { "height": 192, "width": 96, "type": "png" }, "sprites/LPC Base Assets/tiles/bridges.png": { "height": 224, "width": 192, "type": "png" }, "sprites/LPC Base Assets/tiles/buckets.png": { "height": 64, "width": 96, "type": "png" }, "sprites/LPC Base Assets/tiles/cabinets.png": { "height": 416, "width": 192, "type": "png" }, "sprites/LPC Base Assets/tiles/castle_lightsources.png": { "height": 128, "width": 160, "type": "png" }, "sprites/LPC Base Assets/tiles/castle_outside.png": { "height": 352, "width": 544, "type": "png" }, "sprites/LPC Base Assets/tiles/castlefloors_outside.png": { "height": 160, "width": 128, "type": "png" }, "sprites/LPC Base Assets/tiles/castlefloors.png": { "height": 320, "width": 320, "type": "png" }, "sprites/LPC Base Assets/tiles/castlewalls.png": { "height": 480, "width": 384, "type": "png" }, "sprites/LPC Base Assets/tiles/cement.png": { "height": 192, "width": 96, "type": "png" }, "sprites/LPC Base Assets/tiles/cementstair.png": { "height": 128, "width": 160, "type": "png" }, "sprites/LPC Base Assets/tiles/chests.png": { "height": 96, "width": 64, "type": "png" }, "sprites/LPC Base Assets/tiles/country.png": { "height": 128, "width": 160, "type": "png" }, "sprites/LPC Base Assets/tiles/cup.png": { "height": 64, "width": 32, "type": "png" }, "sprites/LPC Base Assets/tiles/dirt.png": { "height": 192, "width": 96, "type": "png" }, "sprites/LPC Base Assets/tiles/dirt2.png": { "height": 192, "width": 96, "type": "png" }, "sprites/LPC Base Assets/tiles/dungeon.png": { "height": 256, "width": 416, "type": "png" }, "sprites/LPC Base Assets/tiles/grass.png": { "height": 192, "width": 96, "type": "png" }, "sprites/LPC Base Assets/tiles/grassalt.png": { "height": 192, "width": 96, "type": "png" }, "sprites/LPC Base Assets/tiles/hole.png": { "height": 192, "width": 96, "type": "png" }, "sprites/LPC Base Assets/tiles/holek.png": { "height": 192, "width": 96, "type": "png" }, "sprites/LPC Base Assets/tiles/holemid.png": { "height": 192, "width": 96, "type": "png" }, "sprites/LPC Base Assets/tiles/house.png": { "height": 224, "width": 288, "type": "png" }, "sprites/LPC Base Assets/tiles/inside.png": { "height": 320, "width": 320, "type": "png" }, "sprites/LPC Base Assets/tiles/kitchen.png": { "height": 128, "width": 64, "type": "png" }, "sprites/LPC Base Assets/tiles/lava.png": { "height": 192, "width": 96, "type": "png" }, "sprites/LPC Base Assets/tiles/lavarock.png": { "height": 192, "width": 96, "type": "png" }, "sprites/LPC Base Assets/tiles/mountains.png": { "height": 288, "width": 384, "type": "png" }, "sprites/LPC Base Assets/tiles/rock.png": { "height": 32, "width": 64, "type": "png" }, "sprites/LPC Base Assets/tiles/signs.png": { "height": 64, "width": 96, "type": "png" }, "sprites/LPC Base Assets/tiles/stairs.png": { "height": 448, "width": 256, "type": "png" }, "sprites/LPC Base Assets/tiles/treetop.png": { "height": 224, "width": 192, "type": "png" }, "sprites/LPC Base Assets/tiles/trunk.png": { "height": 96, "width": 192, "type": "png" }, "sprites/LPC Base Assets/tiles/victoria.png": { "height": 160, "width": 352, "type": "png" }, "sprites/LPC Base Assets/tiles/water.png": { "height": 192, "width": 96, "type": "png" }, "sprites/LPC Base Assets/tiles/waterfall.png": { "height": 160, "width": 96, "type": "png" }, "sprites/LPC Base Assets/tiles/watergrass.png": { "height": 192, "width": 96, "type": "png" }, "sprites/LPC Base Assets/UI/frame.gif": { "height": 211, "width": 236, "type": "gif" }, "sprites/LPC Base Assets/UI/lpc_home_cup.gif": { "height": 320, "width": 480, "type": "gif" }, "sprites/LPC Base Assets/UI/shadow.png": { "height": 64, "width": 160, "type": "png" }, "sprites/scrops.png": { "height": 672, "width": 391, "type": "png" }, "sprites/sword-7Soul1.png": { "height": 192, "width": 256, "type": "png" }, "sprites/tilesets/submission_daneeklu/character/grab_sheet.png": { "height": 256, "width": 384, "type": "png" }, "sprites/tilesets/submission_daneeklu/character/sword_sheet_128.png": { "height": 504, "width": 768, "type": "png" }, "sprites/tilesets/submission_daneeklu/magic/magic_firelion_big.png": { "height": 512, "width": 512, "type": "png" }, "sprites/tilesets/submission_daneeklu/magic/magic_firelion_sheet.png": { "height": 256, "width": 256, "type": "png" }, "sprites/tilesets/submission_daneeklu/magic/magic_iceshield_sheet.png": { "height": 512, "width": 512, "type": "png" }, "sprites/tilesets/submission_daneeklu/magic/magic_snakebite_sheet.png": { "height": 512, "width": 512, "type": "png" }, "sprites/tilesets/submission_daneeklu/magic/magic_torrentacle.png": { "height": 512, "width": 512, "type": "png" }, "sprites/tilesets/submission_daneeklu/magic/turtleshell_front.png": { "height": 512, "width": 512, "type": "png" }, "sprites/tilesets/submission_daneeklu/magic/turtleshell_side.png": { "height": 512, "width": 512, "type": "png" }, "sprites/tilesets/submission_daneeklu/magics_preview.gif": { "height": 128, "width": 128, "type": "gif" }, "sprites/tilesets/submission_daneeklu/tileset_preview.png": { "height": 576, "width": 768, "type": "png" }, "sprites/tilesets/submission_daneeklu/tilesets/farming_fishing.png": { "height": 640, "width": 640, "type": "png" }, "sprites/tilesets/submission_daneeklu/tilesets/fence_alt.png": { "height": 192, "width": 96, "type": "png" }, "sprites/tilesets/submission_daneeklu/tilesets/fence.png": { "height": 192, "width": 96, "type": "png" }, "sprites/tilesets/submission_daneeklu/tilesets/grass.png": { "height": 192, "width": 96, "type": "png" }, "sprites/tilesets/submission_daneeklu/tilesets/grassalt.png": { "height": 192, "width": 96, "type": "png" }, "sprites/tilesets/submission_daneeklu/tilesets/hole.png": { "height": 192, "width": 96, "type": "png" }, "sprites/tilesets/submission_daneeklu/tilesets/plants.png": { "height": 384, "width": 288, "type": "png" }, "sprites/tilesets/submission_daneeklu/tilesets/plowed_soil.png": { "height": 192, "width": 96, "type": "png" }, "sprites/tilesets/submission_daneeklu/tilesets/reed.png": { "height": 320, "width": 96, "type": "png" }, "sprites/tilesets/submission_daneeklu/tilesets/sand.png": { "height": 192, "width": 96, "type": "png" }, "sprites/tilesets/submission_daneeklu/tilesets/sandwater.png": { "height": 192, "width": 96, "type": "png" }, "sprites/tilesets/submission_daneeklu/tilesets/tallgrass.png": { "height": 192, "width": 96, "type": "png" }, "sprites/tilesets/submission_daneeklu/tilesets/wheat.png": { "height": 192, "width": 96, "type": "png" }, "sprites/tilesets/submission_daneeklu/tilesets/youngwheat.png": { "height": 192, "width": 96, "type": "png" }, "sprites/tilesets/submission_daneeklu/ui_preview.png": { "height": 192, "width": 224, "type": "png" }, "sprites/tilesets/submission_daneeklu/ui/scrollsandblocks.png": { "height": 320, "width": 544, "type": "png" }, "sprites/victoriansprites.png": { "height": 384, "width": 384, "type": "png" } };
-
-  // src/engine/phaser-integration/phaser-sprite-manager.ts
-  var _PhaserSpriteManager = class {
-    constructor(spriteDir = "../sprites/") {
-      this.spriteNameToPath = {};
-      this.phaserGame = PhaserGame.createSingleton();
-      this.spriteDir = spriteDir;
-    }
-    onLoad(callback) {
-      throw new Error("Method not implemented.");
-    }
-    path(fileName) {
-      return this.spriteDir + fileName;
-    }
-    loadSprite(spriteName, fileName, widthImgs, heightImgs, offsetx = 0, offsety = 0) {
-      this.phaserGame.mainScene.addPreloader(() => {
-        const path = this.path(fileName);
-        const width = metadata[path.replace("../", "")].width;
-        const height = metadata[path.replace("../", "")].height;
-        const frameWidth = width / widthImgs;
-        const frameHeight = height / heightImgs;
-        this.phaserGame.mainScene.load.spritesheet(spriteName, path, {
-          frameWidth,
-          frameHeight
-        });
-      });
-    }
-    loadSpriteWithDimensions(spriteName, fileName, frameWidth, frameHeight, offsetx = 0, offsety = 0) {
-    }
-    loadSpriteOverlapping(spriteName, fileName) {
-    }
-    addAnimation(spriteName, animationName, spriteNumbers, delay = 1) {
-      this.phaserGame.mainScene.addCreator(() => {
-        const anims = this.phaserGame.mainScene.anims;
-        anims.create(
-          {
-            key: animationName,
-            frames: anims.generateFrameNumbers(spriteName, {
-              frames: spriteNumbers
-            }),
-            frameRate: Math.floor(30 / delay),
-            repeat: -1
-          }
-        );
-      });
-    }
-    getAnimation(animationName) {
-      return SpriteAnimation.create(animationName, "", [], 0);
-    }
-    getRGBs(animationName = null, spriteNumber = 0, width = null, height = null) {
-      return new ImageData(0, 0);
-    }
-    static create() {
-      return new _PhaserSpriteManager();
-    }
-    static singeltonCreate() {
-      if (_PhaserSpriteManager.spriteManager != null)
-        return _PhaserSpriteManager.spriteManager;
-      _PhaserSpriteManager.spriteManager = new _PhaserSpriteManager();
-      return _PhaserSpriteManager.spriteManager;
-    }
-  };
-  var PhaserSpriteManager = _PhaserSpriteManager;
-  PhaserSpriteManager.spriteManager = null;
-
   // src/engine/pixi-integration/pixi-components/generic-animation-component.ts
   var _GenericAnimationComponent = class extends Component {
     constructor(game, entityId) {
@@ -3060,6 +2895,11 @@ ${item.itemName}: ${item.itemQuantity}`;
 
   // src/engine/pixi-integration/pixi-game.ts
   var import_pixi = __toESM(require_pixi());
+
+  // src/metadata.ts
+  var metadata = { "sprites/arm.png": { "height": 32, "width": 32, "type": "png" }, "sprites/BearSprites.webp": { "height": 384, "width": 384, "type": "webp" }, "sprites/blond.png": { "height": 259, "width": 64, "type": "png" }, "sprites/blondWalk.png": { "height": 336, "width": 317, "type": "png" }, "sprites/crops.png": { "height": 256, "width": 384, "type": "png" }, "sprites/deer/deer female calciumtrice.png": { "height": 160, "width": 160, "type": "png" }, "sprites/deer/deer male calciumtrice.png": { "height": 160, "width": 160, "type": "png" }, "sprites/fantasysprites.png": { "height": 512, "width": 384, "type": "png" }, "sprites/fantasysprites/CompSpriteC.png": { "height": 166, "width": 96, "type": "png" }, "sprites/fantasysprites/DwarfSprites.png": { "height": 256, "width": 384, "type": "png" }, "sprites/fantasysprites/DwarfSprites2.png": { "height": 256, "width": 384, "type": "png" }, "sprites/fantasysprites/EnemySpriteSheet1.png": { "height": 256, "width": 384, "type": "png" }, "sprites/fantasysprites/FDwarfSheet.png": { "height": 256, "width": 384, "type": "png" }, "sprites/fantasysprites/PeopleSpriteSheet2.png": { "height": 256, "width": 384, "type": "png" }, "sprites/fantasysprites/PeopleSpriteSheet3.png": { "height": 256, "width": 384, "type": "png" }, "sprites/fantasysprites/SpriteCompD.png": { "height": 188, "width": 96, "type": "png" }, "sprites/femalewarrior/Warrior_Sheet-Effect.png": { "height": 748, "width": 414, "type": "png" }, "sprites/fireball.png": { "height": 512, "width": 512, "type": "png" }, "sprites/greg.png": { "height": 96, "width": 64, "type": "png" }, "sprites/greyactions.png": { "height": 96, "width": 64, "type": "png" }, "sprites/LPC Base Assets/sprites/monsters/bat.png": { "height": 128, "width": 96, "type": "png" }, "sprites/LPC Base Assets/sprites/monsters/bee.png": { "height": 128, "width": 96, "type": "png" }, "sprites/LPC Base Assets/sprites/monsters/big_worm.png": { "height": 200, "width": 105, "type": "png" }, "sprites/LPC Base Assets/sprites/monsters/eyeball.png": { "height": 152, "width": 96, "type": "png" }, "sprites/LPC Base Assets/sprites/monsters/ghost.png": { "height": 184, "width": 120, "type": "png" }, "sprites/LPC Base Assets/sprites/monsters/man_eater_flower.png": { "height": 304, "width": 180, "type": "png" }, "sprites/LPC Base Assets/sprites/monsters/pumpking.png": { "height": 184, "width": 138, "type": "png" }, "sprites/LPC Base Assets/sprites/monsters/slime.png": { "height": 128, "width": 96, "type": "png" }, "sprites/LPC Base Assets/sprites/monsters/small_worm.png": { "height": 128, "width": 96, "type": "png" }, "sprites/LPC Base Assets/sprites/monsters/snake.png": { "height": 128, "width": 96, "type": "png" }, "sprites/LPC Base Assets/sprites/people/female_hurt.png": { "height": 64, "width": 384, "type": "png" }, "sprites/LPC Base Assets/sprites/people/female_slash.png": { "height": 256, "width": 384, "type": "png" }, "sprites/LPC Base Assets/sprites/people/female_spellcast.png": { "height": 258, "width": 448, "type": "png" }, "sprites/LPC Base Assets/sprites/people/female_walkcycle.png": { "height": 256, "width": 576, "type": "png" }, "sprites/LPC Base Assets/sprites/people/hairfemale.png": { "height": 280, "width": 120, "type": "png" }, "sprites/LPC Base Assets/sprites/people/hairmale.png": { "height": 360, "width": 120, "type": "png" }, "sprites/LPC Base Assets/sprites/people/male_hurt_pants.png": { "height": 64, "width": 384, "type": "png" }, "sprites/LPC Base Assets/sprites/people/male_hurt.png": { "height": 64, "width": 384, "type": "png" }, "sprites/LPC Base Assets/sprites/people/male_pants.png": { "height": 256, "width": 576, "type": "png" }, "sprites/LPC Base Assets/sprites/people/male_slash_pants.png": { "height": 256, "width": 384, "type": "png" }, "sprites/LPC Base Assets/sprites/people/male_slash.png": { "height": 256, "width": 384, "type": "png" }, "sprites/LPC Base Assets/sprites/people/male_spellcast_pants.png": { "height": 256, "width": 448, "type": "png" }, "sprites/LPC Base Assets/sprites/people/male_spellcast.png": { "height": 256, "width": 448, "type": "png" }, "sprites/LPC Base Assets/sprites/people/male_walkcycle.png": { "height": 256, "width": 576, "type": "png" }, "sprites/LPC Base Assets/sprites/people/princess.png": { "height": 256, "width": 576, "type": "png" }, "sprites/LPC Base Assets/sprites/people/soldier_altcolor.png": { "height": 256, "width": 576, "type": "png" }, "sprites/LPC Base Assets/sprites/people/soldier.png": { "height": 256, "width": 576, "type": "png" }, "sprites/LPC Base Assets/tiles/barrel.png": { "height": 64, "width": 128, "type": "png" }, "sprites/LPC Base Assets/tiles/brackish.png": { "height": 192, "width": 96, "type": "png" }, "sprites/LPC Base Assets/tiles/bridges.png": { "height": 224, "width": 192, "type": "png" }, "sprites/LPC Base Assets/tiles/buckets.png": { "height": 64, "width": 96, "type": "png" }, "sprites/LPC Base Assets/tiles/cabinets.png": { "height": 416, "width": 192, "type": "png" }, "sprites/LPC Base Assets/tiles/castle_lightsources.png": { "height": 128, "width": 160, "type": "png" }, "sprites/LPC Base Assets/tiles/castle_outside.png": { "height": 352, "width": 544, "type": "png" }, "sprites/LPC Base Assets/tiles/castlefloors_outside.png": { "height": 160, "width": 128, "type": "png" }, "sprites/LPC Base Assets/tiles/castlefloors.png": { "height": 320, "width": 320, "type": "png" }, "sprites/LPC Base Assets/tiles/castlewalls.png": { "height": 480, "width": 384, "type": "png" }, "sprites/LPC Base Assets/tiles/cement.png": { "height": 192, "width": 96, "type": "png" }, "sprites/LPC Base Assets/tiles/cementstair.png": { "height": 128, "width": 160, "type": "png" }, "sprites/LPC Base Assets/tiles/chests.png": { "height": 96, "width": 64, "type": "png" }, "sprites/LPC Base Assets/tiles/country.png": { "height": 128, "width": 160, "type": "png" }, "sprites/LPC Base Assets/tiles/cup.png": { "height": 64, "width": 32, "type": "png" }, "sprites/LPC Base Assets/tiles/dirt.png": { "height": 192, "width": 96, "type": "png" }, "sprites/LPC Base Assets/tiles/dirt2.png": { "height": 192, "width": 96, "type": "png" }, "sprites/LPC Base Assets/tiles/dungeon.png": { "height": 256, "width": 416, "type": "png" }, "sprites/LPC Base Assets/tiles/grass.png": { "height": 192, "width": 96, "type": "png" }, "sprites/LPC Base Assets/tiles/grassalt.png": { "height": 192, "width": 96, "type": "png" }, "sprites/LPC Base Assets/tiles/hole.png": { "height": 192, "width": 96, "type": "png" }, "sprites/LPC Base Assets/tiles/holek.png": { "height": 192, "width": 96, "type": "png" }, "sprites/LPC Base Assets/tiles/holemid.png": { "height": 192, "width": 96, "type": "png" }, "sprites/LPC Base Assets/tiles/house.png": { "height": 224, "width": 288, "type": "png" }, "sprites/LPC Base Assets/tiles/inside.png": { "height": 320, "width": 320, "type": "png" }, "sprites/LPC Base Assets/tiles/kitchen.png": { "height": 128, "width": 64, "type": "png" }, "sprites/LPC Base Assets/tiles/lava.png": { "height": 192, "width": 96, "type": "png" }, "sprites/LPC Base Assets/tiles/lavarock.png": { "height": 192, "width": 96, "type": "png" }, "sprites/LPC Base Assets/tiles/mountains.png": { "height": 288, "width": 384, "type": "png" }, "sprites/LPC Base Assets/tiles/rock.png": { "height": 32, "width": 64, "type": "png" }, "sprites/LPC Base Assets/tiles/signs.png": { "height": 64, "width": 96, "type": "png" }, "sprites/LPC Base Assets/tiles/stairs.png": { "height": 448, "width": 256, "type": "png" }, "sprites/LPC Base Assets/tiles/treetop.png": { "height": 224, "width": 192, "type": "png" }, "sprites/LPC Base Assets/tiles/trunk.png": { "height": 96, "width": 192, "type": "png" }, "sprites/LPC Base Assets/tiles/victoria.png": { "height": 160, "width": 352, "type": "png" }, "sprites/LPC Base Assets/tiles/water.png": { "height": 192, "width": 96, "type": "png" }, "sprites/LPC Base Assets/tiles/waterfall.png": { "height": 160, "width": 96, "type": "png" }, "sprites/LPC Base Assets/tiles/watergrass.png": { "height": 192, "width": 96, "type": "png" }, "sprites/LPC Base Assets/UI/frame.gif": { "height": 211, "width": 236, "type": "gif" }, "sprites/LPC Base Assets/UI/lpc_home_cup.gif": { "height": 320, "width": 480, "type": "gif" }, "sprites/LPC Base Assets/UI/shadow.png": { "height": 64, "width": 160, "type": "png" }, "sprites/scrops.png": { "height": 672, "width": 391, "type": "png" }, "sprites/sword-7Soul1.png": { "height": 192, "width": 256, "type": "png" }, "sprites/tilesets/submission_daneeklu/character/grab_sheet.png": { "height": 256, "width": 384, "type": "png" }, "sprites/tilesets/submission_daneeklu/character/sword_sheet_128.png": { "height": 504, "width": 768, "type": "png" }, "sprites/tilesets/submission_daneeklu/magic/magic_firelion_big.png": { "height": 512, "width": 512, "type": "png" }, "sprites/tilesets/submission_daneeklu/magic/magic_firelion_sheet.png": { "height": 256, "width": 256, "type": "png" }, "sprites/tilesets/submission_daneeklu/magic/magic_iceshield_sheet.png": { "height": 512, "width": 512, "type": "png" }, "sprites/tilesets/submission_daneeklu/magic/magic_snakebite_sheet.png": { "height": 512, "width": 512, "type": "png" }, "sprites/tilesets/submission_daneeklu/magic/magic_torrentacle.png": { "height": 512, "width": 512, "type": "png" }, "sprites/tilesets/submission_daneeklu/magic/turtleshell_front.png": { "height": 512, "width": 512, "type": "png" }, "sprites/tilesets/submission_daneeklu/magic/turtleshell_side.png": { "height": 512, "width": 512, "type": "png" }, "sprites/tilesets/submission_daneeklu/magics_preview.gif": { "height": 128, "width": 128, "type": "gif" }, "sprites/tilesets/submission_daneeklu/tileset_preview.png": { "height": 576, "width": 768, "type": "png" }, "sprites/tilesets/submission_daneeklu/tilesets/farming_fishing.png": { "height": 640, "width": 640, "type": "png" }, "sprites/tilesets/submission_daneeklu/tilesets/fence_alt.png": { "height": 192, "width": 96, "type": "png" }, "sprites/tilesets/submission_daneeklu/tilesets/fence.png": { "height": 192, "width": 96, "type": "png" }, "sprites/tilesets/submission_daneeklu/tilesets/grass.png": { "height": 192, "width": 96, "type": "png" }, "sprites/tilesets/submission_daneeklu/tilesets/grassalt.png": { "height": 192, "width": 96, "type": "png" }, "sprites/tilesets/submission_daneeklu/tilesets/hole.png": { "height": 192, "width": 96, "type": "png" }, "sprites/tilesets/submission_daneeklu/tilesets/plants.png": { "height": 384, "width": 288, "type": "png" }, "sprites/tilesets/submission_daneeklu/tilesets/plowed_soil.png": { "height": 192, "width": 96, "type": "png" }, "sprites/tilesets/submission_daneeklu/tilesets/reed.png": { "height": 320, "width": 96, "type": "png" }, "sprites/tilesets/submission_daneeklu/tilesets/sand.png": { "height": 192, "width": 96, "type": "png" }, "sprites/tilesets/submission_daneeklu/tilesets/sandwater.png": { "height": 192, "width": 96, "type": "png" }, "sprites/tilesets/submission_daneeklu/tilesets/tallgrass.png": { "height": 192, "width": 96, "type": "png" }, "sprites/tilesets/submission_daneeklu/tilesets/wheat.png": { "height": 192, "width": 96, "type": "png" }, "sprites/tilesets/submission_daneeklu/tilesets/youngwheat.png": { "height": 192, "width": 96, "type": "png" }, "sprites/tilesets/submission_daneeklu/ui_preview.png": { "height": 192, "width": 224, "type": "png" }, "sprites/tilesets/submission_daneeklu/ui/scrollsandblocks.png": { "height": 320, "width": 544, "type": "png" }, "sprites/victoriansprites.png": { "height": 384, "width": 384, "type": "png" } };
+
+  // src/engine/pixi-integration/pixi-game.ts
   var _PixiGame = class {
     constructor(imgMetaData) {
       this.tileSprites = {};
@@ -3272,6 +3112,7 @@ ${item.itemName}: ${item.itemQuantity}`;
       for (let i in spriteSheets) {
         const spriteSheet = spriteSheets[i];
         spriteSheet.parse();
+        import_pixi.utils.clearTextureCache();
       }
     }
     finishSpriteSheetGeneration() {
@@ -3818,11 +3659,12 @@ ${item.itemName}: ${item.itemQuantity}`;
     }
     applyEvents(entity, eventManager) {
     }
+    shouldApply(entity) {
+      return entity.getComponent("dash", true) != null;
+    }
     apply(args) {
       const entity = args.entity;
       const dash = entity.getComponent("dash");
-      if (dash == null)
-        return;
       const dashing = dash.dashing;
       const dashingTime = dash.dashTime;
       const position = entity.getComponent("position");
