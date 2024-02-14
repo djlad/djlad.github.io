@@ -122,14 +122,14 @@
                 let noWidth = noRect.width;
                 let noHeight = noRect.height;
                 document.getElementById("no").addEventListener("click", function() {
+                    let count = 0;
                     if (localStorage.getItem("count") == null) {
+                        console.log('test')
                         localStorage.setItem("count", 0);
+                    } else{
+                        count = parseInt(localStorage.getItem("count"));
                     }
-                    let count = parseInt(localStorage.getItem("count"));
-                    if (count == null) {
-                        count = 0;
-                    } 
-                    count += 1;
+                    count++;
                     localStorage.setItem("count", count);
                     console.log(count);
                     width *= 1.1;
@@ -142,14 +142,15 @@
                     no.style.height = noHeight + "px"
                 });
                 yes.addEventListener("click", function() {
-                    let count = parseInt(localStorage.getItem("count"));
+                    let count = parseInt(localStorage.getItem("count") != null ?localStorage.getItem("count"):"0");
+                    console.log(count)
                     document.getElementById("initial").style.display = "none";
                     let final = document.getElementById("final")
                     final.style.display = "block";
                     let numtimes = document.getElementById("numtimes");
                     setTimeout(function() {
                         let count = parseInt(localStorage.getItem("count"));
-                        if (count != null) {
+                        if (count > 0) {
                             numtimes.innerHTML = ` after rejecting me ${count} time${count>1 ? "s" : ""}! I can't believe you did that to your husband`;
                         } 
                         final.style.display = "none";
