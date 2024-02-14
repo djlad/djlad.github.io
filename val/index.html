@@ -122,6 +122,9 @@
                 let noWidth = noRect.width;
                 let noHeight = noRect.height;
                 document.getElementById("no").addEventListener("click", function() {
+                    if (localStorage.getItem("count") == null) {
+                        localStorage.setItem("count", 0);
+                    }
                     let count = parseInt(localStorage.getItem("count"));
                     if (count == null) {
                         count = 0;
