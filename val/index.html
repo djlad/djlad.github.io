@@ -1,0 +1,190 @@
+<html>
+    <head>
+        <title>Alzina's Valentine</title>
+        <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+        <style>
+        #particles-js {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            left: 0;
+            top: 0;
+            background-color: #b61924;
+            background-image: url("");
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: 50% 50%;
+        }
+        #proposal {
+            position: absolute;
+            top: 30%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 50px;
+            color: white;
+            text-align: center;
+        }
+        #answers {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            justify-content: space-around;
+            width: 80%;
+            font-size: 50px;
+            color: white;
+        }
+        #yes, #no {
+            cursor: pointer;
+        }
+        #yes:hover  {
+            transform: scale(1.1);
+            box-shadow: 10px 10px 10px black;
+        }
+        #yes:active{
+            transform: scale(1.1);
+            box-shadow: 0px 0px 0px black;
+        }
+        #no:hover {
+            transform: scale(.9);
+            box-shadow: 10px 10px 10px black;
+        }
+        #no:active{
+            transform: scale(.9);
+            box-shadow: 0px 0px 0px black;
+        }
+        #yes {
+            background-color: red;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        #yes {
+            background-color: red;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        #no {
+            background-color: black;
+            padding: 20px;
+            border-radius: 10px;}
+        .unselectable {
+            -moz-user-select: -moz-none;
+            -khtml-user-select: none;
+            -webkit-user-select: none;
+            -o-user-select: none;
+            user-select: none;
+        }
+        #final {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 50px;
+            color: white;
+            text-align: center;
+        }
+        #card {
+            display: none;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 40px;
+            color: white;
+            text-align: center;
+        }
+        .firstimg{
+            height:60vh;
+        }
+        #happyval {
+            display: none;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 40px;
+            color: white;
+            text-align: center;
+        }
+        </style>
+        <script>
+            particlesJS.load('particles-js', "particles.json", function() {
+              console.log('callback - particles.js config loaded');
+            });
+            window.onload = function() {
+                rect = yes.getBoundingClientRect();
+                console.log(rect);
+                let width = rect.width;
+                let height = rect.height;
+                let noRect = no.getBoundingClientRect();
+                let noWidth = noRect.width;
+                let noHeight = noRect.height;
+                document.getElementById("no").addEventListener("click", function() {
+                    let count = parseInt(localStorage.getItem("count"));
+                    if (count == null) {
+                        count = 0;
+                    } 
+                    count += 1;
+                    localStorage.setItem("count", count);
+                    console.log(count);
+                    width *= 1.1;
+                    height *= 1.1;
+                    yes.style.width = width + "px"
+                    yes.style.height = height + "px"
+                    noWidth *= .9;
+                    noHeight *= .9;
+                    no.style.width = noWidth + "px"
+                    no.style.height = noHeight + "px"
+                });
+                yes.addEventListener("click", function() {
+                    let count = parseInt(localStorage.getItem("count"));
+                    document.getElementById("initial").style.display = "none";
+                    let final = document.getElementById("final")
+                    final.style.display = "block";
+                    let numtimes = document.getElementById("numtimes");
+                    setTimeout(function() {
+                        let count = parseInt(localStorage.getItem("count"));
+                        if (count != null) {
+                            numtimes.innerHTML = ` after rejecting me ${count} time${count>1 ? "s" : ""}! I can't believe you did that to your husband`;
+                        } 
+                        final.style.display = "none";
+                        let card = document.getElementById("card")
+                        card.style.display = "block";
+                        setTimeout(function() {
+                            card.style.display = "none";
+                            let happyval = document.getElementById("happyval");
+                            happyval.style.display = "block";
+                        }, 15000);
+                    }, 4000);
+                });
+            }
+        </script>
+    </head>
+    <body>
+        <div id="particles-js">
+            <div id="initial">
+                <h1 id="proposal">
+                    Alzina will you be my Valentine?
+                </h1>
+                <div id="answers" class="unselectable">
+                    <div id="yes">&#128525; YES &#128525;</div>
+                    <div id="no">&#9785; NO &#9785;</div>
+                </div>
+            </div>
+            <div id="final">
+                <h2 id="final-proposal">Thank you for being my Valentine</h1>
+            </div>
+            <div id="card">
+                <p>I am thrilled to learn that you have accepted my application to be your Valentine<span id="numtimes"></span>!</p>
+                <p>I feel lucky and proud every day, because I get to call you my wife.</p>
+                <p>I treasure every moment with you. From your offers to help with chores, to support, to tickles, to your laughs and all your weird quirks. I don't take any second for granted.</p>
+            </div>
+            <div id="happyval">
+                <img class="firstimg" src="hug.jpg">
+                <p>Happy Valentines Day Zina!</p>
+            </div>
+        </div>
+    </body>
+</html>
