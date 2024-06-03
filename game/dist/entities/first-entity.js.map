@@ -1,0 +1,1 @@
+{"version":3,"file":"first-entity.js","sourceRoot":"","sources":["../../src/entities/first-entity.ts"],"names":[],"mappings":";;;;IAMA,MAAa,WAAW;QAMpB,MAAM,CAAC,gBAAkC,EAAE,MAAc;YACrD,IAAI,QAAQ,GAAwC,MAAM,CAAC,YAAY,CAAC,UAAU,CAAC,CAAC;YACpF,QAAQ,CAAC,CAAC,GAAG,CAAC,OAAO,CAAC;YACtB,IAAI,KAAK,GAAkB,MAAM,CAAC,YAAY,CAAC,MAAM,CAAC,CAAC;YACvD,OAAO,MAAM,CAAC;QAClB,CAAC;KACJ;IAZD,kCAYC"}

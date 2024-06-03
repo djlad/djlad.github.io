@@ -1,0 +1,1 @@
+{"version":3,"file":"sprite-id.js","sourceRoot":"","sources":["../../../src/components/tile-component/sprite-id.ts"],"names":[],"mappings":";;;;IAAA,MAAa,QAAQ;QAGjB,MAAM,CAAC,MAAM,CAAC,UAAiB,EAAE,YAAmB;YAChD,MAAM,QAAQ,GAAG,IAAI,QAAQ,EAAE,CAAC;YAChC,QAAQ,CAAC,UAAU,GAAG,UAAU,CAAC;YACjC,QAAQ,CAAC,YAAY,GAAG,YAAY,CAAC;YACrC,OAAO,QAAQ,CAAC;QACpB,CAAC;KACJ;IATD,4BASC"}

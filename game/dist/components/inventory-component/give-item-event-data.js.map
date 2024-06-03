@@ -1,0 +1,1 @@
+{"version":3,"file":"give-item-event-data.js","sourceRoot":"","sources":["../../../src/components/inventory-component/give-item-event-data.ts"],"names":[],"mappings":";;;;IAAA,MAAa,iBAAiB;QAC1B,YAAY,QAAe,EAAE,QAAe;YACxC,IAAI,CAAC,QAAQ,GAAC,QAAQ,CAAC;YACvB,IAAI,CAAC,QAAQ,GAAG,QAAQ,CAAC;QAC7B,CAAC;KAGJ;IAPD,8CAOC"}

@@ -16,10 +16,10 @@ export class GenericPositionComponent extends Component implements IPositionComp
     public engineSprite: IEngineSprite;
     public static componentName="position";
     events: EventManager;
-    entityId: string;
-    constructor(game:GameDependencies, entityId:string){
+    entityId: number;
+    constructor(game:GameDependencies, entityId:number){
         super("position");
-        this.engineSprite = game.engineCreator.createEngineSprite(entityId);
+        this.engineSprite = game.engineCreator.createEngineSprite(entityId.toString());
         this.engineSprite.setSprite("greyWalk");
         this.engineSprite.width = this.width;
         this.engineSprite.height = this.height;
@@ -161,7 +161,7 @@ export class GenericPositionComponent extends Component implements IPositionComp
         this.moved = !(this.vx == 0 && this.vy == 0);
     }
 
-    static create(game:GameDependencies, entityId:string):GenericPositionComponent{
+    static create(game:GameDependencies, entityId:number):GenericPositionComponent{
         return new GenericPositionComponent(game, entityId);
     }
 }

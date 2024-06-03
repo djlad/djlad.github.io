@@ -1,0 +1,1 @@
+{"version":3,"file":"particles-entity.js","sourceRoot":"","sources":["../../../src/entities/particles/particles-entity.ts"],"names":[],"mappings":";;;;IAKA,MAAa,eAAe;QACxB,MAAM,CAAC,gBAAkC,EAAE,MAAc;YACrD,IAAI,QAAQ,GAAsB,MAAM,CAAC,YAAY,CAAC,UAAU,CAAC,CAAC;YAClE,QAAQ,CAAC,KAAK,GAAG,EAAE,CAAC;YACpB,MAAM,CAAC,YAAY,CAAC,WAAW,CAAC,CAAC;YACjC,OAAO,MAAM,CAAC;QAClB,CAAC;KACJ;IAPD,0CAOC"}

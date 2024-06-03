@@ -1,0 +1,1 @@
+{"version":3,"file":"primitive-component.js","sourceRoot":"","sources":["../../src/components/primitive-component.ts"],"names":[],"mappings":";;;;IAGA,MAAa,kBAAmB,SAAQ,qBAAS;QAC7C,MAAM,CAAC,MAAc;QACrB,CAAC;QACM,MAAM,CAAC,MAAM;YAChB,OAAO,IAAI,kBAAkB,CAAC,WAAW,CAAC,CAAC;QAC/C,CAAC;KACJ;IAND,gDAMC"}

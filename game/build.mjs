@@ -4,6 +4,7 @@ import {fstat, readFileSync, write, writeFile, writeFileSync, rmSync, mkdirSync}
 import * as imageSize from 'image-size';
 import externalGlobalPlugin from "esbuild-plugin-external-global";
 import { networkInterfaces } from 'os';
+import * as http from 'http';
 
 const nets = networkInterfaces();
 const results = Object.create(null); // Or just '{}', an empty object
@@ -49,7 +50,7 @@ const config = {
     bundle: true,
     // outdir: "./dist",
     outfile: "./dist/game.mjs",
-    watch: true,
+    watch: false,
     // external: Object.keys(dependencies??[]).concat(Object.keys(peerDependencies??[])),
     sourcemap: true,
     target: ["chrome107"],
@@ -69,7 +70,7 @@ const config = {
 };
 
 function build(config){
-    config.watch = false;
+    // config.watch = false;
     return esbuild.build(config).catch((e)=>{
         console.log(e);
         return process.exit(1);
@@ -77,7 +78,7 @@ function build(config){
 }
 
 function watch(config){
-    config.watch = false;
+    // config.watch = false;
     return esbuild.serve({
         servedir:".",
         port:port
@@ -87,10 +88,34 @@ function watch(config){
     });;
 }
 
+function customServer(){
+    const requestListener = function (req, res) {
+        let body = ""
+        req.on("data", (chunk)=>{
+            body += chunk;
+        })
+        req.on("end",()=>{
+            console.log(body);
+            // You can also set using the following method
+            res.setHeader('Access-Control-Allow-Origin', '*'); /* @dev First, read about security */
+            res.setHeader('Access-Control-Allow-Methods', 'OPTIONS, GET');
+            res.setHeader('Access-Control-Max-Age', 2592000); // 30 days
+            res.setHeader('Access-Control-Allow-Headers', 'content-type'); 
+            res.writeHead(200);
+            res.end("Received request");
+        })
+    };
+    const server = http.createServer(requestListener);
+    server.listen(port+1, null, ()=>{
+        console.log("Custom server started")
+    });
+}
+
 const port = 8004;
-build(config).then(()=>{
-    console.log(`Built game in ./dist`);
-});
+const host = ""
+// build(config).then(()=>{
+    // console.log(`Built game in ./dist`);
+// });
 
 if (process.argv[2] === "lib"){
     console.log("Building library");
@@ -132,4 +157,5 @@ else if (process.argv.length != 3 && process.argv[2] != "build"){
         console.log(`Serving dev site at http://${results[nic]}:${port}/dist/index.html`);
     }
     watch(config);
+    customServer();
 }

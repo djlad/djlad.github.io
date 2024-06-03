@@ -10,6 +10,8 @@ import { PixiDependencies } from './engine/pixi-integration/pixi-dependencies';
 import { GenericPositionComponent } from './engine/pixi-integration/pixi-components/generic-position-component';
 import { WeaponComponent } from './components/weapon-component/weapon-component';
 import { blue } from './characters/character-builder';
+import { Component } from './engine/component/component';
+import { overrideLogger } from './logger';
 
 declare var synaptic:any;
 export declare var g:Game;
@@ -95,6 +97,7 @@ function startGame(){
 }
 if (typeof window !== 'undefined')
 {
+    overrideLogger();
     const game = startGame();
     /*
     let game = createPixiGame();

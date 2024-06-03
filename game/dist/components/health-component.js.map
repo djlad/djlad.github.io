@@ -1,0 +1,1 @@
+{"version":3,"file":"health-component.js","sourceRoot":"","sources":["../../src/components/health-component.ts"],"names":[],"mappings":";;;;IAGA,MAAa,eAAgB,SAAQ,qBAAS;QAC1C;YACI,KAAK,CAAC,QAAQ,CAAC,CAAC;YAEpB,WAAM,GAAQ,GAAG,CAAC;QADlB,CAAC;QAGD,MAAM,KAAG,CAAC;QAEV,MAAM,CAAC,MAAM;YACT,OAAO,IAAI,eAAe,EAAE,CAAC;QACjC,CAAC;KACJ;IAXD,0CAWC"}
