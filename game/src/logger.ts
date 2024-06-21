@@ -1,3 +1,19 @@
+function thisLine() {
+    const e = new Error();
+    const regex = /\((.*):(\d+):(\d+)\)$/
+    const stack = e.stack.split("\n")
+    if (stack == null || stack.length < 4) {
+        return "";
+    }
+    const match = regex.exec(stack[3])
+    const position = {
+      filepath: match[1],
+      line: match[2],
+      column: match[3]
+    };
+    return ` at ${position.filepath}:${position.line}:${position.column}`
+}
+
 export function overrideLogger(){
     const methods = ["debug", "error", "info", "log", "warn"];
     const newPort = ":" + (Number(location.port) + 1);
@@ -13,7 +29,7 @@ export function overrideLogger(){
             }
             fetch(logUrl, {
                 method: "POST",
-                body: args.join(" "),
+                body: args.join(" ") + thisLine(),
             })
             old(...arguments);
         }
