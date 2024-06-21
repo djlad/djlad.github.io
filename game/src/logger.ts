@@ -6,6 +6,9 @@ function thisLine() {
         return "";
     }
     const match = regex.exec(stack[3])
+    if (match == null) {
+        return "";
+    }
     const position = {
       filepath: match[1],
       line: match[2],
