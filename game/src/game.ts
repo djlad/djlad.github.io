@@ -17,12 +17,12 @@ declare var synaptic:any;
 export declare var g:Game;
 
 
-function startGame(){
+async function startGame(){
     // let game:Game = createGame();
     // let game:Game = createPhaserGameGeneric();
     let game:Game = createPixiGame();
     // game.entityFactory.componentFactory.createComponent("animation");
-    game.gameDependencies.spriteManager.onLoad(()=>{
+    await game.gameDependencies.spriteManager.onLoad(()=>{
 
     game.addEntity("first");
     const player = makePlayer();
@@ -98,7 +98,9 @@ function startGame(){
 if (typeof window !== 'undefined')
 {
     overrideLogger();
-    const game = startGame();
+    const game = startGame().catch((e)=>{
+        console.error(e.stack)
+    });
     /*
     let game = createPixiGame();
     let g = game.gameDependencies as PixiDependencies;
