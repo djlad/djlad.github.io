@@ -11,10 +11,10 @@ export class GenericAnimationComponent extends Component implements IAnimationCo
     spriteName: string;
     public static fakeImageData: ImageData = new ImageData(1,1);
     public static componentName:string = "animation"
-    constructor(game:GameDependencies, entityId:string){
+    constructor(game:GameDependencies, entityId:number){
         super("animation");
         game.checkDependency(game.engineCreator);
-        this.engineSprite = game.engineCreator.createEngineSprite(entityId);
+        this.engineSprite = game.engineCreator.createEngineSprite(entityId.toString());
     }
     update(entity: Entity, args: EntityUpdateArgs): void {
     }
@@ -32,7 +32,7 @@ export class GenericAnimationComponent extends Component implements IAnimationCo
     }
     setSpriteNumber(spriteName: string, spriteNumber: number): void {
     }
-    public static create(game: GameDependencies, entityId:string): GenericAnimationComponent {
+    public static create(game: GameDependencies, entityId:number): GenericAnimationComponent {
         return new GenericAnimationComponent(game, entityId);
     }
 }

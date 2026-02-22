@@ -15,6 +15,7 @@ export class PlayerEntity implements EntityRegistration{
     create(gameDependencies: GameDependencies, entity: Entity): Entity {
         var animation:AnimationComponent = <AnimationComponent>entity.addComponent("animation");
         var position = <GenericPositionComponent>entity.addComponent("position");
+        position = entity.getComponentT(GenericPositionComponent);
         var wasd:WasdComponent = <WasdComponent>entity.addComponent("wasd");
         var inventory:InventoryComponent = <InventoryComponent>entity.addComponent("inventory");
         let placeItem:PlaceItemComponent = <PlaceItemComponent>entity.addComponent("placeItem");

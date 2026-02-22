@@ -1,4 +1,4 @@
-import { ComponentFactory } from '../component/component-factory';
+import { ComponentFactory, GenericComponentType } from '../component/component-factory';
 import { Component } from '../component/component';
 import { GameEvent } from '../events/game-event';
 import { EntityUpdateArgs } from './entity-update-args';
@@ -6,6 +6,7 @@ import { GameDependencies } from '../dependencies/game-dependencies';
 import { EntitySystem } from '../system/system';
 import { Game } from '../game';
 import { SystemArgs } from '../system/system-args';
+
 
 /**
  * {@link Entity#applicableSystems} is added by {@link Game#addEntity}
@@ -20,6 +21,7 @@ export class Entity {
     id:number=-1;
     private components:Component[] = [];
     private componentNameToComponent:{[key:string]:Component} = {};
+    private componentToComponent: Map<Function, Component> = new Map<Function, Component>()
     private componentFactory:ComponentFactory;
     private applicableSystems:EntitySystem[] = [];//see above doc
     targetedEvents:GameEvent[] = [];
@@ -36,12 +38,17 @@ export class Entity {
     addComponent(componentName:string):Component{
         var component:Component = this.componentFactory.createComponent(componentName, this.id);
         this.componentNameToComponent[component.componentName] = component;
+        this.componentToComponent.set(component.constructor, component);
         this.components.push(component);
         return component;
     }
 
     getComponent(componentName:string, allowUndefined:boolean=false):Component{
         return this.componentNameToComponent[componentName];
+    }
+
+    getComponentT<ComponentType extends Component>(componentClass: GenericComponentType<ComponentType>): ComponentType {
+        return this.componentToComponent.get(componentClass) as ComponentType;
     }
 
     emit(event:GameEvent, delayed=false){

@@ -1,0 +1,36 @@
+import { Component } from "../../component/component";
+import { IPositionComponent } from "../../component/components/position/iposition-component";
+import { Entity } from "../../entity/entity";
+import { EntityUpdateArgs } from "../../entity/entity-update-args";
+import { PhaserGame } from "../phaser-game";
+export declare class PhaserPositionComponent extends Component implements IPositionComponent {
+    private phaserGame;
+    phaserObject: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
+    constructor(phaser: PhaserGame);
+    private speedMultiplier;
+    private _vx;
+    get vx(): number;
+    set vx(vx: number);
+    private _vy;
+    get vy(): number;
+    set vy(vy: number);
+    private _rotate;
+    get rotate(): number;
+    set rotate(radiansToRotate: number);
+    x: number;
+    y: number;
+    h: number;
+    width: number;
+    height: number;
+    faceRight: boolean;
+    faceX: number;
+    faceY: number;
+    moved: boolean;
+    applyOffsets: boolean;
+    update(entity: Entity, args: EntityUpdateArgs): void;
+    static create(): PhaserPositionComponent;
+    pivotX: number;
+    pivotY: number;
+    anchorX: number;
+    anchorY: number;
+}

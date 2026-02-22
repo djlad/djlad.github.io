@@ -10,17 +10,19 @@ import { PixiDependencies } from './engine/pixi-integration/pixi-dependencies';
 import { GenericPositionComponent } from './engine/pixi-integration/pixi-components/generic-position-component';
 import { WeaponComponent } from './components/weapon-component/weapon-component';
 import { blue } from './characters/character-builder';
+import { Component } from './engine/component/component';
+import { overrideLogger } from './logger';
 
 declare var synaptic:any;
 export declare var g:Game;
 
 
-function startGame(){
+async function startGame(){
     // let game:Game = createGame();
     // let game:Game = createPhaserGameGeneric();
     let game:Game = createPixiGame();
     // game.entityFactory.componentFactory.createComponent("animation");
-    game.gameDependencies.spriteManager.onLoad(()=>{
+    await game.gameDependencies.spriteManager.onLoad(()=>{
 
     game.addEntity("first");
     const player = makePlayer();
@@ -95,7 +97,10 @@ function startGame(){
 }
 if (typeof window !== 'undefined')
 {
-    const game = startGame();
+    overrideLogger();
+    const game = startGame().catch((e)=>{
+        console.error(e.stack)
+    });
     /*
     let game = createPixiGame();
     let g = game.gameDependencies as PixiDependencies;

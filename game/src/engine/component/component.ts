@@ -9,9 +9,9 @@ export abstract class Component {
     }
     componentName:string;
     abstract update(entity:Entity, args:EntityUpdateArgs):void;
-    static create(game:GameDependencies, entityId:string){
+    static create(game:GameDependencies, entityId:number):Component{
         throw "Component must implement static create function";
     };
-    static createWithGame(game:Game, entityId:string){
+    static createWithGame(game:Game, entityId:number){
     }
 }
