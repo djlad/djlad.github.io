@@ -7,6 +7,7 @@ import { EntitySystem } from '../system/system';
 import { Game } from '../game';
 import { SystemArgs } from '../system/system-args';
 
+
 /**
  * {@link Entity#applicableSystems} is added by {@link Game#addEntity}
  */

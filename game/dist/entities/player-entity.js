@@ -5,7 +5,8 @@ define(["require", "exports", "../engine/pixi-integration/pixi-components/generi
     class PlayerEntity {
         create(gameDependencies, entity) {
             var animation = entity.addComponent("animation");
-            let position = entity.getComponentT(generic_position_component_1.GenericPositionComponent);
+            var position = entity.addComponent("position");
+            position = entity.getComponentT(generic_position_component_1.GenericPositionComponent);
             var wasd = entity.addComponent("wasd");
             var inventory = entity.addComponent("inventory");
             let placeItem = entity.addComponent("placeItem");
